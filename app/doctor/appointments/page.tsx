@@ -1,0 +1,1232 @@
+"use client"
+
+import { useState, useEffect, Suspense } from "react"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
+import {
+  LayoutDashboard,
+  Calendar,
+  Users,
+  Clock,
+  Stethoscope,
+  User,
+  LogOut,
+  Search,
+  Filter,
+  CheckCircle2,
+  XCircle,
+  Clock3,
+  Phone,
+  Mail,
+  MapPin,
+  FileText,
+  ChevronRight,
+  Upload,
+  Paperclip,
+  X,
+  History as HistoryIcon,
+  Pill,
+  AlertCircle,
+} from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { cn } from "@/lib/utils"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import io from "socket.io-client"
+
+const navItems = [
+  { href: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/doctor/appointments", icon: Calendar, label: "Appointments" },
+  { href: "/doctor/patients", icon: Users, label: "Patients" },
+  { href: "/doctor/schedule", icon: Clock, label: "Schedule" },
+  { href: "/doctor/profile", icon: User, label: "Profile" },
+]
+
+interface Appointment {
+  id: string
+  patientName: string
+  patientPhone: string
+  patientEmail: string
+  date: string
+  time: string
+  reason: string
+  status: "pending" | "confirmed" | "completed" | "cancelled"
+  type: "consultation" | "follow-up" | "emergency"
+  notes?: string
+  healthId: string
+  patientId: string
+  attachments?: Array<{
+     name: string
+     url: string
+     fileType: string
+  }>
+}
+
+const appointments: Appointment[] = []
+
+const statusConfig = {
+  pending: {
+    label: "Pending",
+    className: "bg-warning/20 text-warning-foreground border-warning",
+  },
+  confirmed: {
+    label: "Confirmed",
+    className: "bg-success/20 text-success border-success",
+  },
+  completed: {
+    label: "Completed",
+    className: "bg-muted text-muted-foreground border-muted-foreground",
+  },
+  cancelled: {
+    label: "Cancelled",
+    className: "bg-destructive/20 text-destructive border-destructive",
+  },
+}
+
+const typeConfig = {
+  consultation: {
+    label: "Consultation",
+    className: "bg-primary/20 text-primary border-primary",
+  },
+  "follow-up": {
+    label: "Follow-up",
+    className: "bg-accent/20 text-accent-foreground border-accent",
+  },
+  emergency: {
+    label: "Emergency",
+    className: "bg-emergency/20 text-emergency-foreground border-emergency",
+  },
+}
+
+function DoctorAppointmentsContent() {
+  const searchParams = useSearchParams()
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
+  const [activeTab, setActiveTab] = useState("today")
+  const [appointmentNotes, setAppointmentNotes] = useState("")
+
+  // New states for Medical Record
+  const [reportData, setReportData] = useState({
+    diagnosis: "",
+    medicines: [{ name: "", dosage: "", duration: "", instructions: "" }],
+    allergies: "",
+    notes: ""
+  })
+
+  // New states for Reschedule
+  const [rescheduleData, setRescheduleData] = useState({ date: "", time: "" })
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false)
+
+  // New states for Booking
+  const [isBookingOpen, setIsBookingOpen] = useState(false)
+  const [bookingData, setBookingData] = useState({
+    patientId: "",
+    patientName: "",
+    date: "",
+    time: "",
+    reason: "",
+    type: "consultation"
+  })
+
+  // State for file uploads
+  const [uploading, setUploading] = useState(false)
+  const [attachments, setAttachments] = useState<any[]>([])
+
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [loading, setLoading] = useState(true)
+  const [isMounted, setIsMounted] = useState(false)
+
+  const [doctorProfile, setDoctorProfile] = useState<any>(null)
+  const [viewingMedicalRecord, setViewingMedicalRecord] = useState<any>(null)
+  const [isMedicalRecordDialogOpen, setIsMedicalRecordDialogOpen] = useState(false)
+  const [fetchingRecord, setFetchingRecord] = useState(false)
+
+  const fetchMedicalRecordDetail = async (recordId: string) => {
+    console.log("Fetching medical record:", recordId)
+    setFetchingRecord(true)
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`http://localhost:5000/api/medical-records/${recordId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setViewingMedicalRecord(data)
+        setIsMedicalRecordDialogOpen(true)
+      } else {
+        const errorData = await res.json().catch(() => ({}))
+        console.error("Failed to fetch record:", errorData)
+        alert("Failed to fetch medical record: " + (errorData.message || res.statusText))
+      }
+    } catch (error) {
+      console.error("Error fetching medical record detail:", error)
+      alert("Error connecting to server")
+    } finally {
+      setFetchingRecord(false)
+    }
+  }
+
+  useEffect(() => {
+    setIsMounted(true)
+    const socket = io("http://localhost:5000")
+
+    socket.on("appointment_created", (data) => {
+      console.log("New appointment received:", data)
+      fetchAppointments()
+    })
+
+    socket.on("appointment_updated", (data) => {
+      console.log("Appointment updated:", data)
+      fetchAppointments()
+    })
+
+    return () => {
+      socket.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    const patientFromUrl = searchParams.get("patient")
+    if (patientFromUrl) {
+      setBookingData(prev => ({ ...prev, patientName: patientFromUrl }))
+      setIsBookingOpen(true)
+    }
+
+    const fetchDoctorProfile = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch("http://localhost:5000/api/doctors/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setDoctorProfile(data)
+        }
+      } catch (error) {
+        console.error("Error fetching doctor profile", error)
+      }
+    }
+
+    fetchDoctorProfile()
+  }, [searchParams])
+
+  const fetchAppointments = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch("http://localhost:5000/api/appointments/doctor", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        const data = await res.json()
+        // Map API data to UI interface
+        const mappedData = data.map((item: any) => ({
+          id: item._id,
+          patientName: item.patient?.name || "Unknown",
+          patientPhone: item.patient?.phone || "N/A",
+          patientEmail: item.patient?.email || "N/A",
+          patientId: item.patient?._id || "",
+          date: item.date,
+          time: item.time,
+          reason: item.reason,
+          status: item.status,
+          type: item.type || "consultation", // Default if missing
+          healthId: "N/A", // Not in schema yet
+          notes: item.notes,
+          attachments: item.attachments || []
+        }))
+        setAppointments(mappedData)
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchAppointments()
+  }, [])
+
+  const filteredAppointments = appointments
+    .filter((apt) => {
+      const matchesSearch =
+        (apt.patientName || "").toLowerCase().includes(search.toLowerCase()) ||
+        (apt.reason || "").toLowerCase().includes(search.toLowerCase())
+      const matchesStatus = statusFilter === "all" || apt.status === statusFilter
+
+      const aptDate = apt.date ? new Date(apt.date).toISOString().split('T')[0] : ""
+      const today = new Date().toISOString().split('T')[0]
+
+      const matchesDate =
+        activeTab === "all" ||
+        (activeTab === "today" && aptDate === today) ||
+        (activeTab === "upcoming" && aptDate > today) ||
+        (activeTab === "past" && aptDate < today)
+      return matchesSearch && matchesStatus && matchesDate
+    })
+    .sort((a, b) => {
+      const dateA = a.date || ""
+      const dateB = b.date || ""
+      if (dateA !== dateB) return dateA.localeCompare(dateB)
+      return (a.time || "").localeCompare(b.time || "")
+    })
+
+  const handleStatusChange = async (id: string, status: Appointment["status"]) => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status })
+      })
+
+      if (res.ok) {
+        setAppointments(prev => prev.map(app => app.id === id ? { ...app, status } : app))
+      }
+    } catch (error) {
+      console.error("Error updating status", error)
+    }
+  }
+
+  const handleCompleteAppointment = async () => {
+    if (selectedAppointment) {
+      try {
+        const token = localStorage.getItem("token")
+
+        const payload = {
+          appointmentId: selectedAppointment.id,
+          patientId: selectedAppointment.patientId,
+          diagnosis: reportData.diagnosis,
+          medicines: reportData.medicines.filter(m => m.name),
+          allergies: reportData.allergies.split(",").map(s => s.trim()).filter(s => s),
+          notes: reportData.notes,
+          attachments: attachments
+        }
+
+        const res = await fetch("http://localhost:5000/api/medical-records", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        })
+
+        if (res.ok) {
+          setSelectedAppointment(null)
+          setReportData({
+            diagnosis: "",
+            medicines: [{ name: "", dosage: "", duration: "", instructions: "" }],
+            allergies: "",
+            notes: ""
+          })
+          fetchAppointments()
+        }
+      } catch (error) {
+        console.error("Error completing appointment", error)
+      }
+    }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    try {
+      const token = localStorage.getItem("token")
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const res = await fetch("http://localhost:5000/api/medical-records/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        setAttachments(prev => [...prev, data])
+      }
+    } catch (error) {
+      console.error("Upload error", error)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleBookAppointment = async () => {
+    if (!bookingData.date || !bookingData.time) return
+
+    try {
+      const token = localStorage.getItem("token")
+
+      // We need to find patient ID by name or the user needs to provide it.
+      // For now, let's assume doctors can book for existing patients by name search.
+      // Ideally, they search for a patient first.
+
+      const payload = {
+        doctorId: doctorProfile?._id,
+        hospitalId: doctorProfile?.hospitals?.[0]?._id,
+        patientId: bookingData.patientId, // Should be populated from a search
+        date: bookingData.date,
+        time: bookingData.time,
+        reason: bookingData.reason || `Direct booking by Dr. ${doctorProfile?.user?.name}`,
+        type: bookingData.type
+      }
+
+      const res = await fetch("http://localhost:5000/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (res.ok) {
+        setIsBookingOpen(false)
+        fetchAppointments()
+      }
+    } catch (error) {
+      console.error("Booking error", error)
+    }
+  }
+  const handleReschedule = async () => {
+    if (selectedAppointment && rescheduleData.date && rescheduleData.time) {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch(`http://localhost:5000/api/appointments/${selectedAppointment.id}/reschedule`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(rescheduleData)
+        })
+
+        if (res.ok) {
+          setIsRescheduleOpen(false)
+          setSelectedAppointment(null)
+          setRescheduleData({ date: "", time: "" })
+          fetchAppointments()
+        }
+      } catch (error) {
+        console.error("Error rescheduling appointment", error)
+      }
+    }
+  }
+
+  if (!isMounted) return null
+
+  return (
+    <div className="min-h-screen bg-background flex" suppressHydrationWarning>
+      {/* Sidebar */}
+      <aside className="hidden lg:flex flex-col w-64 border-r bg-card">
+        <div className="p-6 border-b">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
+              <Stethoscope className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="font-bold">MediCare+</h1>
+              <p className="text-xs text-muted-foreground">Doctor Portal</p>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex-1 p-4 space-y-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                item.href === "/doctor/appointments"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5" />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="p-4 border-t">
+          <Link href="/auth" className="flex items-center gap-3 px-4 py-3 w-full text-muted-foreground hover:text-foreground transition-colors">
+            <LogOut className="h-5 w-5" />
+            <span>Logout</span>
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-auto">
+        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b px-6 py-4">
+          <div className="flex items-center gap-4">
+            <Link href="/doctor" className="lg:hidden">
+              <Button variant="ghost" size="icon">
+                <ChevronRight className="h-5 w-5 rotate-180" />
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold">Appointments</h1>
+              <p className="text-sm text-muted-foreground">
+                Manage your patient appointments
+              </p>
+            </div>
+            <Button onClick={() => setIsBookingOpen(true)}>
+              <Calendar className="h-4 w-4 mr-2" />
+              Book Appointment
+            </Button>
+          </div>
+        </header>
+
+        <div className="px-6 py-6 space-y-6">
+          {/* Filters */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search by patient name or reason..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-48">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList>
+              <TabsTrigger value="today">Today</TabsTrigger>
+              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+              <TabsTrigger value="past">Past</TabsTrigger>
+              <TabsTrigger value="all">All</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value={activeTab} className="space-y-4">
+              {filteredAppointments.length === 0 ? (
+                <Card>
+                  <CardContent className="p-12 text-center">
+                    <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No appointments found</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-4">
+                  {filteredAppointments.map((appointment) => (
+                    <Card key={appointment.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap mb-2">
+                                  <h3 className="text-lg font-semibold">
+                                    {appointment.patientName}
+                                  </h3>
+                                  <Badge
+                                    variant="outline"
+                                    className={statusConfig[appointment.status]?.className || "bg-muted text-muted-foreground"}
+                                  >
+                                    {statusConfig[appointment.status]?.label || appointment.status}
+                                  </Badge>
+                                  <Badge
+                                    variant="outline"
+                                    className={typeConfig[appointment.type]?.className || "bg-muted text-muted-foreground"}
+                                  >
+                                    {typeConfig[appointment.type]?.label || appointment.type}
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-3">
+                                  {appointment.reason}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4 text-muted-foreground" />
+                                <span>
+                                  {new Date(appointment.date).toLocaleDateString("en-US", {
+                                    weekday: "short",
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  })}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-muted-foreground" />
+                                <span>{appointment.time}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Phone className="h-4 w-4 text-muted-foreground" />
+                                <span>{appointment.patientPhone}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Mail className="h-4 w-4 text-muted-foreground" />
+                                <span className="truncate">{appointment.patientEmail}</span>
+                              </div>
+                            </div>
+
+                            {appointment.attachments && appointment.attachments.length > 0 && (
+                              <div className="mt-4 space-y-2">
+                                <p className="text-sm font-medium flex items-center gap-2">
+                                  <Paperclip className="h-4 w-4 text-primary" />
+                                  Patient Attachments:
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {appointment.attachments.map((file, i) => (
+                                    file.url.startsWith("medical-record:") || file.fileType === "text/reference" ? (
+                                      <button
+                                        key={i}
+                                        disabled={fetchingRecord}
+                                        onClick={() => {
+                                          if (file.url.startsWith("medical-record:")) {
+                                            const id = file.url.split(":")[1];
+                                            fetchMedicalRecordDetail(id);
+                                          } else {
+                                            alert("Detailed view is not available for this record (old summary reference).");
+                                          }
+                                        }}
+                                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                                        title="Click to view full medical record"
+                                      >
+                                        <FileText className="h-3.5 w-3.5" />
+                                        {fetchingRecord ? "Loading..." : file.name}
+                                      </button>
+                                    ) : (
+                                      <a
+                                        key={i}
+                                        href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/10 hover:bg-primary/10 transition-colors text-xs font-medium"
+                                      >
+                                        <FileText className="h-3.5 w-3.5 text-primary" />
+                                        {file.name}
+                                      </a>
+                                    )
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {appointment.notes && (
+                              <div className="mt-4 p-3 bg-muted rounded-lg">
+                                <p className="text-sm font-medium mb-1">Notes:</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {appointment.notes}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col gap-2 lg:min-w-[200px]">
+                            {appointment.status === "pending" && (
+                              <>
+                                <Button
+                                  onClick={() =>
+                                    handleStatusChange(appointment.id, "confirmed")
+                                  }
+                                  className="w-full"
+                                >
+                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  Confirm
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() =>
+                                    handleStatusChange(appointment.id, "cancelled")
+                                  }
+                                  className="w-full"
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Cancel
+                                </Button>
+                              </>
+                            )}
+                            {appointment.status === "confirmed" && (
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => {
+                                    setSelectedAppointment(appointment)
+                                    setReportData({
+                                      diagnosis: "",
+                                      medicines: [{ name: "", dosage: "", duration: "", instructions: "" }],
+                                      allergies: "",
+                                      notes: ""
+                                    })
+                                  }}
+                                  className="flex-1"
+                                >
+                                  <FileText className="h-4 w-4 mr-2" />
+                                  Complete
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => {
+                                    setSelectedAppointment(appointment)
+                                    setRescheduleData({ date: appointment.date.split('T')[0], time: appointment.time })
+                                    setIsRescheduleOpen(true)
+                                  }}
+                                  className="flex-1"
+                                >
+                                  <Clock3 className="h-4 w-4 mr-2" />
+                                  Reschedule
+                                </Button>
+                              </div>
+                            )}
+                            <Button
+                              variant="outline"
+                              onClick={() =>
+                                (window.location.href = `tel:${appointment.patientPhone.replace(/\s/g, "")}`)
+                              }
+                              className="w-full"
+                            >
+                              <Phone className="h-4 w-4 mr-2" />
+                              Call Patient
+                            </Button>
+                            <Link href={`/doctor/patients?patient=${appointment.patientName}`}>
+                              <Button variant="ghost" className="w-full">
+                                View Patient Profile
+                              </Button>
+                            </Link>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+
+      {/* Complete Appointment (Medical Report) Dialog */}
+      <Dialog
+        open={selectedAppointment !== null && !isRescheduleOpen}
+        onOpenChange={(open) => !open && setSelectedAppointment(null)}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Complete Appointment & Add Medical Report</DialogTitle>
+            <DialogDescription>
+              Create a medical record for {selectedAppointment?.patientName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            {/* Patient Details Context */}
+            <div className="space-y-4">
+              <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3">
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1.5">
+                    <Calendar className="h-3 w-3" />
+                    Patient's Reason for Visit
+                  </p>
+                  <p className="text-sm font-medium italic">
+                    "{selectedAppointment?.reason || "No specific reason provided."}"
+                  </p>
+                </div>
+
+                {selectedAppointment?.attachments && selectedAppointment.attachments.length > 0 && (
+                  <div className="pt-3 border-t border-border/50">
+                    <p className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1.5 mb-2">
+                      <Paperclip className="h-3 w-3" />
+                      Patient-Provided Documents
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {selectedAppointment.attachments.map((file, i) => (
+                        file.url.startsWith("medical-record:") || file.fileType === "text/reference" ? (
+                          <button
+                            key={i}
+                            disabled={fetchingRecord}
+                            onClick={() => {
+                              if (file.url.startsWith("medical-record:")) {
+                                const id = file.url.split(":")[1];
+                                fetchMedicalRecordDetail(id);
+                              } else {
+                                alert("Detailed view is not available for this record (old summary reference).");
+                              }
+                            }}
+                            className="flex items-center gap-2 p-2 rounded-lg bg-primary/10 border border-primary/20 text-primary text-xs font-bold hover:bg-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                            title="Click to view full medical record"
+                          >
+                            <FileText className="h-3.5 w-3.5" />
+                            <span className="truncate">{fetchingRecord ? "Loading..." : file.name}</span>
+                          </button>
+                        ) : (
+                          <a
+                            key={i}
+                            href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 p-2 rounded-lg bg-background border border-primary/10 hover:border-primary hover:bg-primary/5 transition-all text-xs group"
+                          >
+                            <FileText className="h-3.5 w-3.5 text-primary group-hover:scale-110 transition-transform" />
+                            <span className="truncate font-medium">{file.name}</span>
+                          </a>
+                        )
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Diagnosis</Label>
+              <Input
+                placeholder="Primary diagnosis..."
+                value={reportData.diagnosis}
+                onChange={(e) => setReportData({ ...reportData, diagnosis: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label>Medicines / Prescription</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setReportData({
+                    ...reportData,
+                    medicines: [...reportData.medicines, { name: "", dosage: "", duration: "", instructions: "" }]
+                  })}
+                >
+                  Add Medicine
+                </Button>
+              </div>
+              {reportData.medicines.map((med, index) => (
+                <div key={index} className="grid grid-cols-2 gap-3 p-3 border rounded-lg bg-muted/30 relative group">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Medicine Name</Label>
+                    <Input
+                      placeholder="e.g. Paracetamol"
+                      value={med.name}
+                      onChange={(e) => {
+                        const newMeds = [...reportData.medicines];
+                        newMeds[index].name = e.target.value;
+                        setReportData({ ...reportData, medicines: newMeds });
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Dosage</Label>
+                    <Input
+                      placeholder="e.g. 500mg"
+                      value={med.dosage}
+                      onChange={(e) => {
+                        const newMeds = [...reportData.medicines];
+                        newMeds[index].dosage = e.target.value;
+                        setReportData({ ...reportData, medicines: newMeds });
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Duration</Label>
+                    <Input
+                      placeholder="e.g. 5 days"
+                      value={med.duration}
+                      onChange={(e) => {
+                        const newMeds = [...reportData.medicines];
+                        newMeds[index].duration = e.target.value;
+                        setReportData({ ...reportData, medicines: newMeds });
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase font-bold text-muted-foreground">Instructions</Label>
+                    <Input
+                      placeholder="e.g. After meal"
+                      value={med.instructions}
+                      onChange={(e) => {
+                        const newMeds = [...reportData.medicines];
+                        newMeds[index].instructions = e.target.value;
+                        setReportData({ ...reportData, medicines: newMeds });
+                      }}
+                    />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => {
+                      const newMeds = reportData.medicines.filter((_, i) => i !== index);
+                      setReportData({ ...reportData, medicines: newMeds });
+                    }}
+                  >
+                    <XCircle className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <Label>Allergies (comma separated)</Label>
+              <Input
+                placeholder="e.g. Penicillin, Peanuts"
+                value={reportData.allergies}
+                onChange={(e) => setReportData({ ...reportData, allergies: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Additional Notes</Label>
+              <Textarea
+                placeholder="Any further advice or observations..."
+                value={reportData.notes}
+                onChange={(e) => setReportData({ ...reportData, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-3">
+              <Label>Attachments (X-Ray, Reports, etc.)</Label>
+              <div className="flex flex-wrap gap-2">
+                {attachments.map((file, idx) => (
+                  <div key={idx} className="flex items-center gap-2 p-2 bg-muted rounded-lg border group relative">
+                    <Paperclip className="h-4 w-4 text-primary" />
+                    <span className="text-xs truncate max-w-[120px]">{file.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+                <Label
+                  htmlFor="file-upload"
+                  className={cn(
+                    "flex items-center gap-2 p-2 bg-primary/10 text-primary rounded-lg border border-dashed border-primary hover:bg-primary/20 cursor-pointer transition-colors",
+                    uploading && "opacity-50 cursor-not-allowed"
+                  )}
+                >
+                  <Upload className="h-4 w-4" />
+                  <span className="text-xs font-semibold">{uploading ? "Uploading..." : "Add File"}</span>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                    disabled={uploading}
+                  />
+                </Label>
+              </div>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setSelectedAppointment(null)}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleCompleteAppointment} disabled={!reportData.diagnosis}>
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Submit Report & Complete
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reschedule Dialog */}
+      <Dialog
+        open={isRescheduleOpen}
+        onOpenChange={(open) => {
+          setIsRescheduleOpen(open);
+          if (!open) setSelectedAppointment(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reschedule Appointment</DialogTitle>
+            <DialogDescription>
+              Select a new date and time for {selectedAppointment?.patientName}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Select Date</Label>
+              <Input
+                type="date"
+                value={rescheduleData.date}
+                onChange={(e) => setRescheduleData({ ...rescheduleData, date: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Select Time</Label>
+              <Input
+                type="time"
+                value={rescheduleData.time}
+                onChange={(e) => setRescheduleData({ ...rescheduleData, time: e.target.value })}
+              />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsRescheduleOpen(false)
+                  setSelectedAppointment(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleReschedule} disabled={!rescheduleData.date || !rescheduleData.time}>
+                Confirm Reschedule
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* Book Appointment Dialog */}
+      <Dialog open={isBookingOpen} onOpenChange={setIsBookingOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Book Appointment for Patient</DialogTitle>
+            <DialogDescription>
+              Schedule a new appointment on behalf of a patient.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Patient Name</Label>
+              <Input
+                placeholder="Enter patient name..."
+                value={bookingData.patientName}
+                onChange={(e) => setBookingData({ ...bookingData, patientName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Patient Mongo ID (Required)</Label>
+              <Input
+                placeholder="Paste Patient ID here..."
+                value={bookingData.patientId}
+                onChange={(e) => setBookingData({ ...bookingData, patientId: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Date</Label>
+                <Input
+                  type="date"
+                  value={bookingData.date}
+                  onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Time</Label>
+                <Input
+                  type="time"
+                  value={bookingData.time}
+                  onChange={(e) => setBookingData({ ...bookingData, time: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Reason</Label>
+              <Input
+                placeholder="Reason for visit..."
+                value={bookingData.reason}
+                onChange={(e) => setBookingData({ ...bookingData, reason: e.target.value })}
+              />
+            </div>
+            <div className="flex gap-2 justify-end pt-4">
+              <Button variant="outline" onClick={() => setIsBookingOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleBookAppointment}
+                disabled={!bookingData.patientId || !bookingData.date || !bookingData.time}
+              >
+                Confirm Booking
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={isMedicalRecordDialogOpen} onOpenChange={setIsMedicalRecordDialogOpen}>
+        <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <HistoryIcon className="h-6 w-6 text-primary" />
+              Medical Record Detail
+            </DialogTitle>
+          </DialogHeader>
+          
+          {viewingMedicalRecord && (
+            <div className="space-y-6 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
+                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Patient Diagnosis</p>
+                  <p className="text-lg font-bold text-foreground">{viewingMedicalRecord.diagnosis}</p>
+                  <div className="flex items-center gap-4 mt-3">
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {new Date(viewingMedicalRecord.date).toLocaleDateString()}
+                    </div>
+                    {viewingMedicalRecord.doctor?.user?.name && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                        <User className="h-3.5 w-3.5" />
+                        Dr. {viewingMedicalRecord.doctor.user.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-muted/30 border border-border">
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Hospital/Clinic</p>
+                  <div className="flex items-center gap-2 text-foreground font-semibold">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    {viewingMedicalRecord.appointment?.hospital?.name || "Self Uploaded"}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 rounded-xl border border-border space-y-3">
+                  <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                    <Stethoscope className="h-4 w-4 text-primary" />
+                    Medical Assessment
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Medicines</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {viewingMedicalRecord.medicines?.length > 0 ? (
+                          viewingMedicalRecord.medicines.map((m: string, i: number) => (
+                            <Badge key={i} variant="secondary" className="bg-success/10 text-success border-success/20 text-[10px] font-bold">
+                              <Pill className="h-2.5 w-2.5 mr-1" />
+                              {m}
+                            </Badge>
+                          ))
+                        ) : <p className="text-xs text-muted-foreground italic">None listed</p>}
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Allergies</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {viewingMedicalRecord.allergies?.length > 0 ? (
+                          viewingMedicalRecord.allergies.map((a: string, i: number) => (
+                            <Badge key={i} variant="secondary" className="bg-destructive/10 text-destructive border-destructive/20 text-[10px] font-bold">
+                              <AlertCircle className="h-2.5 w-2.5 mr-1" />
+                              {a}
+                            </Badge>
+                          ))
+                        ) : <p className="text-xs text-muted-foreground italic">No allergies reported</p>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {viewingMedicalRecord.notes && (
+                  <div className="p-4 rounded-xl border border-border space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                      <FileText className="h-4 w-4 text-primary" />
+                      Doctor Notes
+                    </div>
+                    <div className="text-sm text-muted-foreground leading-relaxed bg-muted/20 p-3 rounded-lg border border-border/50 italic">
+                      &quot;{viewingMedicalRecord.notes}&quot;
+                    </div>
+                  </div>
+                )}
+
+                {viewingMedicalRecord.attachments?.length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                      <Paperclip className="h-4 w-4 text-primary" />
+                      Related Documents
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                      {viewingMedicalRecord.attachments.map((file: any, i: number) => (
+                        <a
+                          key={i}
+                          href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 p-3 rounded-xl bg-background border border-border hover:border-primary hover:bg-primary/5 transition-all group"
+                        >
+                          <FileText className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                          <div className="min-w-0 flex-1">
+                            <p className="text-xs font-bold truncate text-foreground">{file.name}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase">{file.fileType.split('/')[1]}</p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+export default function DoctorAppointments() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-muted-foreground">Loading dashboard...</div>}>
+      <DoctorAppointmentsContent />
+    </Suspense>
+  )
+}
+
