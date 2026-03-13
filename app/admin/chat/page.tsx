@@ -285,9 +285,9 @@ export default function AdminChatPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="min-h-screen bg-background flex">
+      <div className="min-h-screen bg-background relative overflow-hidden">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col h-screen">
+        <div className="md:ml-20 lg:ml-64 transition-all duration-500 flex-1 flex flex-col h-screen">
           <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
             <div className="flex h-16 items-center gap-4 px-6">
               <Link href="/admin" className="lg:hidden">

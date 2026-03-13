@@ -246,13 +246,13 @@ export default function HospitalsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background flex">
+        <div className="min-h-screen bg-background relative overflow-hidden">
             <Toaster />
             {/* Sidebar */}
             <AdminSidebar />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto">
+            <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500">
                 <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b px-6 py-4">
                     <div className="flex items-center gap-4">
                         <Link href="/admin" className="lg:hidden">

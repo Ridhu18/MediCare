@@ -131,6 +131,15 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-emergency: var(--emergency);
   --color-emergency-foreground: var(--emergency-foreground);
+
+  --animate-scan: scan 4s linear infinite;
+
+  @keyframes scan {
+    0% { transform: translateY(0); opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { transform: translateY(400px); opacity: 0; }
+  }
 }
 
 @layer base {

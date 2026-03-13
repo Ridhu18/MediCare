@@ -18,6 +18,7 @@ import {
   ChevronRight,
   Map,
   RefreshCw,
+  CheckCircle2,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -194,62 +195,68 @@ export default function HospitalsPage() {
       <AppNavigation />
       <Toaster />
 
-      <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <Hospital className="h-6 w-6 text-primary" />
-                Hospitals
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-sm text-muted-foreground">Find and book appointments</p>
-                {userLocation ? (
-                  <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-[10px] h-5 py-0 px-1.5 flex items-center gap-1">
-                    <MapPin className="h-2.5 w-2.5" />
-                    Live Location
-                  </Badge>
-                ) : (
-                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20 text-[10px] h-5 py-0 px-1.5 flex items-center gap-1">
-                    <MapPin className="h-2.5 w-2.5" />
-                    Default (Bangalore)
-                  </Badge>
-                )}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn("h-6 w-6 rounded-full hover:bg-muted", isLocating && "animate-spin")}
-                  onClick={() => requestLocation(false)} // Explicit on click
-                  disabled={isLocating}
-                  title="Refresh Location"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                </Button>
+      <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64 relative min-h-screen">
+        {/* Subtle Decorative Gradients */}
+        <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+          <div className="absolute top-[-2%] right-[-2%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[80px]" />
+          <div className="absolute bottom-[10%] left-[-2%] w-[20%] h-[20%] bg-accent/5 rounded-full blur-[60px]" />
+        </div>
+
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5">
+          <div className="flex items-center justify-between px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                <Hospital className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-black tracking-tight text-slate-800">Medical Network</h1>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">National Facility Discovery</p>
+                  <div className="h-0.5 w-0.5 rounded-full bg-slate-300" />
+                  {userLocation ? (
+                    <Badge variant="outline" className="bg-success/5 text-success border-success/10 text-[8px] h-3.5 py-0 px-1 rounded-md flex items-center gap-1 font-black uppercase tracking-tighter">
+                      Live
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-warning/5 text-warning border-warning/10 text-[8px] h-3.5 py-0 px-1 rounded-md flex items-center gap-1 font-black uppercase tracking-tighter">
+                      Default
+                    </Badge>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn("h-4 w-4 rounded-md hover:bg-primary/5 text-muted-foreground hover:text-primary transition-all p-0", isLocating && "animate-spin")}
+                    onClick={() => requestLocation(false)} 
+                    disabled={isLocating}
+                  >
+                    <RefreshCw className="h-2.5 w-2.5" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="p-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="search">Find Hospital</TabsTrigger>
-              <TabsTrigger value="map" className="flex items-center gap-2">
+        <div className="p-6 pt-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="bg-background/40 backdrop-blur-md border border-primary/5 p-1 rounded-xl h-auto self-start">
+              <TabsTrigger value="search" className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Find Hospital</TabsTrigger>
+              <TabsTrigger value="map" className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all flex items-center gap-1.5">
                 <Map className="h-4 w-4" />
                 Map View
               </TabsTrigger>
-              <TabsTrigger value="appointments">My Appointments</TabsTrigger>
+              <TabsTrigger value="appointments" className="rounded-lg px-4 py-1.5 text-xs font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all">Archives</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="map" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" />
+            <TabsContent value="map" className="space-y-4 outline-none">
+              <Card className="border-none shadow-xl shadow-primary/5 bg-background/50 backdrop-blur-md rounded-2xl overflow-hidden">
+                <CardHeader className="p-4 pb-2">
+                  <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest">
+                    <MapPin className="h-4 w-4 text-primary" />
                     Nearby Hospitals on Map
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-2">
                   <HospitalsMap
                     hospitals={filteredHospitals.map(h => ({
                       ...h,
@@ -258,7 +265,6 @@ export default function HospitalsPage() {
                     }))}
                     userLocation={userLocation || undefined}
                     onHospitalClick={(hospital) => {
-                      // Use type assertion since Map component might expect slightly different type or we match by ID
                       const foundHospital = hospitals.find(h => h.id === hospital.id)
                       if (foundHospital) {
                         handleBook(foundHospital)
@@ -269,163 +275,153 @@ export default function HospitalsPage() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="search" className="space-y-4">
+            <TabsContent value="search" className="space-y-4 outline-none">
               {/* Search and Filters */}
-              <Card>
-                <CardContent className="p-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Card className="border-none shadow-xl shadow-primary/5 bg-background/50 backdrop-blur-md rounded-2xl overflow-hidden">
+                <CardContent className="p-3">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="relative flex-1 group">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                       <Input
                         placeholder="Search hospitals, departments..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9"
+                        className="pl-9 h-10 bg-white/40 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-medium text-sm"
                       />
                     </div>
-                    <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="w-full sm:w-40">
-                        <SelectValue placeholder="Sort by" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="distance">Nearest</SelectItem>
-                        <SelectItem value="rating">Top Rated</SelectItem>
-                        <SelectItem value="beds">Most Beds</SelectItem>
-                        <SelectItem value="wait">Shortest Wait</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={filterType} onValueChange={setFilterType}>
-                      <SelectTrigger className="w-full sm:w-40">
-                        <SelectValue placeholder="Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Types</SelectItem>
-                        <SelectItem value="government">Government</SelectItem>
-                        <SelectItem value="private">Private</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select value={sortBy} onValueChange={setSortBy}>
+                        <SelectTrigger className="w-full sm:w-36 h-10 bg-white/40 border-primary/5 focus:ring-primary/20 rounded-xl font-bold text-[10px] uppercase tracking-widest">
+                          <SelectValue placeholder="Sort" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-primary/10 shadow-2xl">
+                          <SelectItem value="distance" className="text-xs font-bold">Nearest</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select value={filterType} onValueChange={setFilterType}>
+                        <SelectTrigger className="w-full sm:w-36 h-10 bg-white/40 border-primary/5 focus:ring-primary/20 rounded-xl font-bold text-[10px] uppercase tracking-widest">
+                          <SelectValue placeholder="Type" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl border-primary/10 shadow-2xl">
+                          <SelectItem value="all" className="text-xs font-bold">All Types</SelectItem>
+                          <SelectItem value="government" className="text-xs font-bold">Government</SelectItem>
+                          <SelectItem value="private" className="text-xs font-bold">Private</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Results Count */}
-              <div className="flex items-center justify-between text-sm">
-                <p className="text-muted-foreground">
-                  {filteredHospitals.length} hospitals found
-                  {userLocation && <span className="text-xs ml-2">near your location</span>}
-                </p>
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-1.5">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
+                    Results: {filteredHospitals.length}
+                  </p>
+                  <span className="h-0.5 w-0.5 rounded-full bg-slate-300" />
+                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                    {userLocation ? "Location Synchronized" : "Default Coverage"}
+                  </p>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-primary"
+                  className="text-[10px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5 rounded-lg transition-all h-7"
                   onClick={() => setActiveTab("map")}
                 >
-                  <MapPin className="h-4 w-4 mr-1" />
+                  <MapPin className="h-3 w-3 mr-1" />
                   View on Map
                 </Button>
               </div>
 
-              {/* Hospital List */}
-              <div className="space-y-4">
+              <div className="grid md:grid-cols-1 gap-3">
                 {filteredHospitals.map((hospital) => (
-                  <Card key={hospital.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between">
+                  <Card key={hospital.id} className="group border-none shadow-lg shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all duration-300">
+                    <CardContent className="p-0">
+                      <div className="flex flex-col lg:flex-row">
+                        <div className="flex-1 p-5">
+                          <div className="flex items-start justify-between gap-4 mb-4">
                             <div>
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="text-lg font-semibold">{hospital.name}</h3>
-                                <Badge variant="outline" className="text-xs">
+                              <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                                <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-md border-primary/10 bg-primary/5 text-primary">
                                   {hospital.type}
                                 </Badge>
-                                {hospital.emergencyOpen && (
-                                  <Badge className="bg-success/20 text-success border-success text-xs">
-                                    24/7 Emergency
-                                  </Badge>
-                                )}
+                                <div className="flex items-center gap-1.5 px-2 py-0.5 bg-success/5 border border-success/10 rounded-md shadow-sm shadow-success/5">
+                                  <CheckCircle2 className="h-2.5 w-2.5 text-success" />
+                                  <span className="text-[9px] font-bold text-success uppercase tracking-tighter">Verified Center</span>
+                                </div>
                               </div>
-                              <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5" />
+                              <h3 className="text-lg font-bold tracking-tight text-slate-800">{hospital.name}</h3>
+                              <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5">
+                                <MapPin className="h-3 w-3 opacity-60" />
                                 {hospital.address}
                               </p>
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-6 mt-4 text-sm flex-wrap">
-                            <span className="flex items-center gap-1.5">
-                              <Navigation className="h-4 w-4 text-primary" />
-                              <span className="font-medium">{hospital.distance} km</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                              <Star className="h-4 w-4 text-warning fill-warning" />
-                              <span className="font-medium">{hospital.rating}</span>
-                            </span>
-                            <span className="flex items-center gap-1.5">
-                              <Clock className="h-4 w-4 text-muted-foreground" />
-                              <span>~{hospital.waitTime}</span>
-                            </span>
-                            <span
-                              className={cn(
-                                "flex items-center gap-1.5",
-                                hospital.availableBeds > 10
-                                  ? "text-success"
-                                  : hospital.availableBeds > 5
-                                    ? "text-warning-foreground"
-                                    : "text-emergency"
-                              )}
-                            >
-                              <Bed className="h-4 w-4" />
-                              <span className="font-medium">
-                                {hospital.availableBeds}/{hospital.totalBeds} beds
-                              </span>
-                            </span>
+                          <div className="flex items-center gap-4 p-3 bg-muted/20 border border-primary/5 rounded-xl group-hover:bg-white/60 transition-all">
+                            <div className="flex items-center gap-2.5">
+                              <div className="p-2 rounded-lg bg-primary/10">
+                                <Navigation className="h-4 w-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Proximity</p>
+                                <span className="text-xs font-bold text-slate-700">
+                                  {hospital.distance < 1 ? "Under 1 km away" : `${hospital.distance} km from you`}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="h-8 w-px bg-primary/10 mx-1" />
+                            <div className="flex-1">
+                              <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 mb-1">Key Departments</p>
+                              <div className="flex flex-wrap gap-1">
+                                {hospital.departments.slice(0, 3).map((dept) => (
+                                  <span key={dept} className="text-[9px] font-bold text-slate-600 bg-white/40 px-1.5 py-0.5 rounded border border-primary/5">
+                                    {dept}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
                           </div>
 
-                          <div className="flex gap-1.5 mt-3 flex-wrap">
-                            {hospital.departments.slice(0, 4).map((dept) => (
-                              <Badge key={dept} variant="secondary" className="text-xs">
+                          <div className="flex gap-1.5 mt-4 flex-wrap">
+                            {hospital.departments.slice(3, 8).map((dept) => (
+                              <Badge key={dept} variant="secondary" className="bg-white/40 group-hover:bg-muted/40 border-primary/5 text-[9px] font-bold px-2 py-0.5 rounded-md transition-colors">
                                 {dept}
                               </Badge>
                             ))}
-                            {hospital.departments.length > 4 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{hospital.departments.length - 4} more
+                            {hospital.departments.length > 8 && (
+                              <Badge variant="secondary" className="bg-white/40 group-hover:bg-muted/40 border-primary/5 text-[9px] font-bold px-2 py-0.5 rounded-md transition-colors">
+                                +{hospital.departments.length - 8}
                               </Badge>
                             )}
                           </div>
                         </div>
 
-                        <div className="flex lg:flex-col gap-2">
+                        <div className="lg:w-56 p-5 lg:bg-primary/[0.01] flex flex-col gap-2 justify-center border-t lg:border-t-0 lg:border-l border-primary/5 relative overflow-hidden">
                           <Button
                             variant="outline"
-                            className="flex-1 lg:flex-none bg-transparent hover:bg-success hover:text-success-foreground border-success/50 transition-colors"
-                            onClick={() =>
-                              (window.location.href = `tel:${hospital.phone.replace(/\s/g, "")}`)
-                            }
+                            className="w-full bg-white/60 hover:bg-emerald-500 hover:text-white border-emerald-200 transition-all duration-300 rounded-lg h-9 text-xs font-bold hover:scale-[1.02] active:scale-95 shadow-sm group/call"
+                            onClick={() => (window.location.href = `tel:${hospital.phone.replace(/\s/g, "")}`)}
                           >
-                            <Phone className="h-4 w-4 mr-2" />
+                            <Phone className="h-3.5 w-3.5 mr-2 group-hover/call:scale-110 transition-transform" />
                             Call
                           </Button>
                           <Button
                             variant="outline"
-                            className="flex-1 lg:flex-none bg-transparent hover:bg-primary hover:text-primary-foreground border-primary/50 transition-colors"
-                            onClick={() =>
-                              window.open(
-                                `https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`,
-                                "_blank"
-                              )
-                            }
+                            className="w-full bg-white/60 hover:bg-primary hover:text-white border-primary/20 transition-all duration-300 rounded-lg h-9 text-xs font-bold hover:scale-[1.02] active:scale-95 shadow-sm"
+                            onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`, "_blank")}
                           >
-                            <Navigation className="h-4 w-4 mr-2" />
+                            <Navigation className="h-3.5 w-3.5 mr-2" />
                             Directions
                           </Button>
                           <Button
-                            className="flex-1 lg:flex-none"
+                            className="w-full rounded-lg h-10 font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-all duration-300 mt-1 group/book hover:scale-[1.02] active:scale-95"
                             onClick={() => handleBook(hospital)}
                           >
                             Book Appointment
-                            <ChevronRight className="h-4 w-4 ml-1" />
+                            <ChevronRight className="h-3.5 w-3.5 ml-1 transition-transform group-hover/book:translate-x-1" />
                           </Button>
                         </div>
                       </div>
@@ -435,7 +431,7 @@ export default function HospitalsPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="appointments">
+            <TabsContent value="appointments" className="outline-none">
               <AppointmentsList />
             </TabsContent>
           </Tabs>
@@ -445,18 +441,20 @@ export default function HospitalsPage() {
       {/* Booking Dialog */}
       <Suspense fallback={<Loading />}>
         <Dialog open={showBooking} onOpenChange={setShowBooking}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden border-none bg-background/60 backdrop-blur-xl rounded-[2rem] shadow-2xl z-[1000]">
             <DialogTitle className="sr-only">Book Appointment</DialogTitle>
-            <AppointmentBooking
-              hospitalName={selectedHospital?.name}
-              hospitalId={selectedHospital?.id}
-              onClose={() => setShowBooking(false)}
-              onSuccess={() => {
-                setShowBooking(false)
-                setSelectedHospital(null)
-                setActiveTab("appointments")
-              }}
-            />
+            <div className="p-1">
+              <AppointmentBooking
+                hospitalName={selectedHospital?.name}
+                hospitalId={selectedHospital?.id}
+                onClose={() => setShowBooking(false)}
+                onSuccess={() => {
+                  setShowBooking(false)
+                  setSelectedHospital(null)
+                  setActiveTab("appointments")
+                }}
+              />
+            </div>
           </DialogContent>
         </Dialog>
       </Suspense>

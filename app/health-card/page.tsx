@@ -2,7 +2,8 @@
 
 import { AppNavigation } from "@/components/app-navigation"
 import { DigitalHealthCard } from "@/components/digital-health-card"
-import { CreditCard, FileText, History, Download, Trash2 } from "lucide-react"
+import Link from "next/link"
+import { CreditCard, FileText, History, Download, Trash2, ChevronRight, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +14,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog"
 import { useReactToPrint } from "react-to-print"
 
@@ -58,7 +60,6 @@ export default function HealthCardPage() {
   const [userId, setUserId] = useState<string>("")
   const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [uploading, setUploading] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const allRecordsPrintRef = useRef<HTMLDivElement>(null)
@@ -94,7 +95,7 @@ export default function HealthCardPage() {
 
       if (res.ok) {
         const fileData = await res.json()
-        
+
         // Step 2: Create the actual medical record document
         const createRes = await fetch("http://localhost:5000/api/medical-records", {
           method: "POST",
@@ -188,111 +189,82 @@ export default function HealthCardPage() {
     <div className="min-h-screen bg-background">
       <AppNavigation />
 
-      <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <CreditCard className="h-6 w-6 text-primary" />
-                Digital Health Card
-              </h1>
-              <p className="text-sm text-muted-foreground">Your complete medical profile</p>
+      <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64 relative min-h-screen">
+        {/* Background Decorative Gradients */}
+        <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+          <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[20%] left-[-5%] w-[30%] h-[30%] bg-accent/5 rounded-full blur-[100px]" />
+        </div>
+
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5">
+          <div className="flex items-center justify-between px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                <CreditCard className="h-5 w-5" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black tracking-tight text-slate-800">Digital Health Card</h1>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Comprehensive Medical Profile</p>
+              </div>
             </div>
           </div>
         </header>
 
-        <div className="p-6 space-y-6">
+        <div className="p-8 space-y-8">
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Health Card & Profile */}
             <div className="lg:col-span-2">
               <DigitalHealthCard />
             </div>
 
-            {/* Medical Records */}
+            {/* Medical Records Summary */}
             <div className="space-y-6">
-              <Card>
-                <CardHeader className="pb-3">
+              <Card className="border-none shadow-xl shadow-primary/5 bg-background/50 backdrop-blur-md rounded-3xl overflow-hidden">
+                <CardHeader className="p-6 pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      Medical Records
+                    <CardTitle className="text-sm font-bold uppercase tracking-widest flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-primary" />
+                      Recent Records
                     </CardTitle>
-                    <Button variant="ghost" size="sm" onClick={() => setIsHistoryOpen(true)}>View All</Button>
+                    <Button variant="ghost" size="sm" asChild className="text-xs font-bold hover:bg-primary/5">
+                      <Link href="/history?tab=reports" className="flex items-center">
+                        View All
+                        <ChevronRight className="h-3 w-3 ml-1" />
+                      </Link>
+                    </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="p-4 pt-0 space-y-3">
                   {loading ? (
-                    <div className="py-8 text-center text-sm text-muted-foreground">Loading records...</div>
+                    <div className="py-12 text-center text-xs font-medium text-muted-foreground italic">Loading records...</div>
                   ) : records.length === 0 ? (
-                    <div className="py-8 text-center text-sm text-muted-foreground">No records found.</div>
+                    <div className="py-12 text-center text-xs font-medium text-muted-foreground italic">No records found.</div>
                   ) : (
                     records.slice(0, 3).map((record) => (
                       <div
                         key={record._id}
-                        className="p-3 bg-muted/50 rounded-lg space-y-2"
+                        className="p-4 bg-muted/30 rounded-2xl border border-transparent hover:border-primary/10 hover:bg-white transition-all cursor-pointer group shadow-sm"
+                        onClick={() => {
+                          setSelectedRecord(record)
+                          setIsDetailOpen(true)
+                        }}
                       >
-                        <div className="flex items-center justify-between">
-                          <div
-                            className="flex-1 min-w-0 cursor-pointer"
-                            onClick={() => {
-                              setSelectedRecord(record)
-                              setIsDetailOpen(true)
-                            }}
-                          >
-                            <Badge variant="outline" className="text-xs">
-                              {record.attachments && record.attachments.length > 0 ? "Diagnostic File" : "Consultation"}
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border-primary/10 bg-primary/5 text-primary mb-2">
+                              {record.attachments && record.attachments.length > 0 ? "Laboratory Report" : "Clinical Consultation"}
                             </Badge>
-                            <p className="font-medium text-sm mt-1 truncate">{record.diagnosis}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(record.date).toLocaleDateString()} • Dr. {record.doctor?.user?.name || "Self-Uploaded"}
+                            <p className="font-bold text-sm truncate text-slate-800">{record.diagnosis}</p>
+                            <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-2">
+                              <span>{new Date(record.date).toLocaleDateString()}</span>
+                              <span className="h-1 w-1 rounded-full bg-slate-200" />
+                              <span className="font-medium">Dr. {record.doctor?.user?.name || "Self-Uploaded"}</span>
                             </p>
                           </div>
-                          <div className="flex items-center gap-1">
-                            {!record.doctor && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  handleDeleteRecord(record._id)
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 shrink-0 text-primary"
-                              onClick={() => {
-                                setSelectedRecord(record)
-                                setIsDetailOpen(true)
-                              }}
-                            >
-                              <FileText className="h-4 w-4" />
-                            </Button>
+                          <div className="p-2 rounded-xl bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                            <FileText className="h-4 w-4" />
                           </div>
                         </div>
-
-                        {record.attachments && record.attachments.length > 0 && (
-                          <div className="flex flex-wrap gap-2 pt-1">
-                            {record.attachments.map((file, i) => (
-                              <a
-                                key={i}
-                                href={`http://localhost:5000${file.url}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1.5 px-2 py-1 bg-background rounded border text-[10px] hover:bg-muted transition-colors"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Paperclip className="h-3 w-3 text-primary" />
-                                <span className="font-medium truncate max-w-[100px]">{file.name}</span>
-                                <ExternalLink className="h-2 w-2 text-muted-foreground" />
-                              </a>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     ))
                   )}
@@ -300,11 +272,11 @@ export default function HealthCardPage() {
               </Card>
 
               {/* Quick Actions */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Quick Actions</CardTitle>
+              <Card className="border-none shadow-xl shadow-primary/5 bg-background/50 backdrop-blur-md rounded-3xl overflow-hidden">
+                <CardHeader className="p-6 pb-2">
+                  <CardTitle className="text-sm font-bold uppercase tracking-widest">Quick Actions</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="p-4 pt-0 space-y-3">
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -313,38 +285,51 @@ export default function HealthCardPage() {
                   />
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent"
+                    className="w-full justify-start bg-transparent border-primary/10 hover:bg-primary hover:text-white transition-all rounded-2xl h-11 px-4 font-bold group"
                     disabled={uploading}
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    {uploading ? <Activity className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
+                    <div className="p-2 rounded-lg bg-primary/10 mr-3 group-hover:bg-white/20 transition-colors">
+                      {uploading ? <Activity className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                    </div>
                     {uploading ? "Uploading..." : "Upload Medical Document"}
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent"
-                    onClick={() => setIsHistoryOpen(true)}
+                    className="w-full justify-start bg-transparent border-primary/10 hover:bg-primary hover:text-white transition-all rounded-2xl h-11 px-4 font-bold group"
+                    asChild
                   >
-                    <History className="h-4 w-4 mr-2" />
-                    View Health History
+                    <Link href="/history?tab=reports" className="flex items-center">
+                      <div className="p-2 rounded-lg bg-primary/10 mr-3 group-hover:bg-white/20 transition-colors">
+                        <History className="h-4 w-4" />
+                      </div>
+                      View Health History
+                    </Link>
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-full justify-start bg-transparent"
+                    className="w-full justify-start bg-transparent border-primary/10 hover:bg-primary hover:text-white transition-all rounded-2xl h-11 px-4 font-bold group"
                     onClick={handlePrintAll}
                   >
-                    <Download className="h-4 w-4 mr-2" />
+                    <div className="p-2 rounded-lg bg-primary/10 mr-3 group-hover:bg-white/20 transition-colors">
+                      <Download className="h-4 w-4" />
+                    </div>
                     Export Health Records
                   </Button>
                 </CardContent>
               </Card>
 
               {/* Emergency Access Info */}
-              <Card className="bg-emergency/5 border-emergency/30">
-                <CardContent className="p-4">
-                  <h4 className="font-semibold text-emergency mb-2">Emergency Access</h4>
-                  <p className="text-sm text-muted-foreground">
-                    In case of emergency, medical professionals can scan your Health Card QR code to instantly access critical medical information including blood group, allergies, and current medications.
+              <Card className="bg-red-500/5 border border-red-500/10 rounded-3xl shadow-xl shadow-red-500/5 overflow-hidden group">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-2 rounded-xl bg-red-500/10 text-red-600 group-hover:scale-110 transition-transform">
+                      <AlertTriangle className="h-4 w-4" />
+                    </div>
+                    <h4 className="font-black text-[10px] uppercase tracking-widest text-red-600">Paramedic Protocol</h4>
+                  </div>
+                  <p className="text-xs leading-relaxed text-muted-foreground font-medium">
+                    In emergencies, medical personnel can scan your **Health Card QR** to instantly access critical medical information: blood type, allergies, and medications.
                   </p>
                 </CardContent>
               </Card>
@@ -355,27 +340,29 @@ export default function HealthCardPage() {
 
       {/* Medical Record Detail Dialog */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader className="flex flex-row items-center justify-between pr-8">
-            <DialogTitle>Medical Record Details</DialogTitle>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background/95 backdrop-blur-xl border-primary/10 rounded-3xl p-0 overflow-hidden shadow-2xl">
+          <DialogHeader className="p-6 border-b bg-muted/30 flex flex-row items-center justify-between">
+            <div>
+              <DialogTitle className="text-xl font-bold">Medical Report Details</DialogTitle>
+              <DialogDescription className="text-xs font-semibold text-primary uppercase tracking-widest mt-1">Official Document</DialogDescription>
+            </div>
             <div className="flex items-center gap-2">
               {selectedRecord && !selectedRecord.doctor && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-destructive border-destructive/20 hover:bg-destructive/5"
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl border-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all gap-2"
                   onClick={() => {
                     handleDeleteRecord(selectedRecord._id)
                     setIsDetailOpen(false)
                   }}
                 >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               )}
-              <Button variant="outline" size="sm" onClick={() => handlePrint()}>
-                <Printer className="h-4 w-4 mr-2" />
-                Print / Download
+              <Button variant="outline" size="sm" className="rounded-xl border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all gap-2" onClick={() => handlePrint()}>
+                <Printer className="h-4 w-4" />
+                Download PDF
               </Button>
             </div>
           </DialogHeader>
@@ -504,67 +491,6 @@ export default function HealthCardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Medical History Dialog (View All) */}
-      <Dialog open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <History className="h-5 w-5 text-primary" />
-              Full Medical History
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            {records.length === 0 ? (
-              <div className="py-12 text-center text-muted-foreground">No records found.</div>
-            ) : (
-              records.map((record) => (
-                <div key={record._id} className="p-4 border rounded-xl hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <FileText className="h-5 w-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-bold">{record.diagnosis}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(record.date).toLocaleDateString()} • Dr. {record.doctor?.user?.name || "Self-Uploaded"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {!record.doctor && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => handleDeleteRecord(record._id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => {
-                          setSelectedRecord(record)
-                          setIsDetailOpen(true)
-                        }}
-                      >
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                  {record.notes && (
-                    <p className="text-sm text-muted-foreground line-clamp-2 bg-muted/30 p-2 rounded italic">
-                      "{record.notes}"
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Hidden Print Container for All Records */}
       <div className="hidden">
@@ -573,7 +499,7 @@ export default function HealthCardPage() {
             <h1 className="text-3xl font-bold text-primary">Full Medical History Report</h1>
             <p className="text-muted-foreground mt-2">Patient: {userName} • Generated on {new Date().toLocaleDateString()}</p>
           </div>
-          
+
           {records.map((record, index) => (
             <div key={record._id} className="space-y-4 pb-8 border-b border-slate-200 last:border-0">
               <div className="flex justify-between items-start">
@@ -582,14 +508,14 @@ export default function HealthCardPage() {
               </div>
               <p className="text-sm"><strong>Doctor:</strong> {record.doctor?.user?.name || "Self-Uploaded"}</p>
               <p className="text-sm"><strong>Facility:</strong> {record.appointment?.hospital?.name || record.hospital?.name || "N/A"}</p>
-              
+
               {record.notes && (
                 <div className="text-sm">
                   <strong>Notes:</strong>
                   <p className="mt-1 p-2 bg-slate-50 border rounded italic">{record.notes}</p>
                 </div>
               )}
-              
+
               {record.medicines && record.medicines.length > 0 && (
                 <div className="text-sm">
                   <strong>Prescriptions:</strong>
@@ -602,7 +528,7 @@ export default function HealthCardPage() {
               )}
             </div>
           ))}
-          
+
           <div className="pt-8 text-center text-[10px] text-muted-foreground">
             End of Medical History Report for {userName}.
           </div>

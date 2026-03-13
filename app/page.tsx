@@ -14,6 +14,8 @@ import {
   Hospital,
   Shield,
   Ambulance,
+  ShieldAlert,
+  ChevronRight,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -23,6 +25,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { cn } from "@/lib/utils"
 
 
 
@@ -108,39 +111,60 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Decorative Gradients */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[100px]" />
+        <div className="absolute top-[20%] left-[5%] w-[30%] h-[30%] bg-emergency/5 rounded-full blur-[80px]" />
+      </div>
+
       <AppNavigation />
 
-      <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64">
-        {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">MediCare+</h1>
-              <p className="text-sm text-muted-foreground">Your Health, Our Priority</p>
+      <main className="relative z-10 pb-20 md:pb-0 md:ml-20 lg:ml-64">
+        {/* Header - Glassmorphism Refined */}
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5">
+        <div className="flex items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-primary/10 text-primary shadow-sm shadow-primary/10">
+              <ShieldAlert className="h-5 w-5" />
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1 right-1 h-2 w-2 bg-emergency rounded-full" />
-              </Button>
+            <div>
+              <h1 className="text-xl font-black tracking-tight text-slate-800">MediCare+ System Dashboard</h1>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Connected Healthcare Network</p>
             </div>
           </div>
-        </header>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex flex-col items-end">
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-40">System Status</p>
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-bold text-slate-600">Secure Protocol Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        <div className="p-6 space-y-6">
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {currentStats.map((stat) => (
-              <Card key={stat.label}>
+        <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
+          {/* Quick Stats - Premium Glass Tiles */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {currentStats.map((stat, i) => (
+              <Card key={stat.label} className="border-none shadow-xl shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden group/stat transition-all duration-300 hover:scale-[1.02]">
+                <div className={cn("absolute top-0 left-0 w-1 h-full bg-gradient-to-b opacity-40", 
+                  i === 0 ? "from-success to-transparent" :
+                  i === 1 ? "from-primary to-transparent" :
+                  i === 2 ? "from-accent to-transparent" :
+                  "from-warning to-transparent"
+                )} />
                 <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-muted ${stat.color}`}>
+                  <div className="flex items-center gap-4">
+                    <div className={cn("p-2.5 rounded-xl bg-white shadow-sm ring-1 ring-primary/5 group-hover/stat:rotate-6 transition-transform", stat.color)}>
                       <stat.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">{stat.label}</p>
-                      <p className="font-semibold">{stat.value}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{stat.label}</p>
+                      <p className="text-xl font-black text-slate-800 tracking-tight mt-0.5">{stat.value}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -149,17 +173,21 @@ export default function HomePage() {
           </div>
 
           {/* Main Grid */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Left Column - SOS */}
-            <div className="lg:col-span-1 space-y-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Activity className="h-5 w-5 text-emergency" />
-                    Emergency SOS
-                  </CardTitle>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Left Column - SOS & Contacts */}
+            <div className="lg:col-span-1 space-y-8">
+              <Card className="relative border-none shadow-2xl shadow-emergency/10 bg-white/30 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden group/sos">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emergency via-red-500 to-emergency opacity-80" />
+                <CardHeader className="pt-8 pb-0 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="p-3 rounded-2xl bg-emergency/10 ring-1 ring-emergency/20 animate-pulse">
+                      <ShieldAlert className="h-6 w-6 text-emergency" />
+                    </div>
+                    <CardTitle className="text-lg font-black uppercase tracking-[0.2em] text-emergency">Critical SOS</CardTitle>
+                    <div className="h-px w-12 bg-emergency/20" />
+                  </div>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center py-8">
+                <CardContent className="flex flex-col items-center pt-2 pb-10">
                   <SOSButton />
                 </CardContent>
               </Card>
@@ -168,70 +196,90 @@ export default function HomePage() {
             </div>
 
             {/* Right Column - Hospitals & Appointments */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-8">
               {/* Nearby Hospitals */}
-              <NearbyHospitals onBookAppointment={handleBookAppointment} />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                  <h2 className="text-lg font-black uppercase tracking-widest text-slate-800 flex items-center gap-3">
+                    <Hospital className="h-5 w-5 text-primary" />
+                    Nearby Medical Centers
+                  </h2>
+                  <Button variant="ghost" size="sm" asChild className="text-[10px] font-black uppercase tracking-widest text-primary hover:bg-primary/5">
+                    <a href="/hospitals">Directory <ChevronRight className="h-3.5 w-3.5 ml-1" /></a>
+                  </Button>
+                </div>
+                <NearbyHospitals onBookAppointment={handleBookAppointment} />
+              </div>
 
-              {/* Appointments Preview */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Upcoming Appointments</CardTitle>
-                    <Button variant="ghost" size="sm" asChild>
-                      <a href="/hospitals">View All</a>
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {upcomingAppointments.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">No upcoming appointments.</p>
-                    ) : (
-                      upcomingAppointments.map((apt: any) => (
-                        <div key={apt._id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                          <div className="flex items-center gap-3">
-                            <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${apt.status === 'confirmed' ? 'bg-primary/10' : 'bg-warning/20'}`}>
-                              <Calendar className={`h-5 w-5 ${apt.status === 'confirmed' ? 'text-primary' : 'text-warning-foreground'}`} />
-                            </div>
-                            <div>
-                              <p className="font-medium">{apt.doctor?.user?.name || "Doctor"}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {apt.hospital?.name || "Hospital"} • {apt.doctor?.specialization || "General"}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium">{new Date(apt.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
-                            <p className="text-sm text-muted-foreground">{apt.time}</p>
-                            {apt.status === 'pending' && (
-                              <Badge variant="outline" className="bg-warning/20 text-warning-foreground border-warning text-[10px] mt-1">
-                                Pending
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Health Tips */}
-              <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Activity className="h-6 w-6 text-primary" />
+              {/* Appointments & Health Tip Row */}
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Appointments Preview */}
+                <Card className="border-none shadow-xl shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden">
+                  <CardHeader className="pb-4 border-b border-primary/5 bg-white/20">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-accent" />
+                        Next Sessions
+                      </CardTitle>
                     </div>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-4">
+                    {upcomingAppointments.length === 0 ? (
+                      <div className="py-12 flex flex-col items-center justify-center gap-2 opacity-40">
+                        <Calendar className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">No pending sessions</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {upcomingAppointments.map((apt: any) => (
+                          <div key={apt._id} className="group/apt flex items-center justify-between p-3.5 bg-white/40 hover:bg-white/60 border border-primary/5 rounded-xl transition-all duration-300">
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "h-11 w-11 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover/apt:scale-110",
+                                apt.status === 'confirmed' ? 'bg-primary/10 text-primary' : 'bg-warning/10 text-warning-foreground'
+                              )}>
+                                <Calendar className="h-5 w-5" />
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-bold text-slate-800 truncate">{apt.doctor?.user?.name || "Dr. Medical Specialist"}</p>
+                                <p className="text-[10px] font-bold text-muted-foreground opacity-60 truncate">
+                                  {apt.hospital?.name || "General Clinic"}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-[11px] font-black text-slate-800 uppercase tracking-tighter">{new Date(apt.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p>
+                              <p className="text-[10px] font-bold text-muted-foreground">{apt.time}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Health Tip Feature */}
+                <Card className="relative border-none shadow-xl shadow-primary/5 bg-gradient-to-br from-primary/10 via-background/40 to-accent/10 backdrop-blur-md rounded-2xl overflow-hidden group/tip">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                  <CardContent className="p-8 h-full flex flex-col justify-between">
                     <div>
-                      <h3 className="font-semibold mb-1">Daily Health Tip</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Stay hydrated! Drink at least 8 glasses of water daily. Proper hydration helps maintain body temperature, lubricates joints, and aids in nutrient absorption.
+                      <div className="h-12 w-12 rounded-2xl bg-white shadow-md flex items-center justify-center mb-6 group-hover/tip:scale-110 transition-transform">
+                        <Activity className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-black text-slate-800 mb-2 leading-tight">Daily Prime Health Tip</h3>
+                      <p className="text-xs font-medium text-slate-600 leading-relaxed opacity-80">
+                        Maximize your hydration quality by sipping water consistently 
+                        throughout the day. Proper hydration is the cornerstone of clinical vitality 
+                        and metabolic performance.
                       </p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="pt-6 flex items-center gap-2">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">System Optimal</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
@@ -239,7 +287,7 @@ export default function HomePage() {
 
       {/* Appointment Booking Dialog */}
       <Dialog open={showBooking} onOpenChange={setShowBooking}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto z-[1100]">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto border-none bg-background/60 backdrop-blur-2xl shadow-2xl rounded-3xl p-0">
           <DialogTitle className="sr-only">Book Appointment</DialogTitle>
           <AppointmentBooking
             hospitalName={selectedHospital?.name}

@@ -1,16 +1,22 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { AppNavigation } from "@/components/app-navigation"
 import { SOSButton } from "@/components/sos-button"
 import { EmergencyContacts } from "@/components/emergency-contacts"
 import {
+  FileText,
+  ChevronRight,
+  CheckCircle2,
+  ShieldAlert,
+  Info,
+  ExternalLink,
   Phone,
   MapPin,
   Clock,
   AlertTriangle,
-  FileText,
-  ChevronRight,
+  Loader2,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -106,14 +112,18 @@ export default function EmergencyPage() {
       <AppNavigation />
 
       <main className="pb-20 md:pb-0 md:ml-20 lg:ml-64">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <AlertTriangle className="h-6 w-6 text-emergency" />
-                Emergency
-              </h1>
-              <p className="text-sm text-muted-foreground">Quick access to emergency services</p>
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5">
+          <div className="flex items-center justify-between px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-emergency/10 ring-1 ring-emergency/20 text-emergency">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black tracking-tight text-slate-800">
+                  Emergency Command
+                </h1>
+                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">High-Fidelity Response System</p>
+              </div>
             </div>
           </div>
         </header>
@@ -122,11 +132,20 @@ export default function EmergencyPage() {
           <div className="grid lg:grid-cols-3 gap-6">
             {/* SOS Section */}
             <div className="lg:col-span-1 space-y-6">
-              <Card className="border-emergency/30 bg-emergency/5">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg text-emergency">SOS Emergency</CardTitle>
+              <Card className="relative border-none shadow-2xl shadow-emergency/10 bg-white/40 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden group/sos">
+                {/* Visual Accent */}
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emergency via-red-500 to-emergency opacity-80" />
+                
+                <CardHeader className="pt-8 pb-0 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="p-3 rounded-2xl bg-emergency/10 ring-1 ring-emergency/20 animate-pulse">
+                      <ShieldAlert className="h-6 w-6 text-emergency" />
+                    </div>
+                    <CardTitle className="text-xl font-black uppercase tracking-[0.2em] text-emergency">Critical SOS</CardTitle>
+                    <div className="h-px w-12 bg-emergency/20" />
+                  </div>
                 </CardHeader>
-                <CardContent className="flex flex-col items-center py-6">
+                <CardContent className="flex flex-col items-center pt-2 pb-10">
                   <SOSButton />
                 </CardContent>
               </Card>
@@ -134,27 +153,34 @@ export default function EmergencyPage() {
               <EmergencyContacts />
 
               {/* Emergency Numbers */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Phone className="h-5 w-5 text-primary" />
-                    Emergency Numbers
-                  </CardTitle>
+              <Card className="border-none shadow-lg shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden">
+                <CardHeader className="pb-3 border-b border-primary/5 bg-white/20">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-primary" />
+                      Direct Services
+                    </CardTitle>
+                    <Info className="h-3.5 w-3.5 text-muted-foreground opacity-40 hover:opacity-100 cursor-help transition-opacity" />
+                  </div>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="p-2 space-y-1">
                   {emergencyNumbers.map((item) => (
                     <a
                       key={item.number}
                       href={`tel:${item.number}`}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
+                      className="group/num flex items-center justify-between p-3 rounded-xl hover:bg-white/60 transition-all duration-300"
                     >
-                      <div>
-                        <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-primary/5 flex items-center justify-center group-hover/num:bg-primary/10 transition-colors">
+                          <Phone className="h-3.5 w-3.5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-700">{item.name}</p>
+                          <p className="text-[10px] text-muted-foreground font-medium opacity-60 line-clamp-1">{item.description}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-primary">{item.number}</span>
-                        <Phone className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex items-center gap-2 bg-primary/5 px-2 py-1 rounded-lg border border-primary/10 group-hover/num:border-primary/30 transition-all">
+                        <span className="text-[11px] font-black text-primary font-mono">{item.number}</span>
                       </div>
                     </a>
                   ))}
@@ -165,26 +191,39 @@ export default function EmergencyPage() {
             {/* Right Column */}
             <div className="lg:col-span-2 space-y-6">
               {/* First Aid Guides */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-accent" />
-                    First Aid Guides
+              <Card className="border-none shadow-lg shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden">
+                <CardHeader className="pb-0 border-b border-primary/5 bg-white/20">
+                  <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-2 py-4">
+                    <FileText className="h-4 w-4 text-accent" />
+                    Interactive Life-Saving Guides
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                   <Accordion type="single" collapsible className="w-full">
                     {firstAidGuides.map((guide, index) => (
-                      <AccordionItem key={guide.title} value={`item-${index}`}>
-                        <AccordionTrigger className="text-left">
-                          {guide.title}
+                      <AccordionItem key={guide.title} value={`item-${index}`} className="border-primary/5 px-6">
+                        <AccordionTrigger className="text-sm font-bold text-slate-700 hover:no-underline hover:text-primary transition-colors py-4">
+                          <span className="flex items-center gap-3">
+                            <span className="flex items-center justify-center w-5 h-5 rounded bg-primary/10 text-[10px] text-primary">{index + 1}</span>
+                            {guide.title}
+                          </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                          <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-                            {guide.steps.map((step, i) => (
-                              <li key={i}>{step}</li>
-                            ))}
-                          </ol>
+                          <div className="pb-4 space-y-3">
+                            <div className="p-3 bg-muted/20 border border-primary/5 rounded-xl space-y-2">
+                              {guide.steps.map((step, i) => (
+                                <div key={i} className="flex gap-3">
+                                  <div className="mt-1 h-3.5 w-3.5 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                                  </div>
+                                  <p className="text-xs font-medium text-slate-600 leading-relaxed italic">{step}</p>
+                                </div>
+                              ))}
+                            </div>
+                            <Button variant="outline" size="sm" className="w-full text-[10px] font-bold uppercase tracking-widest h-8 rounded-lg border-primary/10 bg-white/40 hover:bg-primary hover:text-white transition-all">
+                              Download Detailed guide
+                            </Button>
+                          </div>
                         </AccordionContent>
                       </AccordionItem>
                     ))}
@@ -193,83 +232,105 @@ export default function EmergencyPage() {
               </Card>
 
               {/* Emergency History */}
-              <Card>
-                <CardHeader>
+              <Card className="border-none shadow-lg shadow-primary/5 bg-background/40 backdrop-blur-md rounded-2xl overflow-hidden">
+                <CardHeader className="pb-3 border-b border-primary/5 bg-white/20">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <Clock className="h-5 w-5 text-muted-foreground" />
-                      Emergency History
+                    <CardTitle className="text-base font-bold tracking-tight text-slate-800 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground opacity-60" />
+                      Incident Timeline
                     </CardTitle>
-                    <Button variant="ghost" size="sm">
-                      View All
-                      <ChevronRight className="h-4 w-4 ml-1" />
+                    <Button variant="ghost" size="sm" asChild className="text-[10px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5 h-8">
+                      <Link href="/history?tab=emergencies">
+                        Full Access
+                        <ChevronRight className="h-3 w-3 ml-1" />
+                      </Link>
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="p-4 space-y-3">
                   {loading ? (
-                    <div className="py-8 text-center text-sm text-muted-foreground animate-pulse">Loading history...</div>
+                    <div className="py-12 flex flex-col items-center justify-center gap-3">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary opacity-40" />
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-40">Synchronizing records...</p>
+                    </div>
                   ) : emergencyHistory.length === 0 ? (
-                    <div className="py-8 text-center text-sm text-muted-foreground">No emergency records found.</div>
+                    <div className="py-12 text-center rounded-xl border border-dashed border-primary/10 bg-primary/[0.01]">
+                      <p className="text-xs font-medium text-muted-foreground italic opacity-60">Complete security. No incident records found.</p>
+                    </div>
                   ) : (
-                    emergencyHistory.map((emergency) => (
-                      <div
-                        key={emergency._id}
-                        className="p-4 border rounded-lg hover:bg-muted/30 transition-colors"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-semibold capitalize">{emergency.emergencyType} Emergency</h4>
-                              <Badge
-                                variant="outline"
-                                className={cn(
-                                  "text-xs capitalize",
-                                  emergency.status === "completed" ? "bg-success/20 text-success border-success" : "bg-warning/20 text-warning border-warning"
-                                )}
-                              >
-                                {emergency.status === "completed" ? "Resolved" : emergency.status.replace("-", " ")}
-                              </Badge>
+                    <div className="space-y-2.5">
+                      {emergencyHistory.map((emergency) => (
+                        <div
+                          key={emergency._id}
+                          className="group/history p-4 bg-white/40 hover:bg-white/60 border border-primary/5 rounded-xl transition-all duration-300 hover:shadow-md hover:shadow-primary/5"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 group-hover/history:translate-x-0.5 transition-transform duration-300">
+                                <h4 className="text-sm font-bold text-slate-800 capitalize leading-none">{emergency.emergencyType} Alert</h4>
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    "text-[8px] font-black uppercase tracking-widest px-1.5 py-0 rounded-md border-none",
+                                    emergency.status === "completed" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                                  )}
+                                >
+                                  {emergency.status === "completed" ? "Resolved" : "In Progress"}
+                                </Badge>
+                              </div>
+                              <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+                                <p className="flex items-center gap-2 text-[10px] font-medium text-slate-500">
+                                  <Clock className="h-3 w-3 opacity-60 text-primary" />
+                                  {new Date(emergency.createdAt).toLocaleDateString("en-IN", { day: 'numeric', month: 'short' })} • {new Date(emergency.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                                <p className="flex items-center gap-2 text-[10px] font-medium text-slate-500 truncate">
+                                  <MapPin className="h-3 w-3 opacity-60 text-primary" />
+                                  {emergency.location?.name || "Location Sync Active"}
+                                </p>
+                              </div>
                             </div>
-                            <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                              <p className="flex items-center gap-2">
-                                <Clock className="h-3.5 w-3.5" />
-                                {new Date(emergency.createdAt).toLocaleDateString()} at {new Date(emergency.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </p>
-                              <p className="flex items-center gap-2">
-                                <MapPin className="h-3.5 w-3.5" />
-                                {emergency.location?.name || "Location Not Specified"}
-                              </p>
-                            </div>
+                            {emergency.hospitalId && (
+                              <div className="flex items-center gap-3 p-2 bg-primary/5 rounded-lg border border-primary/10 sm:w-48 group-hover/history:border-primary/30 transition-all">
+                                <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground opacity-60">Verified Response</p>
+                                  <p className="text-[10px] font-bold text-slate-700 truncate">{emergency.hospitalId.name}</p>
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          {emergency.hospitalId && (
-                            <div className="text-right text-sm">
-                              <p className="text-muted-foreground">Treated at</p>
-                              <p className="font-medium">{emergency.hospitalId.name}</p>
-                            </div>
-                          )}
                         </div>
-                      </div>
-                    ))
+                      ))}
+                    </div>
                   )}
                 </CardContent>
               </Card>
 
               {/* Offline SOS Info */}
-              <Card className="bg-muted/30 border-dashed">
+              <Card className="border-none shadow-lg shadow-primary/5 bg-primary/[0.02] border-dashed border border-primary/20 rounded-2xl overflow-hidden group/offline">
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <AlertTriangle className="h-5 w-5 text-primary" />
+                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover/offline:scale-110 transition-transform duration-500">
+                      <ShieldAlert className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-semibold mb-1">Offline SOS Support</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Even without internet, you can trigger an SOS via SMS. Your location and emergency contacts will receive an alert automatically. Make sure to grant SMS permissions for this feature.
+                      <h3 className="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
+                        Offline Guard System
+                        <Badge className="bg-primary/5 text-primary text-[8px] font-black tracking-widest border-none">BETA</Badge>
+                      </h3>
+                      <p className="text-xs font-medium text-muted-foreground leading-relaxed">
+                        No internet? Our system automatically switches to <span className="text-primary font-bold">Encrypted SMS SOS</span>. Your live coordinates and health summary will be sent to verified responders via telco networks.
                       </p>
-                      <Button variant="outline" size="sm" className="mt-3 bg-transparent">
-                        Configure Offline SOS
-                      </Button>
+                      <div className="flex gap-2 mt-4">
+                        <Button variant="outline" size="sm" className="h-9 px-4 rounded-lg text-xs font-bold border-primary/10 bg-white/40 hover:bg-primary hover:text-white transition-all">
+                          Configure SMS Protocol
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-9 px-4 rounded-lg text-xs font-bold text-muted-foreground hover:bg-muted/50 transition-all">
+                          Security Whitepaper
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

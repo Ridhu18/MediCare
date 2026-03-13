@@ -205,76 +205,85 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
 
   if (isSuccess) {
     return (
-      <Card className="w-full border-0 shadow-none">
-        <CardContent className="pt-12 pb-8 text-center">
-          <div className="h-16 w-16 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4">
-            <Check className="h-8 w-8 text-success" />
+      <Card className="w-full border-0 shadow-none bg-transparent">
+        <CardContent className="pt-8 pb-6 text-center">
+          <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-3 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+            <Check className="h-6 w-6 text-success" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Appointment Requested!</h2>
-          <p className="text-muted-foreground mb-4">
-            Your appointment request has been sent to {hospitalName || "the hospital"}.
-            You will receive a notification once it's confirmed.
+          <h2 className="text-lg font-bold tracking-tight mb-1">Appointment Requested!</h2>
+          <p className="text-[11px] text-muted-foreground mb-4 uppercase tracking-widest font-bold opacity-70">
+            Request Sent to {hospitalName || "Hospital"}
           </p>
-          <div className="bg-muted p-4 rounded-lg text-left text-sm space-y-2">
-            <p><strong>Doctor:</strong> {selectedDoctor?.user.name}</p>
-            <p><strong>Date:</strong> {selectedDate}</p>
-            <p><strong>Time:</strong> {selectedTime}</p>
-            <p><strong>Department:</strong> {department}</p>
-            {attachments.length > 0 && <p><strong>Attachments:</strong> {attachments.length} files linked</p>}
+          <div className="bg-white/40 backdrop-blur-md p-4 rounded-xl text-left border border-primary/5 space-y-2 mb-2">
+            <div className="flex justify-between items-center text-[11px]">
+              <span className="text-muted-foreground font-bold uppercase tracking-wider">Doctor</span>
+              <span className="font-bold text-slate-700">{selectedDoctor?.user.name}</span>
+            </div>
+            <div className="flex justify-between items-center text-[11px]">
+              <span className="text-muted-foreground font-bold uppercase tracking-wider">Schedule</span>
+              <span className="font-bold text-slate-700">{selectedDate} at {selectedTime}</span>
+            </div>
+            <div className="flex justify-between items-center text-[11px]">
+              <span className="text-muted-foreground font-bold uppercase tracking-wider">Unit</span>
+              <span className="font-bold text-slate-700">{department}</span>
+            </div>
           </div>
+          <p className="text-[10px] text-muted-foreground font-medium italic opacity-60 mt-4">
+            Confirmation details will appear in your history soon.
+          </p>
         </CardContent>
       </Card>
     )
   }
 
   return (
-    <Card className="w-full border-0 shadow-none">
-      <CardHeader className="px-1 pt-0">
-        <div className="flex items-center gap-4">
+    <Card className="w-full border-0 shadow-none bg-transparent">
+      <CardHeader className="px-5 pt-5 pb-0">
+        <div className="flex items-center gap-3">
           {(step > 1 || onClose) && (
             <Button
               variant="outline"
               size="icon"
-              className="rounded-full h-10 w-10 shrink-0"
+              className="rounded-lg h-8 w-8 shrink-0 bg-white/40 border-primary/5 hover:bg-primary/5 transition-all"
               onClick={() => step > 1 ? setStep(step - 1) : onClose?.()}
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
           )}
           <div className="flex-1">
-            <CardTitle className="text-2xl font-bold">Book Appointment</CardTitle>
-            <CardDescription className="text-base">
-              {hospitalName || "Select department and doctor"}
-            </CardDescription>
+            <h2 className="text-lg font-bold tracking-tight">Book Appointment</h2>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">
+              {hospitalName || "Select Unit & Specialist"}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className={cn(
+                  "h-1 w-4 rounded-full transition-all duration-300",
+                  s === step ? "w-8 bg-primary" : s < step ? "bg-primary/40" : "bg-primary/10"
+                )}
+              />
+            ))}
           </div>
         </div>
-        <div className="flex items-center gap-2 mt-4">
-          {[1, 2, 3].map((s) => (
-            <div
-              key={s}
-              className={cn(
-                "h-2 flex-1 rounded-full transition-colors",
-                s <= step ? "bg-primary" : "bg-muted"
-              )}
-            />
-          ))}
-        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-5">
         {step === 1 && (
-          <div className="space-y-6 pt-4">
-            <div className="bg-muted/30 p-4 rounded-xl border border-dashed border-primary/20">
-              <Label className="text-base font-semibold mb-2 block">Select Department</Label>
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Medical Unit</Label>
               <Select value={department} onValueChange={(val) => {
                 setDepartment(val)
                 fetchDoctors(val)
               }}>
-                <SelectTrigger className="mt-1.5 h-12 bg-background border-primary/20 hover:border-primary transition-colors">
-                  <SelectValue placeholder="Choose a department" />
+                <SelectTrigger className="h-10 bg-white/40 border-primary/5 focus:ring-primary/20 rounded-xl font-bold text-xs">
+                  <SelectValue placeholder="Select Specialization" />
                 </SelectTrigger>
-                <SelectContent className="z-[1001]">
+                <SelectContent className="z-[1001] rounded-xl border-primary/10 shadow-2xl">
                   {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
+                    <SelectItem key={dept} value={dept} className="text-xs font-bold">
                       {dept}
                     </SelectItem>
                   ))}
@@ -283,16 +292,16 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
             </div>
 
             {department && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="text-base font-semibold">Available Doctors</Label>
-                  <Badge variant="outline" className="font-normal">{doctors.length} Found</Badge>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-0.5">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Available Specialists</Label>
+                  <p className="text-[9px] font-black uppercase text-primary/60">{doctors.length} Active</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {doctors.length === 0 ? (
-                    <div className="col-span-full py-12 text-center bg-muted/20 rounded-xl border border-dashed">
-                      <Stethoscope className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-20" />
-                      <p className="text-muted-foreground">No doctors available for this department</p>
+                    <div className="col-span-full py-8 text-center bg-muted/10 rounded-xl border border-dashed border-primary/5">
+                      <Stethoscope className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-20" />
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">No specialists found</p>
                     </div>
                   ) : (
                     doctors.map((doctor) => (
@@ -301,33 +310,27 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
                         type="button"
                         onClick={() => setSelectedDoctor(doctor)}
                         className={cn(
-                          "flex items-center gap-4 p-4 border rounded-xl text-left transition-all relative group",
+                          "flex items-center gap-3 p-3 border rounded-xl text-left transition-all relative group overflow-hidden",
                           selectedDoctor?._id === doctor._id
-                            ? "border-primary bg-primary/5 ring-1 ring-primary"
-                            : "hover:border-primary/50 hover:bg-muted/50"
+                            ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-md shadow-primary/5"
+                            : "hover:border-primary/20 hover:bg-white/40 border-primary/5 bg-white/20"
                         )}
                       >
-                        <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/10 group-hover:scale-105 transition-transform">
-                          <User className="h-7 w-7 text-primary" />
+                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border border-primary/10 group-hover:scale-105 transition-transform">
+                          <User className="h-5 w-5 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-base truncate">{doctor.user.name}</span>
-                          </div>
-                          <p className="text-sm text-muted-foreground font-medium">
+                          <span className="font-bold text-xs truncate block">{doctor.user.name}</span>
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider opacity-70">
                             {doctor.specialization}
                           </p>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-primary font-bold">₹{doctor.consultationFee}</span>
-                            <div className="flex items-center gap-1 text-warning text-sm">
-                              <Star className="h-3.5 w-3.5 fill-warning" />
-                              <span className="font-medium">4.8</span>
-                            </div>
+                          <div className="flex items-center justify-between mt-1.5 px-0.5">
+                            <span className="text-[10px] font-black text-primary">₹{doctor.consultationFee}</span>
                           </div>
                         </div>
                         {selectedDoctor?._id === doctor._id && (
-                          <div className="absolute top-2 right-2 h-6 w-6 rounded-full bg-primary flex items-center justify-center">
-                            <Check className="h-3.5 w-3.5 text-primary-foreground" />
+                          <div className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                            <Check className="h-2.5 w-2.5 text-primary-foreground" />
                           </div>
                         )}
                       </button>
@@ -338,7 +341,7 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
             )}
 
             <Button
-              className="w-full h-12 text-lg font-semibold rounded-xl shadow-lg shadow-primary/20"
+              className="w-full h-11 text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
               onClick={() => setStep(2)}
               disabled={!department || !selectedDoctor}
             >
@@ -346,36 +349,38 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
             </Button>
           </div>
         )}
-
         {step === 2 && (
-          <div className="space-y-8 pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <Label htmlFor="date" className="text-base font-semibold">Select Appointment Date</Label>
-                <div className="p-4 bg-muted/30 rounded-xl border border-dashed border-primary/20">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-2">
+                <Label htmlFor="date" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Select Date</Label>
+                <div className="p-3 bg-white/20 rounded-xl border border-primary/5">
                   <Input
                     id="date"
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
                     min={new Date().toISOString().split("T")[0]}
-                    className="h-12 bg-background border-primary/20 hover:border-primary transition-colors cursor-pointer"
+                    className="h-10 bg-white/40 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs cursor-pointer"
                   />
                 </div>
-                <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-                  <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-primary mt-0.5" />
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      Please select a date from Monday to Saturday. Appointments are usually processed within 2 hours.
+                <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 mt-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-3 w-3 text-primary opacity-60" />
+                    <p className="text-[9px] font-bold text-muted-foreground leading-snug">
+                      Processing priority enabled for premium members.
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <Label className="text-base font-semibold">Choose Your Time Slot</Label>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between px-0.5">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Time Slot</Label>
+                  {selectedDate && <p className="text-[9px] font-black uppercase text-primary/60">IST (Standard)</p>}
+                </div>
                 {selectedDate ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-1.5 max-h-[160px] overflow-y-auto pr-1">
                     {timeSlots.map((slot) => (
                       <button
                         key={slot.time}
@@ -383,12 +388,12 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
                         onClick={() => slot.available && setSelectedTime(slot.time)}
                         disabled={!slot.available}
                         className={cn(
-                          "h-12 flex items-center justify-center rounded-xl border font-medium transition-all",
+                          "h-9 flex items-center justify-center rounded-lg border text-[10px] font-black transition-all",
                           selectedTime === slot.time
-                            ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                            ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/10 scale-[0.98]"
                             : slot.available
-                              ? "hover:border-primary hover:bg-primary/5 border-primary/20"
-                              : "opacity-40 cursor-not-allowed bg-muted grayscale"
+                              ? "hover:border-primary/40 hover:bg-primary/5 border-primary/5 bg-white/40"
+                              : "opacity-20 cursor-not-allowed bg-muted/20"
                         )}
                       >
                         {slot.time}
@@ -396,76 +401,78 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
                     ))}
                   </div>
                 ) : (
-                  <div className="h-[240px] flex flex-col items-center justify-center border border-dashed rounded-xl bg-muted/20">
-                    <Calendar className="h-10 w-10 text-muted-foreground mb-2 opacity-20" />
-                    <p className="text-muted-foreground text-sm">Please select a date first</p>
+                  <div className="h-[120px] flex flex-col items-center justify-center border border-dashed rounded-xl bg-muted/10 opacity-60">
+                    <Calendar className="h-6 w-6 text-muted-foreground mb-2 opacity-20" />
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase">Please Select Date</p>
                   </div>
                 )}
               </div>
             </div>
 
             <Button
-              className="w-full h-12 text-lg font-semibold rounded-xl shadow-lg shadow-primary/20"
+              className="w-full h-11 text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/10 transition-all active:scale-95"
               onClick={() => setStep(3)}
               disabled={!selectedDate || !selectedTime}
             >
-              Review and Confirm
+              Review Configuration
             </Button>
           </div>
         )}
 
+
         {step === 3 && (
-          <div className="space-y-6 pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <Label className="text-base font-semibold">Appointment Details</Label>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-primary/10">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <User className="h-5 w-5 text-primary" />
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Booking Preview</Label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 p-3 bg-white/40 rounded-xl border border-primary/5 hover:border-primary/20 transition-all">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <User className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Doctor</p>
-                      <p className="font-bold text-base">{selectedDoctor?.user.name}</p>
-                      <p className="text-sm text-muted-foreground">{selectedDoctor?.specialization}</p>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Attending Doctor</p>
+                      <p className="font-bold text-xs tracking-tight">{selectedDoctor?.user.name}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-primary/10">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Calendar className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-3 p-3 bg-white/40 rounded-xl border border-primary/5 hover:border-primary/20 transition-all">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Calendar className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Date & Time</p>
-                      <p className="font-bold text-base">{selectedDate}</p>
-                      <p className="text-sm text-muted-foreground">{selectedTime}</p>
+                      <p className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Session Slot</p>
+                      <p className="font-bold text-xs tracking-tight">{selectedDate} at {selectedTime}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl border border-primary/10">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <ReceiptText className="h-5 w-5 text-primary" />
+                  <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-primary/10">
+                    <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                      <ReceiptText className="h-4 w-4 text-primary" />
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Consultation Fee</p>
-                      <p className="font-bold text-base text-primary">₹{selectedDoctor?.consultationFee}</p>
+                    <div className="flex-1 flex justify-between items-center pr-1">
+                      <div>
+                        <p className="text-[8px] font-black text-muted-foreground uppercase opacity-60">Consultation Fee</p>
+                        <p className="font-black text-sm text-primary">₹{selectedDoctor?.consultationFee}</p>
+                      </div>
+                      <Badge className="bg-success/10 text-success border-none text-[8px] font-black uppercase">Standard rate</Badge>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <Label htmlFor="reason" className="text-base font-semibold">Reason for Visit & Attachments</Label>
+              <div className="space-y-3">
+                <Label htmlFor="reason" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Clinical Notes</Label>
                 <Textarea
                   id="reason"
-                  placeholder="Tell us about your symptoms or medical concerns..."
+                  placeholder="Describe symptoms or concerns..."
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="mt-1.5 rounded-xl border-primary/20 focus:border-primary min-h-[120px] text-base p-4"
+                  className="rounded-xl bg-white/40 border-primary/5 focus:border-primary/20 min-h-[90px] text-[11px] p-3 font-medium placeholder:opacity-50"
                 />
-                
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
+
+                <div className="space-y-2">
+                  <div className="flex gap-1.5 overflow-x-auto pb-1 invisible-scrollbar">
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -473,58 +480,55 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
                       onChange={handleFileUpload}
                       accept="image/*,.pdf"
                     />
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="rounded-lg gap-2"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 rounded-lg gap-1.5 px-2.5 bg-white/40 border-primary/5 text-[9px] font-bold uppercase tracking-widest hover:bg-primary/5"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={uploading}
                     >
-                      {uploading ? <Clock className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-                      From Device
+                      {uploading ? <Clock className="h-2.5 w-2.5 animate-spin" /> : <Upload className="h-2.5 w-2.5" />}
+                      Upload
                     </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="rounded-lg gap-2"
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-7 rounded-lg gap-1.5 px-2.5 bg-white/40 border-primary/5 text-[9px] font-bold uppercase tracking-widest hover:bg-primary/5"
                       onClick={() => setShowRecordPicker(true)}
                     >
-                      <History className="h-4 w-4" />
-                      From Records
+                      <History className="h-2.5 w-2.5" />
+                      Vault
                     </Button>
                   </div>
 
                   {attachments.length > 0 && (
-                    <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2">
-                       {attachments.map((file, i) => (
-                         <div key={i} className="flex items-center justify-between p-2 bg-muted/50 rounded-lg border border-primary/10 text-xs">
-                           <div className="flex items-center gap-2 truncate">
-                             <Paperclip className="h-3 w-3 text-primary shrink-0" />
-                             <span className="truncate">{file.name}</span>
-                           </div>
-                           <Button 
-                             variant="ghost" 
-                             size="icon" 
-                             className="h-6 w-6 text-destructive"
-                             onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))}
-                           >
-                             <X className="h-3 w-3" />
-                           </Button>
-                         </div>
-                       ))}
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {attachments.slice(0, 3).map((file, i) => (
+                        <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 rounded-lg border border-primary/10 text-[9px] font-bold group">
+                          <Paperclip className="h-2.5 w-2.5 text-primary opacity-60" />
+                          <span className="max-w-[80px] truncate opacity-80">{file.name}</span>
+                          <X 
+                            className="h-2.5 w-2.5 text-muted-foreground hover:text-destructive cursor-pointer" 
+                            onClick={() => setAttachments(attachments.filter((_, idx) => idx !== i))}
+                          />
+                        </div>
+                      ))}
+                      {attachments.length > 3 && (
+                        <Badge variant="secondary" className="text-[9px] font-bold h-6 rounded-lg">+{attachments.length - 3}</Badge>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-dashed">
+            <div className="pt-4 mt-2">
               <Button
-                className="w-full h-14 text-xl font-bold rounded-xl shadow-xl shadow-primary/30 hover:scale-[1.01] transition-all"
+                className="w-full h-12 text-xs font-black uppercase tracking-widest rounded-xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Confirming Booking..." : "Book Appointment Now"}
+                {isSubmitting ? "Finalizing Transaction..." : "Complete Booking"}
               </Button>
             </div>
           </div>
@@ -533,82 +537,83 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
 
       {/* Medical Records Picker Dialog */}
       <Dialog open={showRecordPicker} onOpenChange={setShowRecordPicker}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto z-[1001]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <History className="h-5 w-5 text-primary" />
-              Your Medical Records
-            </DialogTitle>
+        <DialogContent className="max-w-xl max-h-[70vh] p-0 overflow-hidden border-none bg-background/80 backdrop-blur-xl rounded-[2rem] shadow-2xl z-[1001]">
+          <DialogHeader className="p-6 pb-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                <History className="h-5 w-5" />
+              </div>
+              <div>
+                <DialogTitle className="text-lg font-bold tracking-tight">Health Vault</DialogTitle>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">Sync Records to Appointment</p>
+              </div>
+            </div>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-             {loadingRecords ? (
-               <div className="py-12 text-center">
-                 <Clock className="h-10 w-10 animate-spin mx-auto text-primary/40 mb-3" />
-                 <p className="text-sm text-muted-foreground animate-pulse">Syncing your medical history...</p>
-               </div>
-             ) : myRecords.length === 0 ? (
-               <div className="py-12 text-center text-muted-foreground border border-dashed rounded-2xl bg-muted/20">
-                 <History className="h-12 w-12 mx-auto mb-3 opacity-10" />
-                 <p className="font-medium">No medical records found</p>
-                 <p className="text-xs mt-1">Upload records in the Health Card section first.</p>
-               </div>
-             ) : (
-               myRecords.map((record) => (
-                 <div key={record._id} className="p-4 border rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors border-primary/5 hover:border-primary/20 group">
-                   <div className="flex items-center justify-between mb-3">
-                     <div>
-                       <p className="font-bold text-sm text-foreground">{record.diagnosis}</p>
-                       <p className="text-[10px] text-muted-foreground font-medium flex items-center gap-1 mt-0.5">
-                         <Calendar className="h-2.5 w-2.5" />
-                         {new Date(record.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}
-                       </p>
-                     </div>
-                     <Button 
-                       variant="outline" 
-                       size="sm" 
-                       className="h-8 text-[10px] font-bold uppercase tracking-wider gap-1.5 border-primary/20 hover:bg-primary hover:text-primary-foreground transition-all"
-                       onClick={() => {
-                         const newAttachment = {
-                           name: `Summary: ${record.diagnosis}`,
-                           url: `medical-record:${record._id}`, 
-                           fileType: "text/reference"
-                         }
-                         setAttachments([...attachments, newAttachment])
-                         setShowRecordPicker(false)
-                       }}
-                     >
-                       <Plus className="h-3 w-3" />
-                       Select Record
-                     </Button>
-                   </div>
-                   {record.attachments && record.attachments.length > 0 ? (
-                     <div className="flex flex-wrap gap-2 pt-2 border-t border-primary/5 mt-2">
-                       {record.attachments.map((file, idx) => (
-                         <button
-                           key={idx}
-                           onClick={(e) => {
-                             e.stopPropagation()
-                             if (!attachments.find(a => a.url === file.url)) {
-                               setAttachments([...attachments, file])
-                             }
-                             setShowRecordPicker(false)
-                           }}
-                           className="flex items-center gap-1.5 px-2 py-1 bg-background rounded-lg border border-primary/10 text-[9px] font-bold hover:border-primary hover:bg-primary/5 transition-all active:scale-95"
-                         >
-                           <Plus className="h-2.5 w-2.5 text-primary" />
-                           <span className="max-w-[150px] truncate">{file.name}</span>
-                         </button>
-                       ))}
-                     </div>
-                   ) : (
-                     <div className="text-[9px] text-muted-foreground flex items-center gap-1.5 pt-2 border-t border-primary/5 mt-2 italic opacity-60">
-                       <FileText className="h-3 w-3" />
-                       No attached files for this record
-                     </div>
-                   )}
-                 </div>
-               ))
-             )}
+          <div className="p-6 pt-2 overflow-y-auto max-h-[50vh] space-y-2">
+            {loadingRecords ? (
+              <div className="py-10 text-center">
+                <Clock className="h-8 w-8 animate-spin mx-auto text-primary/30 mb-2" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase animate-pulse">Synchronizing Data...</p>
+              </div>
+            ) : myRecords.length === 0 ? (
+              <div className="py-10 text-center bg-white/40 border border-dashed border-primary/10 rounded-2xl">
+                <History className="h-10 w-10 mx-auto mb-2 opacity-5" />
+                <p className="text-[10px] font-bold text-muted-foreground uppercase opacity-60">No Records available</p>
+              </div>
+            ) : (
+              myRecords.map((record) => (
+                <div key={record._id} className="group p-3 border border-primary/5 rounded-2xl bg-white/40 hover:bg-white/70 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-slate-800 truncate mb-0.5">{record.diagnosis}</h4>
+                      <div className="flex items-center gap-1.5 opacity-60">
+                        <Calendar className="h-2.5 w-2.5" />
+                        <span className="text-[9px] font-bold uppercase">{new Date(record.date).toLocaleDateString("en-US", { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="h-7 rounded-lg px-2.5 font-bold text-[9px] uppercase tracking-widest bg-primary/5 text-primary hover:bg-primary hover:text-white border-primary/10 transition-all"
+                      onClick={() => {
+                        const newAttachment = {
+                          name: `Summary: ${record.diagnosis}`,
+                          url: `medical-record:${record._id}`,
+                          fileType: "text/reference"
+                        }
+                        if (!attachments.find(a => a.url === newAttachment.url)) {
+                          setAttachments([...attachments, newAttachment])
+                        }
+                        setShowRecordPicker(false)
+                      }}
+                    >
+                      Attach
+                    </Button>
+                  </div>
+                  {record.attachments && record.attachments.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2.5 pt-2 buffer border-t border-primary/5 overflow-hidden">
+                      {record.attachments.slice(0, 3).map((file, idx) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (!attachments.find(a => a.url === file.url)) {
+                              setAttachments([...attachments, file])
+                            }
+                            setShowRecordPicker(false)
+                          }}
+                          className="flex items-center gap-1 px-1.5 py-0.5 bg-background border border-primary/5 rounded text-[8px] font-bold hover:bg-primary/5 transition-all truncate max-w-[100px]"
+                        >
+                          {file.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+          <div className="p-4 bg-muted/20 border-t border-primary/5 text-center">
+            <p className="text-[9px] font-bold text-muted-foreground uppercase opacity-60 tracking-widest">Secure end-to-end medical encryption</p>
           </div>
         </DialogContent>
       </Dialog>

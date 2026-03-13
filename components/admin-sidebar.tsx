@@ -57,62 +57,79 @@ export function AdminSidebar() {
         return () => clearInterval(interval)
     }, [])
     return (
-        <aside className="w-64 border-r bg-card flex flex-col hidden md:flex border-border/40">
-            <div className="p-6 border-b border-border/40">
-                <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-                        <AlertTriangle className="h-5 w-5 text-primary-foreground" />
-                    </div>
-                    <span className="font-bold text-xl tracking-tight">Admin<span className="text-primary">Panel</span></span>
+        <aside className="fixed bottom-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-2xl border-t border-primary/5 md:top-0 md:bottom-auto md:right-auto md:border-t-0 md:border-r md:h-screen md:w-20 lg:w-64 flex flex-col hidden md:flex transition-all duration-500">
+            {/* Logo Section */}
+            <div className="flex items-center gap-3 px-6 pb-8 pt-4 relative">
+                <div className="h-11 w-11 bg-gradient-to-br from-primary to-primary/80 rounded-[18px] flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-transform hover:scale-105 duration-300">
+                    <AlertTriangle className="h-6 w-6 text-white" />
+                </div>
+                <div className="hidden lg:flex flex-col">
+                    <span className="font-black text-xl tracking-tight text-slate-800">
+                        Admin<span className="text-primary">Console</span>
+                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 -mt-1 italic">Control Center</span>
                 </div>
             </div>
 
-            <nav className="flex-1 p-4 space-y-1">
-                {
-                    navItems.map((item) => {
-                        const isActive = pathname === item.href
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                                    isActive
-                                        ? "bg-primary/10 text-primary"
-                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                )}
-                            >
-                                <item.icon className="h-5 w-5" />
-                                <span>{item.label}</span>
-                                {item.label === "Emergency Cases" && stats.pending > 0 && (
-                                    <Badge className="ml-auto bg-emergency text-emergency-foreground">
-                                        {stats.pending}
-                                    </Badge>
-                                )}
-                                {item.label === "Messages" && stats.unread > 0 && (
-                                    <Badge className="ml-auto bg-primary text-primary-foreground">
-                                        {stats.unread}
-                                    </Badge>
-                                )}
-                            </Link>
-                        )
-                    })
-                }
-            </nav >
+            {/* Navigation Items */}
+            <nav className="flex-1 p-2 space-y-1 overflow-y-auto custom-scrollbar">
+                {navItems.map((item) => {
+                    const isActive = pathname === item.href
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={cn(
+                                "flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 relative group md:w-full",
+                                isActive
+                                    ? "bg-primary/10 text-primary font-bold shadow-sm shadow-primary/5"
+                                    : "text-slate-500 hover:bg-primary/5 hover:text-primary"
+                            )}
+                        >
+                            {/* Active Indicator */}
+                            {isActive && (
+                                <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full hidden md:block" />
+                            )}
+                            
+                            <item.icon className={cn(
+                                "h-5 w-5 transition-transform duration-300",
+                                isActive ? "scale-110" : "group-hover:scale-110"
+                            )} />
+                            
+                            <span className="text-sm font-bold tracking-tight lg:inline hidden md:hidden lg:inline">{item.label}</span>
+                            
+                            {item.label === "Emergency Cases" && stats.pending > 0 && (
+                                <Badge className="ml-auto bg-emergency/90 text-white border-none shadow-lg shadow-emergency/20 text-[10px] h-5 px-1.5 animate-pulse lg:flex hidden">
+                                    {stats.pending}
+                                </Badge>
+                            )}
+                            {item.label === "Messages" && stats.unread > 0 && (
+                                <Badge className="ml-auto bg-primary text-white border-none shadow-lg shadow-primary/20 text-[10px] h-5 px-1.5 font-bold lg:flex hidden">
+                                    {stats.unread}
+                                </Badge>
+                            )}
+                        </Link>
+                    )
+                })}
+            </nav>
 
-            <div className="p-4 border-t">
+            {/* Bottom Actions */}
+            <div className="p-4 mt-auto border-t border-primary/5 space-y-1">
                 <button
                     type="button"
-                    className="flex items-center gap-3 px-4 py-3 w-full text-muted-foreground hover:text-foreground transition-colors"
+                    className="flex items-center gap-4 px-4 py-3.5 w-full text-slate-400 hover:text-slate-800 hover:bg-white/40 rounded-2xl transition-all group"
                 >
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
+                    <Settings className="h-5 w-5 group-hover:rotate-45 transition-transform duration-500" />
+                    <span className="text-sm font-bold tracking-tight lg:inline hidden md:hidden lg:inline">Settings</span>
                 </button>
-                <Link href="/auth" className="flex items-center gap-3 px-4 py-3 w-full text-muted-foreground hover:text-foreground transition-colors">
-                    <LogOut className="h-5 w-5" />
-                    <span>Logout</span>
+                <Link 
+                    href="/auth" 
+                    className="flex items-center gap-4 px-4 py-3.5 w-full text-slate-400 hover:text-emergency hover:bg-emergency/5 rounded-2xl transition-all group"
+                >
+                    <LogOut className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+                    <span className="text-sm font-bold tracking-tight lg:inline hidden md:hidden lg:inline">Logout</span>
                 </Link>
             </div>
-        </aside >
+        </aside>
     )
 }

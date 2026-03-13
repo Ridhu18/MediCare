@@ -29,7 +29,11 @@ interface Hospital {
   image?: string
 }
 
-export function HospitalChat() {
+interface HospitalChatProps {
+  activeTab?: string
+}
+
+export function HospitalChat({ activeTab }: HospitalChatProps) {
   const [hospitals, setHospitals] = useState<Hospital[]>([])
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null)
   const [input, setInput] = useState("")
@@ -99,12 +103,12 @@ export function HospitalChat() {
     }
   }, [selectedHospital, currentUser, socket])
 
-  // Scroll to bottom on new messages
+  // Scroll to bottom on new messages or when tab becomes active
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollIntoView({ behavior: activeTab === "hospitals" ? "auto" : "smooth" })
     }
-  }, [messages])
+  }, [messages, activeTab])
 
   const sendMessage = async () => {
     if (!selectedHospital || !currentUser || !socket) return
@@ -171,14 +175,15 @@ export function HospitalChat() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-200px)] min-h-[500px] border rounded-lg overflow-hidden">
+    <div className="flex h-[calc(100vh-200px)] min-h-[500px] border border-primary/10 rounded-2xl overflow-hidden bg-background/50 backdrop-blur-xl shadow-2xl relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 -z-10" />
       {/* Hospital List */}
       <div className={cn(
-        "w-full md:w-80 border-r bg-card",
+        "w-full md:w-80 border-r bg-background/40 backdrop-blur-md z-10",
         selectedHospital && "hidden md:block"
       )}>
-        <div className="p-4 border-b">
-          <h2 className="font-semibold">Hospitals</h2>
+        <div className="p-6 border-b">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary/70">Hospitals</h2>
         </div>
         <ScrollArea className="h-[calc(100vh-257px)] min-h-[443px]">
           {hospitals.map((hospital) => (
@@ -186,8 +191,8 @@ export function HospitalChat() {
               key={hospital._id}
               onClick={() => setSelectedHospital(hospital)}
               className={cn(
-                "w-full p-4 text-left hover:bg-muted/50 transition-colors border-b",
-                selectedHospital?._id === hospital._id && "bg-muted"
+                "w-full p-4 text-left transition-all duration-300 border-b border-border/40 group",
+                selectedHospital?._id === hospital._id ? "bg-primary/10" : "hover:bg-primary/5"
               )}
             >
               <div className="flex items-start gap-3">
@@ -215,29 +220,32 @@ export function HospitalChat() {
       {selectedHospital ? (
         <div className="flex-1 flex flex-col h-full min-w-0">
           {/* Chat Header */}
-          <div className="p-4 border-b flex items-center gap-3">
+          <div className="p-4 border-b bg-background/40 backdrop-blur-md flex items-center gap-4 sticky top-0 z-20">
             <Button
               variant="ghost"
-              size="sm"
-              className="md:hidden"
+              size="icon"
+              className="md:hidden rounded-full h-10 w-10 hover:bg-primary/10 text-primary"
               onClick={() => setSelectedHospital(null)}
             >
               Back
             </Button>
-            <Avatar className="h-10 w-10">
-              {selectedHospital.image && <AvatarImage src={`http://localhost:5000${selectedHospital.image}`} />}
-              <AvatarFallback className="bg-primary/10 text-primary">
-                <Building2 className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="h-10 w-10 border-2 border-primary/20 ring-2 ring-primary/5">
+                {selectedHospital?.image && <AvatarImage src={`http://localhost:5000${selectedHospital.image}`} />}
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  <Building2 className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-background ring-1 ring-success/20" />
+            </div>
             <div>
-              <h3 className="font-semibold">{selectedHospital.name}</h3>
-              <p className="text-xs text-success">Online</p>
+              <h3 className="font-bold text-base">{selectedHospital?.name}</h3>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-success">Official Account • Online</p>
             </div>
           </div>
 
           {/* Messages */}
-          <ScrollArea className="flex-1 p-4 h-[calc(100vh-344px)] min-h-[356px]" ref={scrollRef}>
+          <ScrollArea className="flex-1 p-4 h-[calc(100vh-344px)] min-h-[356px]">
             <div className="space-y-4">
               {messages.map((message) => {
                 const isUser = message.senderModel === "User"
@@ -266,10 +274,10 @@ export function HospitalChat() {
                     </Avatar>
                     <div
                       className={cn(
-                        "rounded-lg p-3 max-w-[70%]",
+                        "rounded-2xl p-4 max-w-[75%] shadow-sm transition-all duration-300",
                         isUser
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
+                          ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-tr-none"
+                          : "bg-card border border-border/50 rounded-tl-none"
                       )}
                     >
                       {message.fileUrl && (
@@ -328,16 +336,17 @@ export function HospitalChat() {
                   Send a message to start the conversation
                 </div>
               )}
+              {/* Bottom anchor for scrolling */}
+              <div ref={scrollRef} className="h-1" />
             </div>
           </ScrollArea>
 
-          {/* Input */}
-          <div className="p-4 border-t flex flex-col gap-2">
+          <div className="p-4 border-t flex flex-col gap-3 bg-background/40 backdrop-blur-md relative z-10">
             {selectedFile && (
-              <div className="flex items-center gap-2 bg-muted p-2 rounded-md w-fit text-sm">
+              <div className="flex items-center gap-3 bg-primary/10 p-2.5 rounded-xl border border-primary/20 w-fit text-xs font-semibold text-primary animate-in fade-in slide-in-from-bottom-2">
                 <Paperclip className="h-4 w-4" />
-                <span className="truncate max-w-[200px]">{selectedFile.name}</span>
-                <Button type="button" variant="ghost" size="icon" className="h-4 w-4 ml-2" onClick={() => {
+                <span className="truncate max-w-[200px]">{selectedFile?.name}</span>
+                <Button type="button" variant="ghost" size="icon" className="h-5 w-5 ml-1 hover:bg-primary/20 rounded-full" onClick={() => {
                   setSelectedFile(null)
                   if (fileInputRef.current) fileInputRef.current.value = ""
                 }}>
@@ -350,7 +359,7 @@ export function HospitalChat() {
                 e.preventDefault()
                 sendMessage()
               }}
-              className="flex gap-2 w-full"
+              className="flex gap-3 bg-muted/30 p-1.5 rounded-2xl border border-border/40 focus-within:border-primary/40 focus-within:bg-background/60 transition-all duration-300"
             >
               <input
                 type="file"
@@ -358,18 +367,29 @@ export function HospitalChat() {
                 onChange={handleFileSelect}
                 className="hidden"
               />
-              <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
-                <Paperclip className="h-4 w-4" />
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="icon" 
+                className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Paperclip className="h-5 w-5" />
               </Button>
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1"
+                className="flex-1 border-none bg-transparent focus-visible:ring-0 px-1 placeholder:text-muted-foreground/60 h-10"
                 disabled={isUploading}
               />
-              <Button type="submit" size="icon" disabled={(!input.trim() && !selectedFile) || isUploading}>
-                <Send className="h-4 w-4" />
+              <Button 
+                type="submit" 
+                size="icon" 
+                disabled={(!input.trim() && !selectedFile) || isUploading}
+                className="h-10 w-10 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all bg-gradient-to-br from-primary to-primary/80"
+              >
+                <Send className="h-4.5 w-4.5" />
               </Button>
             </form>
           </div>

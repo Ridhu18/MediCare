@@ -11,6 +11,7 @@ import {
   User,
   LayoutDashboard,
   LogOut,
+  History,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -19,6 +20,7 @@ const userNavItems = [
   { href: "/emergency", icon: AlertCircle, label: "Emergency" },
   { href: "/hospitals", icon: Hospital, label: "Hospitals" },
   { href: "/health-card", icon: CreditCard, label: "Health Card" },
+  { href: "/history", icon: History, label: "History" },
   { href: "/chat", icon: MessageCircle, label: "Chat" },
   { href: "/profile", icon: User, label: "Profile" },
 ]
@@ -39,45 +41,60 @@ export function AppNavigation({ isAdmin = false }: AppNavigationProps) {
   const navItems = isAdmin ? adminNavItems : userNavItems
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border md:top-0 md:bottom-auto md:right-auto md:border-t-0 md:border-r md:h-screen md:w-20 lg:w-64">
-      <div className="flex md:flex-col items-center justify-around md:justify-start md:pt-6 md:gap-2 p-2 md:h-full">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-2xl border-t border-primary/5 md:top-0 md:bottom-auto md:right-auto md:border-t-0 md:border-r md:h-screen md:w-20 lg:w-64 transition-all duration-500">
+      <div className="flex md:flex-col items-center justify-around md:justify-start md:pt-4 md:gap-1 p-2 md:h-full">
         {/* Logo - Desktop only */}
-        <div className="hidden md:flex items-center gap-3 px-4 pb-6 border-b border-border w-full">
-          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">M+</span>
+        <div className="hidden md:flex items-center gap-3 px-6 pb-8 pt-4 w-full">
+          <div className="h-11 w-11 rounded-[18px] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-transform hover:scale-105 duration-300">
+            <span className="text-white font-black text-xl tracking-tighter">M+</span>
           </div>
-          <span className="hidden lg:block font-bold text-lg">MediCare+</span>
+          <div className="hidden lg:flex flex-col">
+            <span className="font-black text-xl tracking-tight text-slate-800">MediCare+</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 -mt-1 italic">Patient Portal</span>
+          </div>
         </div>
 
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex flex-col md:flex-row items-center gap-1 md:gap-3 p-2 md:px-4 md:py-3 rounded-lg transition-colors md:w-full",
-                isActive
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="text-xs md:text-sm lg:inline hidden md:hidden lg:inline">
-                {item.label}
-              </span>
-            </Link>
-          )
-        })}
+        <div className="flex md:flex-col gap-1 w-full px-2">
+          {navItems.map((item) => {
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex flex-col md:flex-row items-center gap-1 md:gap-4 p-2 md:px-5 md:py-3.5 rounded-2xl transition-all duration-300 md:w-full group relative",
+                  isActive
+                    ? "text-primary bg-primary/10 shadow-sm shadow-primary/5"
+                    : "text-slate-500 hover:text-primary hover:bg-primary/5"
+                )}
+              >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-r-full hidden md:block" />
+                )}
+                <item.icon className={cn(
+                  "h-5 w-5 transition-transform duration-300",
+                  isActive ? "scale-110" : "group-hover:scale-110"
+                )} />
+                <span className={cn(
+                  "text-[10px] md:text-sm lg:inline hidden md:hidden lg:inline font-bold tracking-tight transition-colors",
+                  isActive ? "text-primary" : "text-slate-500 group-hover:text-primary"
+                )}>
+                  {item.label}
+                </span>
+              </Link>
+            )
+          })}
+        </div>
 
         {/* Logout (Patient/User only) */}
         {!isAdmin && (
-          <div className="hidden md:block border-t border-border mt-auto w-full">
+          <div className="hidden md:block mt-auto w-full px-4 pb-6">
+             <div className="h-px w-full bg-primary/5 mb-6" />
             <Link
               href="/auth"
-              className="flex items-center gap-3 px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center gap-4 px-4 py-3.5 text-sm font-bold text-slate-400 hover:text-emergency hover:bg-emergency/5 rounded-2xl transition-all duration-300 group"
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
               <span className="hidden lg:inline">Logout</span>
             </Link>
           </div>

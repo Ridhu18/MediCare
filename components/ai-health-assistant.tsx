@@ -32,9 +32,10 @@ const quickQuestions = [
 
 interface AIHealthAssistantProps {
   className?: string
+  activeTab?: string
 }
 
-export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
+export function AIHealthAssistant({ className, activeTab }: AIHealthAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([])
 
   useEffect(() => {
@@ -66,10 +67,15 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth" })
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior })
+      }
     }
-  }, [messages, isTyping])
+
+    // Scroll automatically on new messages, typing status change, or when tab becomes active
+    scrollToBottom(activeTab === "ai" ? "auto" : "smooth")
+  }, [messages, isTyping, activeTab])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -254,8 +260,9 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
   }
 
   return (
-    <Card className={cn("flex flex-col h-[calc(100vh-15rem)]", className)}>
-      <CardHeader className="pb-3 border-b flex flex-row items-center justify-between">
+    <Card className={cn("flex flex-col h-[calc(100vh-15rem)] border-primary/10 shadow-xl bg-background/50 backdrop-blur-xl relative overflow-hidden", className)}>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 -z-10" />
+      <CardHeader className="pb-3 border-b bg-background/40 backdrop-blur-md flex flex-row items-center justify-between sticky top-0 z-20">
         <CardTitle className="flex items-center gap-2 text-lg">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
             <Sparkles className="h-4 w-4 text-primary" />
@@ -274,7 +281,7 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
         </Button>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
-        <div className="flex-1 overflow-y-auto w-full p-4" ref={scrollRef}>
+        <div className="flex-1 overflow-y-auto w-full p-4">
           <div className="space-y-4 pb-4">
             {messages.map((message) => (
               <div
@@ -300,14 +307,14 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
                 </div>
                 <div
                   className={cn(
-                    "rounded-lg p-3 max-w-[80%] text-sm",
+                    "rounded-2xl p-4 max-w-[85%] text-sm shadow-sm transition-all duration-300 hover:shadow-md",
                     message.role === "assistant"
-                      ? "bg-muted"
-                      : "bg-primary text-primary-foreground"
+                      ? "bg-card border border-border/50 rounded-tl-none"
+                      : "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-tr-none"
                   )}
                 >
                   {message.role === "assistant" ? (
-                    <div className="break-words space-y-2">
+                    <div className="break-words space-y-2 opacity-90">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -315,22 +322,22 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
                           ul: ({ node, ...props }) => <ul className="list-disc pl-5 mt-2 space-y-1" {...props} />,
                           ol: ({ node, ...props }) => <ol className="list-decimal pl-5 mt-2 space-y-1" {...props} />,
                           li: ({ node, ...props }) => <li {...props} />,
-                          strong: ({ node, ...props }) => <strong className="font-semibold text-foreground" {...props} />,
+                          strong: ({ node, ...props }) => <strong className="font-semibold text-primary" {...props} />,
                         }}
                       >
                         {message.content}
                       </ReactMarkdown>
                     </div>
                   ) : (
-                    <div className="whitespace-pre-wrap">
+                    <div className="whitespace-pre-wrap font-medium">
                       {message.attachmentUrl && (
-                        <div className="mb-2">
+                        <div className="mb-3 rounded-xl overflow-hidden shadow-lg border-2 border-primary-foreground/20">
                           {message.attachmentUrl.startsWith('data:image') ? (
-                            <img src={message.attachmentUrl} alt="attachment" className="max-w-[200px] h-auto rounded-md border border-primary/20" />
+                            <img src={message.attachmentUrl} alt="attachment" className="max-w-[200px] h-auto" />
                           ) : (
-                            <div className="flex items-center gap-2 p-2 bg-primary-foreground/10 rounded-md border border-primary/20">
-                              <FileText className="h-4 w-4" />
-                              <span className="text-xs">File attached</span>
+                            <div className="flex items-center gap-2 p-3 bg-primary-foreground/10">
+                              <FileText className="h-5 w-5" />
+                              <span className="text-sm">File attached</span>
                             </div>
                           )}
                         </div>
@@ -361,13 +368,13 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
         </div>
 
         {/* Quick Questions */}
-        <div className="px-4 pb-4 pt-2 shrink-0 border-t bg-muted/30">
-          <p className="text-xs text-muted-foreground mb-2 px-1">Suggested questions:</p>
+        <div className="px-4 pb-4 pt-4 shrink-0 border-t bg-background/30 backdrop-blur-sm relative z-10">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-primary/60 mb-3 px-1">Suggested for you</p>
           <div className="flex flex-wrap gap-2">
             {quickQuestions.map((question) => (
               <button
                 key={question}
-                className="text-xs px-3 py-1.5 rounded-md border bg-background hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs px-4 py-2 rounded-full border border-primary/10 bg-background/50 hover:bg-primary hover:text-primary-foreground hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm"
                 onClick={() => sendMessage(question)}
               >
                 {question}
@@ -400,8 +407,8 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
         )}
 
         {/* Input */}
-        <form onSubmit={handleSubmit} className="p-4 border-t shrink-0">
-          <div className="flex gap-2">
+        <form onSubmit={handleSubmit} className="p-4 border-t shrink-0 bg-background/40 backdrop-blur-md relative z-10">
+          <div className="flex gap-3 bg-muted/30 p-1.5 rounded-2xl border border-border/40 focus-within:border-primary/40 focus-within:bg-background/60 transition-all duration-300">
             <input
               type="file"
               ref={fileInputRef}
@@ -413,7 +420,7 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
               type="button"
               variant="ghost"
               size="icon"
-              className="shrink-0 text-muted-foreground hover:text-foreground"
+              className="shrink-0 h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
               onClick={() => fileInputRef.current?.click()}
               disabled={isTyping}
               title="Attach a file or image"
@@ -423,16 +430,21 @@ export function AIHealthAssistant({ className }: AIHealthAssistantProps) {
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask a health question..."
-              className="flex-1"
+              placeholder="Type your health concern..."
+              className="flex-1 border-none bg-transparent focus-visible:ring-0 px-1 placeholder:text-muted-foreground/60 h-10"
             />
-            <Button type="submit" size="icon" disabled={(!input.trim() && !selectedFile) || isTyping}>
-              <Send className="h-4 w-4" />
+            <Button 
+              type="submit" 
+              size="icon" 
+              disabled={(!input.trim() && !selectedFile) || isTyping}
+              className="h-10 w-10 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all bg-gradient-to-br from-primary to-primary/80"
+            >
+              <Send className="h-4.5 w-4.5" />
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1 justify-center">
+          <p className="text-[10px] text-muted-foreground/60 mt-3 flex items-center gap-1.5 justify-center tracking-wide">
             <AlertCircle className="h-3 w-3" />
-            Not a substitute for professional medical advice
+            VIRTUAL ASSISTANT • NOT A SUBSTITUTE FOR PROFESSIONAL MEDICAL ADVICE
           </p>
         </form>
       </CardContent>

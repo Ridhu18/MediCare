@@ -11,6 +11,7 @@ import {
   Star,
   ChevronRight,
   Map,
+  Hospital,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -124,26 +125,31 @@ export function NearbyHospitals({ onBookAppointment }: NearbyHospitalsProps) {
   const filteredHospitals = hospitals
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-primary" />
-            Nearby Hospitals
-          </CardTitle>
+    <Card className="border-none shadow-xl shadow-primary/5 bg-background/50 backdrop-blur-md rounded-2xl overflow-hidden">
+      <CardHeader className="p-4 pb-2 border-b border-primary/5">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+              <MapPin className="h-4 w-4" />
+            </div>
+            <CardTitle className="text-sm font-bold uppercase tracking-widest">
+              Nearby Hospitals
+            </CardTitle>
+          </div>
+          <div className="flex items-center gap-1.5">
             <Tabs value={radius} onValueChange={(v) => setRadius(v as "5" | "10" | "20")}>
-              <TabsList className="h-8">
-                <TabsTrigger value="5" className="text-xs px-3">5 km</TabsTrigger>
-                <TabsTrigger value="10" className="text-xs px-3">10 km</TabsTrigger>
-                <TabsTrigger value="20" className="text-xs px-3">20 km</TabsTrigger>
+              <TabsList className="bg-background/40 backdrop-blur-md border border-primary/5 p-0.5 rounded-lg h-7">
+                <TabsTrigger value="5" className="rounded-md px-2 py-0 text-[10px] font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all h-6">5km</TabsTrigger>
+                <TabsTrigger value="10" className="rounded-md px-2 py-0 text-[10px] font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all h-6">10km</TabsTrigger>
+                <TabsTrigger value="20" className="rounded-md px-2 py-0 text-[10px] font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all h-6">20km</TabsTrigger>
               </TabsList>
             </Tabs>
+            <div className="h-4 w-[1px] bg-primary/10 mx-1" />
             <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "list" | "map")}>
-              <TabsList className="h-8">
-                <TabsTrigger value="list" className="text-xs px-3">List</TabsTrigger>
-                <TabsTrigger value="map" className="text-xs px-3 flex items-center gap-1">
-                  <Map className="h-3 w-3" />
+              <TabsList className="bg-background/40 backdrop-blur-md border border-primary/5 p-0.5 rounded-lg h-7">
+                <TabsTrigger value="list" className="rounded-md px-2 py-0 text-[10px] font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all h-6">List</TabsTrigger>
+                <TabsTrigger value="map" className="rounded-md px-2 py-0 text-[10px] font-bold data-[state=active]:bg-primary data-[state=active]:text-white transition-all h-6 flex items-center gap-1">
+                  <Map className="h-2.5 w-2.5" />
                   Map
                 </TabsTrigger>
               </TabsList>
@@ -151,98 +157,73 @@ export function NearbyHospitals({ onBookAppointment }: NearbyHospitalsProps) {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3">
         {viewMode === "map" ? (
-          <div className="space-y-3">
+          <div className="rounded-xl overflow-hidden border border-primary/5 shadow-inner">
             <HospitalsMap
               hospitals={filteredHospitals}
               userLocation={userLocation || undefined}
               onHospitalClick={onBookAppointment}
-              height="400px"
+              height="350px"
             />
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {filteredHospitals.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
-                No hospitals found within {radius} km
-              </p>
+              <div className="flex flex-col items-center justify-center py-10 opacity-60">
+                <div className="p-3 rounded-full bg-muted/20 mb-3">
+                  <Hospital className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  No hospitals in {radius} km
+                </p>
+              </div>
             ) : (
               filteredHospitals.map((hospital) => (
                 <div
                   key={hospital.id}
-                  className="p-4 border rounded-lg hover:bg-muted/30 transition-colors"
+                  className="group p-3 border border-primary/5 rounded-xl bg-white/40 hover:bg-white/70 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold truncate">{hospital.name}</h3>
-                        {hospital.emergencyOpen && (
-                          <Badge variant="outline" className="text-success border-success text-xs">
-                            24/7 Emergency
-                          </Badge>
-                        )}
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-sm font-bold tracking-tight text-slate-800 truncate">{hospital.name}</h3>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 truncate">
+                      <p className="text-[10px] text-muted-foreground truncate mb-2">
                         {hospital.address}
                       </p>
-                      <div className="flex items-center gap-4 mt-2 text-sm flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <Navigation className="h-3.5 w-3.5 text-primary" />
-                          {hospital.distance} km
+                      <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        <span className="flex items-center gap-1 opacity-70">
+                          <Navigation className="h-3 w-3 text-primary" />
+                          {hospital.distance}km
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Star className="h-3.5 w-3.5 text-warning fill-warning" />
-                          {hospital.rating}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                          ~{hospital.waitTime}
-                        </span>
-                        <span
-                          className={cn(
-                            "flex items-center gap-1",
-                            hospital.availableBeds > 10
-                              ? "text-success"
-                              : hospital.availableBeds > 5
-                                ? "text-warning-foreground"
-                                : "text-emergency"
-                          )}
-                        >
-                          <Bed className="h-3.5 w-3.5" />
-                          {hospital.availableBeds}/{hospital.totalBeds} beds
-                        </span>
-                      </div>
-                      <div className="flex gap-1.5 mt-2 flex-wrap">
-                        {hospital.departments.slice(0, 3).map((dept) => (
-                          <Badge key={dept} variant="secondary" className="text-xs">
-                            {dept}
-                          </Badge>
-                        ))}
-                        {hospital.departments.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{hospital.departments.length - 3}
-                          </Badge>
-                        )}
                       </div>
                     </div>
-                    <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Button
                         size="sm"
-                        variant="outline"
-                        className="whitespace-nowrap bg-transparent"
+                        variant="ghost"
+                        className="h-8 rounded-lg px-2.5 bg-white/60 border border-primary/10 hover:bg-primary hover:text-white transition-all font-bold text-[9px] uppercase tracking-widest gap-1.5 hover:scale-[1.02] active:scale-95 shadow-sm"
+                        onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${hospital.lat},${hospital.lng}`, '_blank')}
+                      >
+                        <Navigation className="h-3 w-3" />
+                        Direction
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 rounded-lg px-2.5 bg-white/60 border border-emerald-200 hover:bg-emerald-500 hover:text-white transition-all shadow-sm group/call font-bold text-[9px] uppercase tracking-widest gap-1.5 hover:scale-[1.02] active:scale-95"
                         onClick={() => window.location.href = `tel:${hospital.phone.replace(/\s/g, "")}`}
                       >
-                        <Phone className="h-3.5 w-3.5 mr-1" />
+                        <Phone className="h-3 w-3 group-hover/call:scale-110 transition-transform" />
                         Call
                       </Button>
                       <Button
                         size="sm"
-                        className="whitespace-nowrap"
+                        className="h-8 rounded-lg px-3 font-bold text-[9px] uppercase tracking-widest shadow-lg shadow-primary/5 transition-all ml-0.5 hover:scale-[1.02] active:scale-95"
                         onClick={() => onBookAppointment?.(hospital)}
                       >
                         Book
-                        <ChevronRight className="h-3.5 w-3.5 ml-1" />
                       </Button>
                     </div>
                   </div>

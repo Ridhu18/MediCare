@@ -1,0 +1,26 @@
+# Git Commands Used to Resolve Push Error
+
+# 1. Diagnosis - Checking current status and branches
+git status
+git branch
+git remote -v
+git log -n 1
+
+# 2. Remote Check - Verifying remote repository state
+git fetch origin
+git branch -a
+git remote show origin
+
+# 3. Initial Commit and Push - Resolving the "src refspec main does not match any" error
+# This stages all files, creates the first commit, and pushes to remote
+git add .
+git commit -m "Initial commit of emergency app UI"
+git push -u origin main
+
+# 4. Cleanup - Removing node_modules from Git history
+# After updating .gitignore, these commands remove tracked files and re-add them 
+# (matching the new .gitignore rules) without deleting them from disk.
+git rm -r --cached .
+git add .
+git commit -m "Cleanup: remove node_modules and update .gitignore"
+git push origin main
