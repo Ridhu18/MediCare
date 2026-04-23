@@ -1,0 +1,1878 @@
+0.0 TRAINING TAKEN AT INDUSTRY
+==============================
+
+The Web Development Internship was structured to provide participants with an in-depth understanding of modern web application development using contemporary technologies such as Next.js 16, Node.js, Express.js, and MongoDB. The program emphasized industry-standard practices and focused on equipping interns with hands-on experience in building scalable, maintainable, and efficient healthcare web applications like Medicare+.
+
+During the training period at the industry, the focus was on gaining core competencies in full-stack development, system architecture, and real-world problem-solving. The internship covered the following areas:
+
+1. Full Stack Development (Next.js & Node.js)
+   Understanding the complete development cycle of web applications using Next.js 16 (React 19 framework) for frontend and Node.js with Express.js for backend development. Learned how to design RESTful APIs, manage server-side logic, and integrate complex healthcare frontends with backend services efficiently.
+
+2. Frontend Development & UI Design
+   Building responsive and modern user interfaces using React (Next.js App Router), Tailwind CSS, and optimized Radix UI components. Focus was on creating a "Soft Glassmorphism" aesthetic, reusable medical components, and improving user experience for patients and doctors with smooth transitions.
+
+3. Database Management (MongoDB & Mongoose)
+   Implementing database operations using MongoDB with Mongoose ODM. Learned schema design for medical records, patient data modeling, and handling CRUD operations efficiently. Also worked with geospatial data for locating nearby medical facilities.
+
+4. Geolocation & Map Integration
+   Developing location-based features using Leaflet.js for high-performance map rendering. Learned how to fetch user GPS coordinates, display nearby hospitals/clinics, and perform geospatial queries to identify healthcare services within a defined emergency radius.
+
+5. Authentication & Authorization (JWT)
+   Implementing secure authentication systems using JSON Web Tokens (JWT) and Bcrypt. Managed secure user sessions, protected clinical routes, and ensured role-based access for different users such as Patients, Doctors, and Hospital Administrators.
+
+6. Request Handling & Real-Time Workflow Logic
+   Designed and implemented complex request lifecycle management systems where medical appointments and SOS alerts move through multiple stages such as Pending -> Confirmed -> Completed / Resolved. Focus was on backend state handling and data consistency via Socket.io.
+
+7. AI-Based Feature Integration (Gemini AI Implementation)
+   Worked on integrating an innovative AI-based diagnosis and health assistant feature using Google's Gemini API. Users can upload medical documents (PDF/Images) and receive intelligent guidance and analysis for healthcare queries and clinical reports.
+
+8. API Development & Error Handling
+   Built robust REST APIs using Express.js with proper error handling, schema validation, and response structuring. Learned how to manage asynchronous operations and ensure extreme reliability in medical API communication.
+
+9. Version Control & Collaboration
+   Utilized Git and GitHub for version control, managing project branches, tracking technical documentation changes, and collaborating effectively during the development of the Medicare+ platform.
+
+10. Development & Testing Environment
+    The project was developed using Visual Studio Code and tested in a local environment. All core functionalities, including SOS triggers, appointment booking, and AI analysis, have been implemented and thoroughly tested using Postman to ensure reliable operation.
+
+The training focused on enhancing technical skills in full-stack web development along with problem-solving and teamwork. Through real-time project development, interns gained practical experience in building scalable and user-centric web applications like the Medicare+ Healthcare Platform.
+
+
+ABSTRACT
+========
+
+Medicare+ is a full-stack web application designed to streamline patient care, hospital administration, and healthcare service delivery by bringing critical medical services onto a unified digital platform. The system addresses the need for fast, reliable, and intelligent tools in healthcare environments - from emergency response to routine appointments and secure patient record management.
+
+Built on a modern tech stack, the application uses Next.js 16 with React 19 for a high-performance, server-rendered front end, while the backend is powered by Node.js with Express and a Mongoose ODM connected to a scalable MongoDB database. Real-time communication is facilitated through Socket.io, enabling live chat between patients and hospital administration with file and document sharing support. Secure authentication is implemented using JWT and bcrypt for data protection.
+
+A standout feature of the platform is the Digital Health Card system, aligned with ABHA (NDHM) standards, which generates unique patient IDs and QR codes to provide instant access to critical medical profiles during emergencies. The system also integrates an AI Health Assistant powered by Google's Gemini API, capable of answering patient queries and analysing uploaded medical documents. Advanced mapping integration allows patients to locate nearby hospitals effortlessly and navigate using Google Maps.
+
+Appointment management is a core module of Medicare+, featuring a complete lifecycle system with status transitions (Pending, Confirmed, Completed) and seamless Razorpay integration for secure online payment of consultation and appointment fees. Additional modules include a comprehensive Admin and Doctor Dashboard for ward management, bed availability tracking, and scheduling, as well as a Hospital Chat module for real-time provider-patient communication.
+
+The application adopts a premium "Soft Glassmorphism" UI aesthetic with micro-animations, ensuring an accessible and polished experience across both mobile and desktop devices. By combining AI capabilities, secure health record management, and integrated payments, Medicare+ delivers a scalable, intelligent, and user-centric solution to modernise digital healthcare infrastructure.
+
+
+1.1 PROJECT DETAILS
+===================
+
+Medicare+ is developed as a web-based application using Next.js 16, React 19, and Node.js with Express. It aims to serve as a comprehensive digital healthcare platform, helping hospitals and clinics streamline and manage their day-to-day medical operations efficiently. The system enables healthcare providers to handle essential tasks such as scheduling and managing appointments, maintaining digital patient health records, facilitating real-time doctor-patient communication, and processing consultation fee payments securely. By centralizing patient data and automating key workflows, Medicare+ reduces manual effort, minimizes administrative errors, and enhances overall productivity in a healthcare environment. The platform further integrates an AI-powered health assistant and integrated mapping services to make quality healthcare more accessible and responsive for patients.
+
+
+1.2 PURPOSE
+===========
+
+The primary goal of Medicare+ is to provide hospitals, clinics, and healthcare providers with a reliable and user-friendly digital platform to manage and streamline their daily medical operations. It simplifies critical tasks such as appointment scheduling, patient health record management, doctor-patient communication, and consultation fee processing while ensuring data accuracy and patient privacy. By automating routine administrative processes and centralizing health information, Medicare+ enhances operational efficiency, reduces manual errors, and improves overall productivity within healthcare environments - ultimately making quality healthcare more accessible and responsive for every patient.
+
+
+1.3 SCOPE
+=========
+
+The scope of Medicare+ encompasses both patient-facing and administrative functionalities, delivering a comprehensive digital healthcare experience. Patients can register, book appointments with doctors, pay consultation fees securely through Razorpay, access their digital health card with QR code, and communicate with hospital administrators via real-time chat. The AI Health Assistant allows patients to query health-related questions and upload medical documents for analysis, while integrated mapping services help them locate and navigate toward nearby hospitals. On the administrative side, hospital staff and doctors can manage appointments, track ward and bed availability, oversee patient records, and monitor real-time communications through a dedicated dashboard. The platform is built on a scalable tech stack including Next.js, React, Node.js, Express, and Mongoose ODM, ensuring reliable performance, data security, and extensibility for future healthcare modules.
+
+
+1.4 OBJECTIVES
+==============
+
+The objective of Medicare+ is to create a seamless, efficient, and user-friendly digital healthcare platform that simplifies hospital management and enhances the patient experience. This application is designed to provide a one-stop solution for patients and healthcare providers, offering easy access to appointment booking, health records, AI assistance, and secure payments.
+
+Key Goals:
+
+1. Simplified Appointment Booking Process:
+   - Develop an intuitive UI that ensures easy navigation for patients and doctors.
+   - Provide a streamlined appointment scheduling process with real-time status updates (Pending, Confirmed, Completed).
+
+2. Secure Payment Integration:
+   - Integrate Razorpay for secure and seamless online payment of consultation and appointment fees.
+   - Implement a structured order management system to handle payments and transaction records efficiently.
+
+3. Digital Health Card & Patient Records:
+   - Generate ABHA-compliant digital health cards with unique patient IDs and QR codes for rapid access during emergencies.
+   - Enable real-time hydration of medical data including allergies, medications, and emergency contacts onto the health card.
+
+4. AI-Powered Health Assistance:
+   - Integrate Google Gemini API to provide an intelligent health assistant capable of answering patient queries.
+   - Support multi-modal input, allowing users to upload medical documents and images for AI-driven analysis.
+
+5. Secure Authentication & User Management:
+   - Implement JWT-based authentication and bcrypt password hashing to ensure secure user login and data protection.
+   - Manage role-based access for patients, doctors, and administrators with appropriate dashboards.
+
+6. Real-Time Communication:
+   - Enable live doctor-patient chat using Socket.io with support for file and document sharing.
+   - Provide a dedicated admin chat interface for seamless inter-department communication.
+
+7. Hospital & Ward Management:
+   - Equip administrators with tools to monitor bed availability, ward status, and patient admissions in real time.
+   - Provide doctors with a dashboard to manage appointments, view patient histories, and update consultation records.
+
+8. Location-Based Hospital Discovery:
+   - Integrate Leaflet.js and OpenStreetMap to help patients locate nearby hospitals and healthcare centres on an interactive map.
+   - Provide external Google Maps integration for seamless navigation and GPS-guided directions to selected facilities.
+   - Enable the AI assistant to respond to location-based healthcare queries for enhanced accessibility.
+
+
+9. Multi-Platform Accessibility:
+   - Ensure the application is fully responsive and accessible across desktops, tablets, and mobile devices.
+   - Adopt a premium Glassmorphism UI aesthetic with micro-animations for a polished and engaging user experience.
+
+10. Patient Medical History & Record Access:
+    - Enable doctors to view complete patient medical records during appointments, including past diagnoses, prescribed medicines, allergies, and clinical notes.
+    - Allow doctors to access and review documents and lab reports attached to appointments for informed consultation decisions.
+
+11. Doctor Schedule & Availability Management:
+    - Allow doctors to set and update their availability schedule, enabling patients to book appointments only during available time slots.
+    - Provide doctors with a dedicated dashboard to track pending, confirmed, and completed appointments in real time.
+
+12. Doctor & Hospital Administration:
+    - Enable administrators to onboard and manage doctor profiles, including their specialization and availability within the platform.
+    - Provide a centralized admin control panel to monitor overall statistics such as total appointments, registered doctors, hospitals, and patients.
+    - Allow administrators to manage hospital listings and oversee emergency case queues from a single dashboard.
+
+13. SOS Emergency Alert System:
+    - Provide patients with a dedicated SOS button that triggers a hold-to-activate countdown with GPS location capture.
+    - Automatically create an emergency case in the backend upon SOS activation, alerting the hospital response center with the patient's live coordinates and emergency type.
+    - Support audio alerts and a silent mode for discreet emergency triggering in sensitive situations.
+
+14. Emergency Contacts Management:
+    - Allow patients to add and manage up to two trusted emergency contacts (family or guardians) with their name, relation, and phone number.
+    - Automatically notify registered emergency contacts when an SOS is triggered, ensuring rapid response from trusted individuals.
+
+15. First Aid Guides & Incident History:
+    - Provide built-in interactive first aid guides covering critical scenarios such as heart attacks, choking, severe bleeding, and burns to assist users before medical help arrives.
+    - Maintain a personal incident timeline for each patient, recording past SOS events with emergency type, location, timestamp, and resolution status for reference and follow-up.
+
+16. Comprehensive Medical History & PDF Export:
+    - Provide a unified medical history page with tabbed views for emergencies, appointments, and medical reports, each with time-period filtering.
+    - Enable patients to view a detailed summary for each record and download individual medical reports or appointment summaries as printable PDF documents.
+
+17. Patient Profile & Document Management:
+    - Allow patients to manage their personal profile including name, phone, address, and profile picture upload.
+    - Enable patients to upload external medical documents directly to their health record, auto-linked to their history.
+    - Provide an entire health history PDF export, dark/light/system theme toggle, notification preferences, and privacy settings from the profile page.
+
+1.5 TECHNOLOGY REVIEW
+=====================
+
+Frontend: Next.js 16, React 19, Tailwind CSS for fast, responsive UI and premium Glassmorphism design.
+Backend: Node.js, Express.js with JWT for secure role-based authentication.
+Database: MongoDB with Mongoose ODM for flexible and optimized healthcare data management.
+Real-Time: Socket.io for live hospital-patient communication and appointment status synchronization.
+AI Assistant: Google Gemini API integration for intelligent health queries and medical document analysis.
+Geolocation & Maps: Browser Geolocation API for user positioning, Leaflet.js with OpenStreetMap for interactive hospital discovery, and external Google Maps integration for navigation directions.
+Payments: Razorpay for secure medical consultation and appointment fee transactions.
+Security & Performance: Bcrypt.js for password hashing, CORS, and modern lazy-loaded components for optimal performance.
+
+A robust, scalable, and secure digital healthcare and emergency assistance platform.
+
+
+2.1.1 TECHNICAL FEASIBILITY
+===========================
+
+From a technical perspective, the development of the Medicare+ platform is highly feasible. The project is built using modern, scalable, and widely adopted web technologies that support real-time data processing, live communication, and responsive user interfaces.
+
+- Development Platform: Node.js with Express.js (for scalable backend and API handling)
+- Frontend: Next.js (React), Tailwind CSS, Radix UI (for modern, responsive, and accessible UI)
+- Database: MongoDB with Mongoose (for flexible and efficient healthcare data storage)
+- Mapping & Location Services: Browser Geolocation API and React Leaflet (for real-time hospital discovery and distance calculation)
+- Authentication: JSON Web Tokens (JWT) and Bcrypt.js (for secure user sessions and data protection)
+- Real-Time Communication: Socket.io (for instantaneous hospital-patient chat and live status tracking)
+- AI Integration: Google Gemini API (for intelligent health queries and medical document analysis)
+- Tools & IDEs: Visual Studio Code, Postman, MongoDB Compass (for development and testing)
+
+The use of Socket.io ensures instantaneous communication between patients and healthcare providers. Additionally, the integration of an AI-powered health assistant using the Google Gemini API enhances the technical capability of the system, making it innovative and future-ready for modern digital healthcare.
+
+
+2.1.2 TIME SCHEDULE FEASIBILITY
+===============================
+
+The development timeline for the Medicare+ platform is planned to ensure efficient completion while maintaining high-quality code and robust performance. The project follows a phased approach, starting with core functionalities such as user authentication, digital health card generation, and appointment booking.
+
+In later stages, advanced features such as the Gemini AI-powered Health Assistant, live doctor-patient Socket.io chat, and the emergency SOS alert system are implemented.
+
+The project follows an Agile development methodology, allowing iterative progress and continuous improvements. Tasks are divided into smaller, manageable modules and developed in systematic sprints, ensuring the timely completion of each phase.
+
+Since the project is currently under development and not yet deployed for public production, the current timeline prioritizes completing all core healthcare modules, comprehensive testing, and application optimization within the required academic duration.
+
+
+2.1.3 OPERATIONAL FEASIBILITY
+=============================
+
+The Medicare+ platform is operationally feasible as it provides a practical solution to real-world problems faced by patients and healthcare providers during medical emergencies and routine care.
+
+The system simplifies the process of finding nearby hospitals and booking doctor appointments, significantly reducing the time and effort required to get medical assistance. The intuitive, modern user interface ensures that patients of all ages can easily navigate the platform, access their digital health cards, and request services without needing technical knowledge.
+
+The AI Health Assistant and built-in interactive First Aid Guides further enhance usability by allowing users to handle minor health queries independently and take safe, immediate action during critical incidents before professional help arrives. 
+
+Overall, the system improves healthcare efficiency, reduces dependency on manual administrative searching, and provides a highly reliable solution for medical emergencies and hospital management, making it an immensely beneficial and practical tool for the healthcare sector.
+
+
+2.2.1 PROJECT DEVELOPMENT APPROACH AND JUSTIFICATION
+====================================================
+
+For the Medicare+ platform, the Agile development methodology has been adopted. Agile is suitable for this project as it allows flexibility, continuous feedback, and incremental feature development. Since user requirements and healthcare functionalities may evolve (e.g., UI improvements, adding telemedicine, or adjusting dashboard metrics), Agile helps in adapting quickly without affecting the overall system stability.
+
+Development Phases:
+
+1. Requirements Gathering
+Identification of core features such as appointment booking, digital health cards, real-time hospital-patient chat, and AI Health Assistance.
+2. Design
+Creating modern Glassmorphism UI/UX layouts using Tailwind CSS and Radix UI, along with designing database schemas for patients, doctors, appointments, and medical records.
+3. Development (Iteration Phase)
+Implementing features in multiple sprints:
+   - Core modules (secure JWT authentication, health cards, appointment scheduling)
+   - Advanced features (Gemini AI integration, Socket.io chat, SOS geolocated alerts)
+4. Testing & Quality Assurance
+Performing unit testing, API testing, UI responsiveness testing, and fixing bugs to ensure critical system reliability.
+5. Pre-Deployment Preparation
+Optimizing performance, securing API endpoints (CORS, Bcrypt hashing), and preparing the system for future production deployment (currently not deployed).
+6. Feedback & Improvement
+Continuously refining the interface and system logic based on testing results and usability improvements.
+
+Advantages of Agile for this Project:
+- Enables fast development and frequent healthcare feature updates
+- Allows flexibility to modify UI and features based on patient and doctor feedback
+- Encourages continuous testing and security improvement
+- Helps in building a highly user-centric and optimized healthcare platform
+
+Disadvantages of Agile:
+- Requires consistent monitoring and updates across all medical modules
+- Feature scope may change frequently requiring database schema migrations
+- Proper documentation must be maintained continuously to ensure clinical alignment
+
+
+2.2.2 GROUP DEPENDENCIES
+========================
+
+The development of the Medicare+ platform depends on coordination between different functional roles:
+
+Development Team
+- Depends on finalized UI/UX design and healthcare feature requirements
+- Implements frontend components, backend logic, and secure API integrations
+- Works on Socket.io real-time chat, AI integration, and medical record management
+
+Testing Team
+- Requires stable modules from developers
+- Reports bugs, tests secure payment flows, and ensures overall system quality and compliance
+
+UI/UX Design Team
+- Designs modern, user-friendly Glassmorphism interfaces
+- Ensures visual consistency and accessibility across all dashboards (Patient, Doctor, Admin, Hospital)
+
+Future Deployment Team (Planned)
+- Will handle hosting and secure production deployment
+- Will configure server environments, load balancing, and continuous performance monitoring
+
+Maintenance & Support (Future Scope)
+- Will handle continuous updates, bug fixes, and feature improvements post-deployment
+
+
+2.2.3 PROJECT SCHEDULING
+========================
+
+The project is planned in structured phases aligned with an academic timeline:
+
+Initiation Phase (Week 1-2)
+- Define project objectives and scope
+- Identify key features (hospital discovery, digital health cards, Gemini AI health queries)
+- Conduct technical and operational feasibility studies
+
+Planning Phase (Week 3-5)
+- Prepare system architecture and database design
+- Design Glassmorphism UI/UX layouts using Tailwind CSS
+- Plan REST API structure and Socket.io communication flows
+
+Development Phase I (Week 6-10)
+- Setup project environment (Next.js, Node.js, MongoDB)
+- Implement secure JWT authentication and role-based access control
+- Develop specialized dashboards (Patient Profile, Doctor Schedule, Admin Panel)
+- Create the core appointment booking lifecycle and Razorpay payment integration
+- Build the Digital Health Card generation module with unique ABHA-compliant IDs and QR codes
+
+Development Phase II (Week 11-16)
+- Implement interactive map integration for hospital discovery (React Leaflet/OpenStreetMap)
+- Add real-time hospital-patient chat using Socket.io
+- Develop the Gemini API-powered Health Assistant for intelligent medical queries
+- Build the Emergency SOS Alert system with GPS tracking and auto-notifying emergency contacts
+- Implement the comprehensive Medical History tracker with PDF report exporting
+- Refine UI components with premium Glassmorphism aesthetics and optimize global state management
+
+Final Improvement Phase (Week 17–21)
+- Apply necessary clinical and academic feedback changes
+- Complete end-to-end testing and fix identified bugs
+- Optimize UI rendering and backend performance
+- Ensure the healthcare system's overall readiness
+
+
+3.1 STUDY OF CURRENT SYSTEM
+===========================
+
+The study of the current system focuses on how patients handle medical emergencies and routine healthcare management, along with the limitations of existing solutions. Currently, most patients rely on manual, fragmented methods such as searching for nearby hospitals on general maps, calling clinics repeatedly to check doctor availability, or carrying physical files for their medical history.
+
+Existing healthcare solutions like generic directory applications are not specifically designed for real-time, comprehensive patient care. They lack features such as instant appointment booking with live status updates, centralized digital health records, and structured communication channels between doctors and patients.
+
+Patients often face severe delays in locating hospitals with available beds or specific departments, especially during critical emergencies. Additionally, there is no proper unified system to track a patient's entire medical history, monitor appointment progress, or coordinate emergency response effectively.
+
+Another major limitation is the absence of immediate, intelligent health guidance. Patients with minor medical queries or those requiring basic first aid are completely dependent on scheduling a physical consultation, even when the problem could be addressed with reliable basic instructions or preliminary AI triage.
+
+The Medicare+ platform addresses these challenges by providing a centralized, real-time, and highly user-friendly digital healthcare system. It integrates location-based hospital discovery, secure appointment management, live hospital-patient chat, and an innovative Gemini AI Health Assistant to guide users and analyse medical documents, thereby drastically improving healthcare efficiency and reducing delayed medical responses.
+
+
+3.2 PROBLEMS AND WEAKNESSES OF CURRENT SYSTEM
+=============================================
+
+The existing manual and semi-digital healthcare management processes suffer from several critical weaknesses:
+
+1. Fragmented Patient Records: Medical histories, lab reports, and prescriptions are often scattered across different clinics and physical files, making it difficult for doctors to access a complete patient profile quickly, especially during emergencies.
+2. Inefficient Appointment Scheduling: Patients experience long wait times and uncertainty due to the lack of real-time visibility into doctor availability, leading to crowded waiting rooms and scheduling conflicts.
+3. Lack of Real-Time Emergency Response: During critical incidents, there is no centralized SOS system that automatically shares the patient's live location and medical profile simultaneously with trusted contacts and nearby hospitals.
+4. Absence of Preliminary Triage: Patients with minor symptoms often unnecessarily visit hospitals or struggle to find reliable medical information, as the current system lacks intelligent, AI-driven assessment tools or integrated first aid guidance.
+5. Poor Inter-Departmental Communication: Hospitals lack a unified platform for tracking bed availability, ward status, and patient transfers in real time, leading to significant administrative bottlenecks.
+
+
+3.3 USER CHARACTERISTICS
+========================
+
+The Medicare+ system is designed for different types of users with specific roles and privileges:
+
+Patients (Users):
+- Registration
+- Login / Logout
+- Manage Profile & Documents
+- Digital Health Card Generation
+- View Nearby Hospitals
+- Book Doctor Appointments
+- Pay Consultation Fees
+- SOS Emergency Alert
+- AI Health Assistant
+- Real-Time Hospital Communication
+- Interactive First Aid Guides
+- View Medical History
+
+Doctors (Healthcare Providers):
+- Login / Logout
+- Manage Profile & Specialization
+- Manage Availability Schedule
+- Manage Patient Appointments
+- Access Patient Medical Profiles
+- Complete Appointments & Prescriptions
+
+Administrators (Hospital Staff):
+- Login / Logout
+- Manage Hospital Availability
+- Manage Registered Hospitals
+- Manage Appointments
+- Manage Doctor Profiles
+- Monitor Platform Statistics
+- Oversee Emergency Response
+- Secure Internal Communication
+
+
+3.4 HARDWARE AND SOFTWARE REQUIREMENTS
+======================================
+
+To ensure proper functioning and seamless development of the Medicare+ platform, the following explicit requirements are needed:
+
+Hardware Requirements:
+- Processor: Intel Core i3 or equivalent AMD (i5 or higher recommended for full-stack API building)
+- Memory (RAM): Minimum 4 GB (8 GB recommended for stable Node.js/React development environments)
+- Storage: At least 10 GB available SSD space
+- Device Compatibility: Any modern Smartphone, Tablet, Laptop, or Desktop with GPS/Location Service support
+
+Software Requirements:
+- Frontend: Next.js 16 (React 19), Tailwind CSS, Radix UI (Glassmorphism design)
+- Backend: Node.js with Express.js
+- Database: MongoDB with Mongoose ODM
+- Authentication: JWT (JSON Web Tokens) with Bcrypt password hashing
+- Real-Time Communication: Socket.io
+- Mapping & Location: Browser Geolocation API and React Leaflet (OpenStreetMap)
+- AI Integration: Google Gemini API
+- Development Tools: Visual Studio Code, Postman, MongoDB Compass
+
+Supported Platforms (For End Users):
+- Latest versions of Google Chrome, Microsoft Edge, Mozilla Firefox, or Apple Safari
+- All standard iOS and Android mobile browsers for fully responsive access
+
+
+3.5.1 HARDWARE LIMITATIONS
+==========================
+
+- Devices with low RAM or outdated processors may experience slightly slower performance due to Next.js server-side rendering and complex Glassmorphism UI micro-animations.
+- Emergency SOS GPS accuracy heavily depends on the user's specific device capability and their physical environment (e.g., indoor vs. outdoor signal strength).
+- The Gemini AI Health Assistant's document analysis feature requires a camera-enabled device or access to local file storage for uploading medical reports and prescriptions securely.
+
+
+3.5.2 RELIABILITY REQUIREMENTS
+==============================
+
+- Data Security: Secure authentication using JWT and bcrypt password hashing ensures safe access to sensitive medical records and user data.
+- System Availability: Requires a stable internet connection for real-time Socket.io hospital-patient communication, live hospital bed updates, and Razorpay transactions.
+- Location Accuracy: The Emergency SOS alert system heavily depends on accurate GPS coordinates to immediately notify nearby hospitals and emergency contacts.
+- Data Consistency: The Mongoose ODM and Express backend ensure proper and consistent handling of critical appointment scheduling, transaction history, and medical record updates.
+
+
+3.6 ASSUMPTIONS AND DEPENDENCIES
+================================
+
+- Patients and doctors have access to a smartphone, tablet, or computer with an active internet connection.
+- GPS/location services are actively enabled on user devices to ensure the Emergency SOS and hospital discovery features work correctly.
+- Doctors and hospital administrators update their active availability schedule and ward bed capacity regularly to maintain system accuracy.
+- The system relies on accurate geolocation data and external Google Maps routing for guiding patients to nearby hospitals efficiently.
+- The Node.js backend server, Socket.io instance, and MongoDB database operate continuously and reliably during medical request processing and live chats.
+
+
+4.1 REQUIREMENTS OF NEW SYSTEM
+==============================
+
+4.1.1 Functional Requirements
+=============================
+
+A. Patient (User Panel)
+-----------------------
+
+● Registration
+Patients can create an account by entering basic personal details to access healthcare services.
+
+● Login / Logout
+Patients can securely log in to access the system and their personalized dashboard, and log out when finished.
+
+● Manage Profile & Documents
+Patients can update their personal information, manage emergency contacts, and upload external medical documents or test reports to their secure health record.
+
+● Digital Health Card Generation
+Patients can generate a unique, ABHA-compliant Digital Health Card with a QR code for rapid access to their medical profile.
+
+● View Nearby Hospitals
+The system displays nearby hospitals and medical centres on an interactive map based on the patient's real-time GPS location.
+
+- Book Doctor Appointments
+Patients can search for available doctors, view their schedules, and book appointments with real-time status tracking.
+
+- Pay Consultation Fees
+Patients can securely pay for their medical consultations and scheduled appointments using integrated payment gateways (Razorpay).
+
+- SOS Emergency Alert
+Patients can send a high-priority emergency request with a single hold-to-activate action, immediately sharing their live GPS coordinates with hospitals and emergency contacts.
+
+- AI Health Assistant
+Patients can interact with an AI-powered assistant for medical guidance and upload health documents for automated analysis.
+
+- Real-Time Hospital Communication
+Patients can communicate directly with hospital administrators via live chat with document and file sharing support.
+
+- Interactive First Aid Guides
+Patients can view step-by-step interactive first aid guides to manage critical scenarios or minor health incidents before professional help arrives.
+
+- View Medical History
+Patients can view their complete medical timeline, including past appointments, emergency SOS history, and download their medical reports as printable PDFs.
+
+B. Doctor (Provider Panel)
+--------------------------
+
+- Login / Logout
+Doctors can securely log in to access their dedicated management dashboard and log out when finished.
+
+- Manage Profile & Specialization
+Doctors can update their personal information, professional biography, qualification details, and profile picture.
+
+- Manage Availability Schedule
+Doctors can set, update, and manage their availability status and schedule for patient appointments.
+
+- Manage Patient Appointments
+Doctors can view, accept, confirm, or complete incoming patient appointment requests.
+
+- Access Patient Medical Profiles
+Doctors can securely view a patient's complete medical history, reported allergies, and attached laboratory reports during consultations.
+
+- Complete Appointments & Prescriptions
+Doctors can mark appointments as completed, add detailed clinical descriptions/diagnoses, and prescribe medicines directly to the patient's permanent medical record.
+
+C. Administrator (Admin Panel)
+------------------------------
+
+- Login / Logout
+Administrators can securely log in to access the central hospital management dashboard and log out when finished.
+
+- Manage Hospital Availability
+Administrators can oversee real-time ward status and track bed availability across the hospital facility.
+
+- Manage Registered Hospitals
+Administrators can register, edit, and manage hospital facility details including their location and supported medical departments.
+
+- Manage Appointments
+Administrators can oversee, filter, and process (accept or reject) patient appointments across the entire hospital.
+
+- Manage Doctor Profiles
+Administrators can onboard new doctors, verify their credentials, and manage their profiles within the hospital network.
+
+- Monitor Platform Statistics
+Administrators can view a central dashboard displaying overall statistics, including total appointments, active doctors, and registered patients.
+- Oversee Emergency Response
+Administrators can monitor live emergency SOS cases and efficiently coordinate the hospital's immediate medical response.
+
+- Secure Internal Communication
+Administrators can participate in a secure, inter-departmental admin chat for seamless facility operations and staff coordination.
+
+
+4.1.2 Non-Functional Requirements
+=================================
+
+1. Performance & Speed
+- The platform uses Next.js 16 with React 19 for fast, server-rendered pages and optimized loading, ensuring a highly responsive user experience.
+- Real-time communication via Socket.io must deliver instant hospital-patient messaging and live appointment status updates without noticeable lag.
+
+2. Security & Privacy
+- User authentication and authorization must be secured using robust JSON Web Tokens (JWT).
+- All sensitive user data, particularly account passwords, must be securely hashed using bcrypt.
+- Patient medical records and live SOS location data must be protected, with access restricted strictly to authorized profiles (assigned doctors and hospital administration).
+- Online appointment and consultation payments via Razorpay must comply with secure transaction standards.
+
+3. Reliability & Availability
+- The healthcare platform must maintain high availability, especially for processing critical hold-to-activate Emergency SOS alerts.
+- The Node.js backend must reliably handle concurrent requests, with a MongoDB database powered by Mongoose ODM ensuring consistent health data storage.
+
+4. Usability & Accessibility
+- The system must provide a premium, intuitive "Soft Glassmorphism" UI aesthetic with micro-animations.
+- Cross-platform responsiveness is mandatory, ensuring seamless access across all desktop, tablet, and mobile devices.
+
+5. Scalability
+- The architecture must be scalable to effortlessly support a growing number of registered patients, doctors, hospitals, and concurrent real-time active users.
+
+6. Integration & Interoperability
+- The application must effectively integrate with crucial third-party APIs, including the Google Gemini API for the intelligent health assistant, OpenStreetMap/Leaflet.js for interactive mapping, Google Maps for route navigation, and Razorpay for secure payment gateways.
+
+
+4.2 FEATURES OF NEW SYSTEM
+The Medicare+ platform introduces a comprehensive set of modern, technology-driven features that fundamentally elevate the quality of digital healthcare delivery:
+AI-Powered Health Assistant (Google Gemini): Patients can query symptoms and receive AI-generated guidance, including automated analysis of uploaded medical documents and prescriptions.
+SOS Emergency Alert System: A hold-to-activate trigger captures live GPS coordinates and instantly alerts hospitals and emergency contacts with the patient's critical medical profile.
+ABHA-Compliant Digital Health Card: Generates unique patient IDs and scannable QR codes aligned with Ayushman Bharat standards for instantaneous identity and medical verification.
+Interactive Hospital Discovery Map: Built on Leaflet.js, the system auto-detects user location to display nearby hospitals with real-time bed availability and one-click navigation.
+Real-Time Hospital-Patient Chat: Bi-directional WebSocket channel via Socket.io supporting text, images, and medical document sharing for seamless follow-up care.
+Appointment Booking & Lifecycle Management: Provides a fully managed booking flow (Pending, Confirmed, Completed) with real-time status synchronization across all user portals.
+Secure Payment Gateway (Razorpay): Integrated webhook-driven payment processing for consultation fees, ensuring verified and auditable financial transactions.
+Digital Medical Records & PDF Export: Automatically generates structured medical records from consultations, allowing patients to view their timeline and download printable PDF reports.
+Ward & Bed Capacity Management: Enables administrators to track and update real-time bed availability across General, ICU, and emergency wards for efficient facility coordination.
+Role-Based Access Control (RBAC): Enforces a strict 3-tier security model (Patient, Doctor, Admin) with isolated dashboards and JWT-protected API routes for data privacy.
+Doctor Portal & e-Prescription System: Dedicated doctor interface for managing schedules, reviewing patient history, and writing digital diagnoses with medicine instructions.
+Interactive First Aid Guides: Step-by-step, evidence-based instructions for critical scenarios like cardiac arrest or choking to assist users before professional help arrives.
+Premium Soft Glassmorphism UI: A modern, responsive design system with frosted glass effects and micro-animations, ensuring a polished experience on mobile and desktop.
+
+
+5.0 DATABASE AND DATA STRUCTURE DESIGN
+========================================
+
+This chapter provides a technical breakdown of the persistence layer, including the logical relationship model and the underlying data dictionary.
+
+5.1 TABLE AND RELATIONSHIP (DETAILED ER DIAGRAM)
+------------------------------------------------
+
+The following Entity Relationship (ER) diagram defines the logical database schema for the Medicare+ platform. It illustrates the core entities (Patients, Doctors, Hospitals, and Appointments) and their multi-directional relationships within the MongoDB environment.
+
+```mermaid
+erDiagram
+    USER ||--o| DOCTOR : "extends_to (Role:Doctor)"
+    USER ||--o{ APPOINTMENT : "books (Role:Patient)"
+    USER ||--o{ MEDICAL_RECORD : "owns"
+    USER ||--o{ EMERGENCY : "triggers"
+    
+    HOSPITAL ||--o{ DOCTOR : "employs"
+    HOSPITAL ||--o{ APPOINTMENT : "hosts"
+    HOSPITAL ||--o{ EMERGENCY : "receives"
+    HOSPITAL ||--o{ WARD : "manages"
+    
+    DOCTOR ||--o{ APPOINTMENT : "conducts"
+    DOCTOR ||--o{ MEDICAL_RECORD : "prescribes"
+    
+    APPOINTMENT ||--o| MEDICAL_RECORD : "generates"
+    
+    USER ||--o{ MESSAGE : "sends/receives"
+    HOSPITAL ||--o{ MESSAGE : "sends/receives"
+
+    USER {
+        string id PK
+        string name
+        string email
+        string phone
+        string role
+        string bloodGroup
+        string healthId
+        string address
+        date dateOfBirth
+        string[] allergies
+    }
+    DOCTOR {
+        string id PK
+        string userId FK
+        string specialization
+        string experience
+        int consultationFee
+        float rating
+        string bio
+        string licenseNumber
+    }
+    HOSPITAL {
+        string id PK
+        string name
+        string address
+        float latitude
+        float longitude
+        string phone
+        string type
+        int availableBeds
+        int totalBeds
+        float rating
+    }
+    APPOINTMENT {
+        string id PK
+        string patientId FK
+        string doctorId FK
+        string hospitalId FK
+        date date
+        string time
+        string reason
+        string status
+        string notes
+    }
+    MEDICAL_RECORD {
+        string id PK
+        string patientId FK
+        string doctorId FK
+        string appointmentId FK
+        string diagnosis
+        string[] allergies
+        string notes
+        date date
+    }
+    EMERGENCY {
+        string id PK
+        string userId FK
+        string hospitalId FK
+        string emergencyType
+        string priority
+        string status
+        float latitude
+        float longitude
+        string eta
+    }
+    WARD {
+        string id PK
+        string name
+        string type
+        int totalBeds
+        int occupiedBeds
+        int reservedBeds
+    }
+    MESSAGE {
+        string id PK
+        string senderId FK
+        string receiverId FK
+        string senderModel
+        string receiverModel
+        string content
+        string status
+        date timestamp
+    }
+```
+
+5.2 DATA DICTIONARY
+--------------------
+
+The following data dictionary provides a formal listing of all backend collections, specifying field types, constraints, and operational purposes.
+
+5.2.1 Collection: Users (Authentication & Profile)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| name | String | Required | Full legal name of user |
+| email | String | Unique | Email for authentication |
+| phone | String | Unique | Contact for SOS/SMS alerts |
+| role | String | Enum | Patient, Doctor, or Admin |
+| bloodGroup | String | Optional | Critical medical metadata |
+| healthId | String | Unique | ABHA-generated unique ID |
+
+5.2.2 Collection: Doctors (Clinical Profile)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| userId | ObjectId | Foreign Key | Link to the User document |
+| specialization | String | Required | Medical expertise area |
+| experience | Number | Required | Years of practice |
+| consultationFee | Number | Required | Razorpay checkout amount |
+| licenseNumber | String | Unique | Verification credentials |
+
+5.2.3 Collection: Appointments (Lifecycle)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| patientId | ObjectId | Foreign Key | Link to requester |
+| doctorId | ObjectId | Foreign Key | Link to practitioner |
+| date | Date | Required | Scheduled session date |
+| status | String | Default: 'pending' | Current workflow state |
+| paymentId | String | Optional | Razorpay payment reference |
+
+5.2.4 Collection: Emergencies (SOS System)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| userId | ObjectId | Foreign Key | Patient in crisis |
+| location | GeoJSON | Required | Live GPS coordinates |
+| emergencyType | String | Enum | Cardiac, Accident, etc. |
+| status | String | Required | Crisis resolution status |
+| eta | String | Dynamic | Calculated response time |
+
+5.2.5 Collection: Hospitals (Facility Registry)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| name | String | Required | Hospital facility name |
+| address | String | Required | Physical street address |
+| location | GeoJSON | Required | GPS coordinates for mapping |
+| phone | String | Required | Shared emergency contact |
+| totalBeds | Number | Required | Physical bed capacity |
+| availableBeds | Number | Dynamic | Real-time bed availability |
+
+5.2.6 Collection: MedicalRecords (Clinical History)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| patientId | ObjectId | Foreign Key | Link to the patient owner |
+| doctorId | ObjectId | Foreign Key | Link to the treating doctor |
+| apptId | ObjectId | Foreign Key | Link to the source session |
+| diagnosis | String | Required | Clinical medical finding |
+| medicines | String[] | Required | List of prescribed drugs |
+| reportUrl | String | Optional | Link to generated PDF report |
+
+5.2.7 Collection: Wards (In-patient Management)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| name | String | Required | Ward name (e.g. ICU-A) |
+| type | String | Enum | General, ICU, Pediatric |
+| totalBeds | Number | Required | Max ward capacity |
+| occupiedBeds | Number | Dynamic | Current patient count |
+
+5.2.8 Collection: Messages (Real-time Communication)
+| Field | Type | Constraint | Description |
+| :--- | :--- | :--- | :--- |
+| _id | ObjectId | Primary Key | Unique system identifier |
+| senderId | ObjectId | Foreign Key | Message originator |
+| receiverId | ObjectId | Foreign Key | Target recipient |
+| content | String | Required | Text or file metadata |
+| type | String | Enum | Text, Image, Document |
+| timestamp | Date | Required | Time of transmission |
+
+
+5.3 INPUT/OUTPUT AND INTERFACE DESIGN (GUI DESIGN)
+==================================================
+
+The system provides a user-friendly, highly responsive web interface developed using Next.js (React). The interface is designed to ensure simplicity, accessibility, and ease of interaction for all user roles, from critical emergency victims to hospital administrators.
+
+      Input Design
+      ------------
+The system accepts the following primary inputs:
+
+1. Emergency SOS Trigger:
+   - Hold-to-activate button (GPS coordinate capture).
+   - High-priority crisis signal input.
+
+2. Appointment Booking:
+   - Form-based input for doctor selection, department, date, and time.
+   - Patient reason for visit (textual input).
+
+3. Medical Document Upload:
+   - File input for medical report PDFs, docx, and images.
+   - Automated Parsing via Gemini AI for Health Insights.
+
+4. Real-Time Chat & Consultation:
+   - Text input for patient-doctor bi-directional communication.
+   - File/Image sharing for follow-up care.
+
+      Output Design
+      -------------
+The system provides the following primary outputs:
+
+1. AI Health Assistant Analysis:
+   - Displayed in a chat-style modal interface.
+   - Shows answer based on medical document context and symptom queries.
+
+2. Digital Health Card (ABHA):
+   - Generates a scannable QR code and unique Health ID.
+   - Displays patient's critical medical profile.
+
+3. Hospital Discovery Map:
+   - Interactive Leaflet.js map showing nearby hospitals.
+   - Real-time bed availability status displayed on pins.
+
+4. Appointment Lifecycle Status:
+   - Live status tracking (Pending, Confirmed, Completed).
+   - Instant visual notifications for status changes.
+
+      Interface Design (GUI Features)
+      -------------------------------
+- Premium Soft Glassmorphism aesthetic for a polished look.
+- Portal-specific sidebars for seamless Patient/Doctor/Admin navigation.
+- Real-time notification center for critical SOS and Chat alerts.
+- Dedicated Hospital Discovery Panel with one-click map navigation.
+- Scrollable e-Prescription and medical history area in the clinical dashboard.
+
+      Design Considerations
+      ---------------------
+- Easy, fast navigation between SOS alerts and hospital discovery.
+- Responsive design for tablets, desktops, and mobile devices.
+- Clear separation of input areas and clinical output areas.
+- Minimal learning curve for stressed users in emergency situations.
+
+
+
+5.4 PANEL-WISE ENTITY AND FUNCTION MAPPING
+------------------------------------------
+
+This section provides a systematic mapping of the core system entities (database models) to the specific functionalities (features) available across the three primary user panels in the Medicare+ platform.
+
+1. Patient Panel (End-User)
+   The patient panel focuses on healthcare accessibility, emergency response, and record management.
+
+   | Entity | Functionality (fn) | Description |
+   | :--- | :--- | :--- |
+   | User | Profile & Health Card | Manage personal profile and generate ABHA-compliant Digital Health Cards with QR codes. |
+   | Hospital | Discovery & Mapping | Locate nearby medical facilities using interactive maps with real-time distance calculation. |
+   | Appointment | Booking & Payment | Search for specialized doctors, schedule consultations, and pay fees via Razorpay. |
+   | Emergency | SOS Activation | Trigger hold-to-activate emergency alerts with life GPS coordinate sharing. |
+   | MedicalRecord | History & Reports | View complete clinical history and download individual reports as printable PDFs. |
+   | Message | Live Chat | Communicate directly with hospital administrators for follow-up and clinical queries. |
+   | AI Assistant | Intelligent Analysis | Upload documents for AI-driven health insights and query symptoms via Gemini AI. |
+
+2. Doctor Panel (Provider)
+   The doctor panel enables medical practitioners to manage their schedules and patient consultations efficiently.
+
+   | Entity | Functionality (fn) | Description |
+   | :--- | :--- | :--- |
+   | Doctor | Profile & Expertise | Manage medical specialization, experience, bio, and professional credentials. |
+   | User | Authentication | Secure JWT-based access to the dedicated practitioner dashboard. |
+   | Appointment | Schedule Mgmt | View, accept, or complete patient appointments in real-time. |
+   | MedicalRecord | Prescriptions | Write digital diagnoses and prescribe medications (e-Prescription system). |
+   | MedicalRecord | Patient Profile | Securely access a patient's historical medical data during the consultation. |
+   | Message | Patient Follow-up | Maintain bi-directional chat communication with patients for post-care guidance. |
+
+3. Administrator Panel (Governance)
+   The admin panel provides centralized control over facility operations, doctor onboarding, and emergency coordination.
+
+   | Entity | Functionality (fn) | Description |
+   | :--- | :--- | :--- |
+   | Hospital | Facility Registry | Manage hospital listings, contact details, and department configurations. |
+   | Ward | Bed Management | Monitor real-time bed availability (General, ICU, Emergency) across the facility. |
+   | Doctor | Staff Onboarding | Register new doctors, verify licenses, and manage their activity within the platform. |
+   | Appointment | Global Oversight | Monitor and filter all hospital appointments to ensure smooth operational flow. |
+   | Emergency | SOS Coordination | Oversee live emergency cases and coordinate immediate medical response teams. |
+   | Ambulance | Fleet Management | Track and allocate emergency vehicles and paramedics for SOS dispatch. |
+   | User | Platform Analytics | Monitor total registered patients, hospital performance, and system statistics. |
+   | Message | Internal Chat | Secure, inter-departmental communication channel for hospital staff coordination. |
+
+
+6.1 IMPLEMENTATION ENVIRONMENT
+==============================
+
+Single vs Multiuser
+-------------------
+
+The Medicare+ platform is designed as a secure multi-user system, where different types of users—Patients, Doctors, and Hospital Administrators—can interact seamlessly and simultaneously.
+Each user has specific, role-based access privileges:
+
+- Patients can book appointments, trigger SOS alerts, generate health cards, and securely chat with hospital staff.
+- Doctors can manage their availability schedule, review patient medical histories, and update consultation records.
+- Administrators oversee hospital bed capacity, verify doctor profiles, monitor live emergency cases, and maintain facility operations.
+
+   The system maintains highly secure, persistent sessions using JSON Web Tokens (JWT) authentication, ensuring role-based privacy and strict HIPAA-aligned data protection across all modules.
+
+GUI vs Non-GUI
+--------------
+
+The system primarily operates through a premium Graphical User Interface (GUI) leveraging a soft glassmorphism aesthetic, built using Next.js (React), Tailwind CSS, and optimized Radix UI components. The GUI includes:
+- Patient dashboard with digital health cards, appointment tracking, and interactive map views.
+- Doctor dashboard for professional profile management and consultation processing.
+- Centralized Admin dashboard for hospital oversight and emergency response coordination.
+- Interactive mapping interface for real-time hospital discovery and navigation.
+
+Non-GUI functionalities include:
+- Backend REST API processing handled by Node.js & Express.js.
+- Database operations and complex document-based queries managed by MongoDB and Mongoose ODM.
+- Real-time bi-directional messaging handled by Socket.io logic.
+- Secure authentication hashing, automated GPS geospatial computations, and Gemini AI data streaming.
+
+Important Features of IDE
+-------------------------
+
+The development of the Medicare+ project is carried out using Visual Studio Code, which provides powerful, built-in features customized for modern full-stack web development:
+- Syntax Highlighting & IntelliSense: Instantly predicts code structures, greatly improving development speed and minimizing syntax errors.
+- Debugging Tools: Allows breakpoints and live inspection to efficiently identify API errors, runtime issues, and React frontend bugs.
+- Extensions Support: Leverages specialized extensions for React, Tailwind CSS InteliSense, Prisma models, and ESLint rule enforcement.
+- Integrated Git Support: Enables seamless version control, commit tracking, and team collaboration natively within the editor.
+- API Testing Tools (Postman): Primarily used for validating secure backend REST endpoints and testing complex JSON payloads directly.
+
+
+6.2 PROGRAM / MODULES SPECIFICATION
+===================================
+
+User Management Module
+----------------------
+
+- Registration and login functionality for all primary platform users.
+- Secure, persistent authentication handling utilizing JWT.
+- Strict role-based access control (RBAC).
+- Seamless logout functionality.
+
+Appointment Booking & SOS Module
+--------------------------------
+
+- Patients can proactively book routine medical appointments or trigger high-priority SOS emergency alerts.
+- Appointment requests include the preferred doctor, target medical department, chosen time slot, and reason for visit.
+- Comprehensive status tracking lifecycle: Pending -> Confirmed -> Completed or Rejected.
+- Real-time status updates broadcasted instantaneously between users via Socket.io.
+
+Dashboard Module
+----------------
+
+- Dedicated, isolated dashboards specifically tailored for Patients, Doctors, and Hospital Administrators.
+- Patient dashboard displays ongoing appointments, actionable digital health cards (QR), and map views.
+- Doctor dashboard efficiently manages incoming patient consultations, daily schedules, and clinical notes.
+- Admin dashboard oversees complete hospital operations, bed availability, doctor verifications, and live emergencies.
+
+Geolocation & Map Module
+------------------------
+
+- Automatically retrieves patient coordinates using the HTML5 Browser Geolocation API.
+- Visually displays nearby registered hospitals on an interactive Leaflet.js and OpenStreetMap map.
+- Utilizes MongoDB backend geospatial queries to calculate accurate distances for logical hospital discovery.
+- Provides outward mobile integration to Google Maps for precise tracking and GPS route navigation.
+
+AI Health Assistant Module
+--------------------------
+
+- Allows patients to query symptom summaries and medical concerns using a Gemini AI-powered chat interface.
+- Supports uploading external medical documents, images, and laboratory reports for intelligent analysis.
+- Provides built-in, step-by-step interactive First Aid Guides for preliminary critical incident management before help arrives.
+
+Data Storage Module
+-------------------
+
+- Utilizes MongoDB for the resilient, flexible storage of user profiles, appointments, SOS logs, and permanent medical histories.
+- Ensures highly available, persistent storage architecture across multiple concurrent active sessions.
+- Employs Mongoose ODM for type-safe, strict, and highly efficient backend database querying operations.
+
+Security & Authentication Module
+--------------------------------
+
+- JWT-based HTTP authentication protocol ensuring stateless and verifiably secure user logins.
+- Robust authorization middleware protecting all sensitive patient medical records and backend REST API routes.
+- Irreversible password hashing implemented via bcrypt to secure all stored user credentials automatically.
+- Strict backend input validation mechanisms to intercept and prevent invalid, malformed, or malicious data entry.
+
+Digital Health Card Module
+--------------------------
+
+- Generates unique, ABHA-compliant Digital Health Cards featuring actively scannable QR codes.
+- Automatically hydrates and securely displays patient details, blood group, and trusted emergency contacts.
+- Allows first responders and hospitals instant, one-tap access to primary medical profiles during critical scenarios.
+
+Real-Time Communication Module
+------------------------------
+
+- Facilitates instant, bi-directional live messaging powered natively by Socket.io logic.
+- Enables direct hospital-to-patient consultation chat and secure admin-to-admin operational communication.
+- Supports seamless, secure sharing of image attachments and medical document PDFs directly within the chat interface.
+
+Payment Gateway Module
+----------------------
+
+- Fully integrates the Razorpay API for processing highly secure, seamless online financial transactions.
+- Manages automated order creation, secure processing, and cryptographic transaction verification for paid consultations.
+- Maintains accurate, permanent digital records of all consultation fee payments for both patient and hospital accounting.
+
+Medical History & Record Module
+-------------------------------
+
+- Maintains an organized, date-filtered timeline of a patient's past appointments, active queries, and SOS emergencies.
+- Enables doctors to seamlessly attach professional clinical notes, formal diagnoses, and targeted medical prescriptions.
+- Allows patients to generate and download beautifully formatted, printable PDF versions of their medical reports instantly.
+- Supports patients intentionally uploading external lab tests and documents directly to their centralized digital file securely.
+
+
+6.3 CODING STANDARDS
+====================
+
+To ensure maintainability, scalability, and clean code practices across the Medicare+ platform, the following rigorous standards are observed:
+
+- Consistent Indentation: Code uses proper, standardized indentation (2 spaces).
+- Commenting: Major components and backend logic are well-commented.
+- Descriptive Naming: Meaningful names chosen for variables and functions.
+- Camel Case Convention: Used consistently for variables and functions.
+- Pascal Case for Components: All UI components follow PascalCase.
+- Modular Structure: Codebase is divided into services, APIs, and components.
+
+- Separation of Concerns:
+  - Frontend: React UI rendering and client-side routing.
+  - Backend: Business logic and real-time events.
+  - Database: Document storage and geospatial queries.
+
+- API Standards: Strict RESTful API design enforced.
+- Secure Data Handling: Validation of all incoming user payloads.
+- Consistent File Naming: Files named based on functionality guidelines.
+
+
+7.1 TESTING METHODOLOGY
+=======================
+
+The testing methodology for the Medicare+ platform employs a comprehensive, multi-layered approach strictly combining White Box Testing, API endpoint validation, and interactive UI component testing. Given the critical nature of healthcare applications, the testing framework focuses extensively on data accuracy, secure role isolation, and real-time system reliability.
+
+In White Box Testing, the internal structural logic, database query efficiency, and state management of the application are scrutinized. This methodology is indispensable for Medicare+ because it involves multiple highly sensitive and interconnected modules- such as secure Razorpay payment gateways, geospatial hospital mapping, and priority SOS alert systems.
+
+The primary objectives of this methodology are to verify:
+- Core Logic Integrity: Ensuring appointment state transitions process seamlessly.
+- Real-Time System Validation: Testing Socket.io event emitters for zero data loss.
+- Geospatial Accuracy: Validating mapping constraints for hospital discovery.
+- AI Interoperability: Testing Gemini API for consistent medical analysis.
+- Security Protocol Testing: Validating JWT sessions and bcrypt hashing.
+
+
+7.2 TESTING STRATEGY
+====================
+
+To guarantee a stable and production-ready healthcare application, Medicare+ enforces a strict hierarchical testing strategy divided into distinct modular and integrated phases:
+
+1) Unit Testing
+a) Independent Component Validation: Individual React UI components, Mongoose schemas, and Node.js utility functions are isolated and tested to ensure they handle expected inputs and edge-case errors correctly.
+b) Targeted Test Cases: Focuses on granular functions such as ABHA-compliant Health Card QR code generation, secure Razorpay transaction signature verification, date-validation for appointment limits, and isolated password hashing algorithms.
+
+2) Integration Testing
+a) Multi-Module Synchronization: Ensures that distinct backend models, external APIs, and frontend state seamlessly interact without desynchronization, particularly during complex multi-step workflows.
+b) Critical Pipeline Scenarios: Tests extensive data journeys, such as initiating a Patient SOS Emergency Request, which involves fetching Browser Geolocation, triggering a Socket.io broadcast to the Admin Panel, and updating the MongoDB Emergency collection to organize the hospital's manual response.
+c) Third-Party API Reconciliation: Validates that external dependencies (Google Maps, OpenStreetMap, Razorpay, and Gemini AI) integrate cleanly with the internal application state without blocking the primary user interface.
+
+Executing this testing strategy continuously detects architectural bottlenecks early. It guarantees that REST APIs communicate predictably with the Next.js frontend, ensuring that critical medical records, clinical notes, and payment histories flow securely and reliably across the entire full-stack ecosystem.
+
+
+7.3 TESTING METHODS
+===================
+
+The Medicare+ platform adopts the following rigorous testing methods:
+
+1) Unit Testing
+- Each module (e.g., user authentication, request creation, AI diagnosis, map integration) is tested separately.
+- Focus areas include:
+- Input/output validation and parameter sanitization.
+- Business logic correctness for complex workflows.
+- Each module (e.g., user authentication, request creation, AI diagnosis, map integration) is tested separately.
+- Focus areas include:
+- Input/output validation and parameter sanitization.
+- Business logic correctness for complex workflows.
+- Error handling UI and graceful edge case fallbacks.
+- Backend APIs are consistently tested using isolated API testing tools like Postman and Thunder Client.
+
+2) Integration Testing
+- Ensures smooth interaction between interrelated modules suchs as:
+- Patient Appointment Booking -> Doctor Acceptance -> Status Dashboards.
+- Patient Emergency SOS Trigger -> Admin Live Map Rendering -> Incident Updates.
+- Patient Document Upload -> AI Health Assistant Parsing -> Output Generation.
+- Verifies error-free communication pipelines between:
+- The rich user interfaces (Frontend: Next.js / React)
+- The business logic server (Backend: Node.js / Express APIs)
+- The persistent storage architecture (Database: MongoDB via Mongoose ODM)
+- Real-time bi-directional messaging websockets (Socket.io)
+
+
+7.4 TEST CASES
+==============
+
+(Table 7.1: Platform Integration Test Cases)
+
+| Role           | Test Case                     | Expected Output                 | Actual Output                   | Result |
+|----------------|-------------------------------|---------------------------------|---------------------------------|--------|
+| Patient        | Valid Registration            | Profile & JWT token created.    | Profile & JWT token created.    | Pass   |
+| Patient        | Duplicate Registration        | Registration halted by system.  | Registration halted by system.  | Pass   |
+| Patient        | Invalid Login                 | Unauthorized access blocked.    | Unauthorized access blocked.    | Pass   |
+| Patient        | Update Profile                | DB updated securely via API.    | DB updated securely via API.    | Pass   |
+| Patient        | Avatar Upload                 | Avatar optimized securely.      | Avatar optimized securely.      | Pass   |
+| Patient        | Book Appointment              | Status set to "Pending".        | Status set to "Pending".        | Pass   |
+| Patient        | Double-Booking Prevention     | Booking explicitly rejected.    | Booking explicitly rejected.    | Pass   |
+| Patient        | Secure Payment                | Crypto signature verified.      | Crypto signature verified.      | Pass   |
+| Patient        | Trigger SOS Alert             | Browser GPS captured live.      | Browser GPS captured live.      | Pass   |
+| Patient        | Ask AI Assistant              | Gemini API processes text.      | Gemini API processes text.      | Pass   |
+| Patient        | AI PDF Parsing                | Symptoms extracted directly.    | Symptoms extracted directly.    | Pass   |
+| Patient        | Generate Health Card          | ABHA QR Code ID created.        | ABHA QR Code ID created.       | Pass   |
+| Patient        | Download Medical PDF          | Record timeline formatted.      | Record timeline formatted.      | Pass   |
+| Patient        | Interactive Hospital Map      | Map centers on coordinates.     | Map centers on coordinates.     | Pass   |
+| Doctor         | Valid Doctor Login            | JWT 'Doctor' role claimed.      | JWT 'Doctor' role claimed.      | Pass   |
+| Doctor         | Update Doctor Profile         | Bio updated securely via API.   | Bio updated securely via API.   | Pass   |
+| Doctor         | Update Availability           | Database slots accurately sync. | Database slots accurately sync. | Pass   |
+| Doctor         | Accept Appointment            | Status marked as Confirmed.     | Status marked as Confirmed.     | Pass   |
+| Doctor         | Reject Appointment            | Status marked as Cancelled.     | Status marked as Cancelled.     | Pass   |
+| Doctor         | Complete Appointment          | Consultation set Completed.     | Consultation set Completed.     | Pass   |
+| Doctor         | View Patient History          | Timeline retrieved accurately.  | Timeline retrieved accurately.  | Pass   |
+| Doctor         | Add Clinical Notes            | Notes attached to specific ID.  | Notes attached to specific ID.  | Pass   |
+| Administrator  | Valid Admin Login             | Admin JWT role claimed.         | Admin JWT role claimed.         | Pass   |
+| Administrator  | Update Ward Capacity          | Database mutates securely.      | Database mutates securely.      | Pass   |
+| Administrator  | Verify Doctor Profile         | Status flagged as Active.       | Status flagged as Active.       | Pass   |
+| Administrator  | Emergency Dispatch            | Status flagged as Responded.    | Status flagged as Responded.    | Pass   |
+| Administrator  | Register New Hospital         | GPS coordinates registered.     | GPS coordinates registered.     | Pass   |
+| Administrator  | Monitor Health Stats          | Live database counts query.     | Live database counts query.     | Pass   |
+| Administrator  | Create Department             | Global DB catalog updated.      | Global DB catalog updated.      | Pass   |
+| Administrator  | Force-Cancel Booking          | Overrides user booking slots.   | Overrides user booking slots.   | Pass   |
+| Administrator  | Secure Live Chat              | Real-time message streaming.    | Real-time message streaming.    | Pass   |
+| System         | Session Expiration            | Active session invalidated.     | Active session invalidated.     | Pass   |
+| System         | Route Authorization           | Middleware triggers HTTP 403.   | Middleware triggers HTTP 403.   | Pass   |
+| System         | Manual Logout                 | Auth cookie cleanly destroyed.  | Auth cookie cleanly destroyed.  | Pass   |
+| System         | Toggle Dark/Light Mode        | Theme preferences preserved.    | Theme preferences preserved.    | Pass   |
+| System         | Mobile Responsiveness         | Auto-collapses grid layouts.    | Auto-collapses grid layouts.    | Pass   |
+
+
+9.1 LIMITATION
+==============
+
+While Medicare+ successfully digitizes hospital appointments, AI diagnostics, and emergency SOS alerts, the current iteration of the project has several functional limitations related to its scope:
+
+
+
+- Absence of Telemedicine Video Calls: The platform does not integrate WebRTC for live video.
+- No IoT Hardware Integration: Emergency SOS is software-driven, not wearable-integrated.
+- Manual Health Insurance Verification: No automated API integration with insurance providers.
+- Primary English-Only Interface: Lack of real-time regional language translation.
+- No Native Pharmacy E-Commerce: Application does not host an integrated drug marketplace.
+
+
+9.2 FUTURE ENHANCEMENT
+======================
+
+To further elevate Medicare+ into a truly comprehensive national healthcare infrastructure, several advanced functional enhancements are proposed for future development cycles:
+
+
+
+- IoT Medical Wearable Integration: Expanding SOS to interface with bluetooth medical wearables.
+- Telemedicine Video Consultations (WebRTC): Integrating real-time video signaling servers.
+- Automated Health Insurance APIs: Partnering with government and private health endpoints.
+- Multi-Lingual Speech-to-Text: Enhancing AI with robust NLP translation pipelines.
+- Integrated E-Pharmacy: Pharmacy marketplace with inventory synchronization.
+- Embedded Insurance Marketplace: In-app health insurance comparison and purchase.
+- AI Predictive Analytics: Scannning map data to predict regional disease clusters.
+
+
+10.1 CONCLUSION
+===============
+
+The Medicare+ platform successfully demonstrates the transformative potential of combining modern full-stack web architectures with artificial intelligence to solve critical bottlenecks in the national healthcare sector. By seamlessly transitioning traditional, manual hospital workflows into a unified, digital ecosystem, the project actively bridges the gap between patients seeking immediate triage and medical professionals striving for administrative efficiency.
+
+Fundamentally driven by a robust Next.js frontend and a highly secure Node.js/MongoDB backend, the application delivers enterprise-grade performance and state-management across all its core modules. The integration of Google's Gemini LLM revolutionizes preliminary patient diagnostics by rapidly parsing complex symptoms and translating PDF lab reports into actionable clinical insights. Simultaneously, the live Socket.io infrastructure and Leaflet geographic mapping ensure that during life-threatening emergencies, patients can broadcast their exact SOS coordinates to hospital administrators instantly, drastically reducing dispatch response times.
+
+Furthermore, the implementation of decentralized Role-Based Access Control (RBAC) securely isolates Patient records, Doctor availability schedules, and global Administrative commands. Accompanied by frictionless Razorpay payment gateways and ABHA QR-Code generation, Medicare+ systematically eliminates frictional barriers at every critical touchpoint of the digital consultation journey.
+
+Ultimately, Medicare+ is highly scalable, shifting from a conceptual booking prototype into a real-time healthcare pipeline. While current functional limitations exist regarding physical IoT integrations and regional language gaps, the foundational Web architecture is deeply primed for infinite future scale. Medicare+ stands as a comprehensive testament to how intelligent software engineering- when rigorously applied to urgent public health logistics- can proactively synchronize ward capacities, secure medical data, and ultimately, save human lives.
+
+
+10.2.1 Problems Encountered
+===========================
+
+During the development and testing phases of the Medicare+ project, several technical challenges were encountered.
+
+1. Integrating the Gemini AI Assistant:
+Learning how to securely handle the Google Gemini API and properly process large PDF laboratory reports was a major learning curve. Initially, sending raw, unformatted PDF data caused the API to return errors or confusing diagnostic summaries.
+
+2. Managing Real-Time Chat with Socket.io:
+Implementing instant, live messaging between the Admin and Patients required transitioning from standard REST API database requests to real-time WebSockets (Socket.io). Ensuring messages were instantly delivered without requiring the user to refresh their browser was challenging.
+
+3. Responsive "Glassmorphism" UI Design:
+Designing a modern UI featuring transparent "glass" cards and dynamic maps presented significant layout challenges. Elements would frequently overlap or break when viewing the application on smaller mobile devices.
+
+4. Securing the Razorpay Checkout Flow:
+Integrating a live payment gateway for booking consultations required extremely careful data management. If a user's internet dropped immediately after paying, the Next.js database would not update their appointment to "Confirmed."
+
+5. Managing Distinct Authentication Roles:
+Implementing JWT-based authentication for three completely distinct user types (Patient, Doctor, Administrator) created complex routing logic. It was crucial to prevent a Patient from accidentally or maliciously accessing an Admin's dashboard.
+
+6. Optimizing Database Query Performance:
+As the "Hospital Network" and "Ward Capacity" database models grew larger, fetching all the geographic location and bed-availability data simultaneously caused the Next.js frontend to load slowly during initial testing.
+
+7. Integrating Interactive Third-Party Maps:
+Rendering the dynamic hospital map using Leaflet.js initially caused the Next.js application to crash. Because Next.js pre-renders pages on the server, it could not load the map properly since the backend server lacks a browser 'window' to draw the graphical map on.
+
+
+10.2.2 Possible Solutions
+=========================
+
+The technical challenges outlined above were successfully mitigated by implementing the following architectural and programmatic solutions:
+
+1. Gemini AI Pipeline: A logical pipeline was created to carefully extract text from patient PDFs locally before dynamically inserting the symptoms into a structured, readable JSON prompt for the AI to interpret natively.
+
+2. Socket.io Express Backend: Socket.io was integrated deeply within an isolated Express.js backend, allowing persistent two-way communication channels that instantly emit messages directly to the Next.js frontend state without HTTP overhead.
+
+3. Tailwind CSS Grid Layouts: Tailwind CSS utility classes (specifically flexbox and responsive grid breakpoints like `md:` and `lg:`) were aggressively utilized to ensure the dashboard auto-collapses cleanly into vertical layouts on smartphone screens.
+
+4. Webhook Reconciliation: Proper error-handling and external database verification checks (via Webhooks) were implemented to safely and permanently reconcile the payment status in MongoDB only after Razorpay officially cleared the transaction.
+
+5. Next.js Routing Middleware: Secure Next.js Middleware was implemented at the root routing level. This middleware intercepts every page request, decodes the user's secure token, and instantly redirects unauthorized users back to the login page before the sensitive dashboard renders.
+
+6. Server-Side Caching: Data fetching was heavily optimized by implementing MongoDB connection pooling and utilizing Next.js server-side caching strategies, which drastically reduced the initial page load latency.
+
+7. Dynamic React Module Imports: The architecture was updated using dynamic module loading to delay the rendering of the Leaflet map component until after the webpage fully initialized in the user's browser, safely bypassing the initial server conflict completely.
+
+
+10.2.3 Summary of Project Work
+==============================
+
+The development of the Medicare+ platform encompassed a rigorous full-stack software engineering lifecycle, transforming a conceptual healthcare model into a highly functional Web Application.
+
+Throughout this development lifecycle, the following core features were successfully engineered and deployed:
+- Role-Based Architectures
+- Centrally Managed Hospital Registry
+- Doctor Professional Profile Management
+- Real-Time Emergency SOS
+- Interactive Hospital Mapping
+- AI Health Assistant (Google Gemini)
+- Digital Appointment Booking
+- Ward & Bed Management
+- ABHA Health Card Generation
+- Medical Record Archiving
+- Interactive First Aid Guides
+- Encrypted Payment Gateway (Razorpay)
+- Instant Chat Ecosystem (Socket.io)
+
+The project work officially commenced with comprehensive Requirements Gathering and Architecture Analysis to identify critical bottlenecks in modern hospital administration. This transitioned directly into the UI/UX Design phase, where a modern, responsive interface was constructed using Tailwind CSS to ensure strict accessibility across all screens.
+
+Backend development focused on establishing a secure, scalable data pipeline using Node.js and Express, connected to a MongoDB database. Key milestones achieved during this phase included the successful implementation of cryptographic JSON Web Token (JWT) logic to secure the features listed above.
+
+In the advanced development stages, complex API integrations were engineered. A dedicated Socket.io Edge server was deployed solely to manage the live Inter-Departmental chat. Concurrently, the Gemini AI Assistant was successfully mapped to interpret uploaded lab reports, and the Razorpay schema was secured to authorize hospital payments.
+
+Finally, exhaustive Unit and Integration Testing was executed across 34 distinct validation vectors, confirming everything from CSS Grid responsiveness to backend Database Mutability. The culmination of this project work yielded a state-of-the-art healthcare infrastructure positioned to streamline clinical management and drastically accelerate emergency response logistics.
+
+
+11.0 REFERENCES
+==============
+
+The development of the Medicare+ platform was supported by the official documentation and technical specifications of the following technologies, libraries, and frameworks:
+
+- Next.js (React) Framework
+- Node.js & Express.js Backend
+- MongoDB & Mongoose ODM
+- Google Gemini AI (Google AI Studio)
+- Socket.io Real-time Engine
+- Leaflet.js & OpenStreetMap
+- Razorpay Payment Gateway
+- Tailwind CSS & Radix UI
+- ABHA Health Mission Standards
+- Prisma Client
+- Lucide-React & Embla Carousel
+
+
+12.0 CLASS DIAGRAMS
+====================
+
+The following sections provide two perspectives on the Medicare+ object model: the conceptual Analysis Level (focusing on business entities) and the technical Design Level (focusing on the MVC/Three-Tier implementation).
+
+
+12.1 ANALYSIS LEVEL CLASS DIAGRAM
+---------------------------------
+
+The Analysis Level diagram focuses on the logical structure of the system's core entities and their real-world relationships, abstracting away implementation details like database drivers or routing logic.
+
+```mermaid
+classDiagram
+    class User {
+        +String name
+        +String phone
+        +String email
+        +String role
+    }
+    class Patient {
+        +String bloodGroup
+        +String healthId
+        +String address
+    }
+    class Doctor {
+        +String specialization
+        +Number experience
+        +Number consultationFee
+    }
+    class Hospital {
+        +String name
+        +String address
+        +Number availableBeds
+    }
+    class Appointment {
+        +Date date
+        +String status
+        +String type
+    }
+    class MedicalRecord {
+        +String diagnosis
+        +String[] medicines
+        +Date date
+    }
+    class Emergency {
+        +String type
+        +String priority
+        +Location coordinates
+        +String status
+    }
+    class Ward {
+        +String roomType
+        +Number capacity
+        +Number occupied
+    }
+    User <|-- Patient : inheritance
+    User <|-- Doctor : inheritance
+    Patient "1" -- "*" Appointment : books
+    Doctor "1" -- "*" Appointment : conducts
+    Hospital "1" -- "*" Appointment : hosts
+    Appointment "1" -- "0..1" MedicalRecord : generates
+    Patient "1" -- "*" MedicalRecord : owns
+    Hospital "1" -- "*" Emergency : manages
+    Hospital "1" -- "*" Ward : contains
+    User "1" -- "*" Message : sends/receives
+```
+
+
+12.2 DESIGN LEVEL CLASS DIAGRAM (MVC / THREE-TIER)
+--------------------------------------------------
+
+The Design Level diagram illustrates the technical implementation of the Medicare+ platform, following a strict Three-Tier / MVC (Model-View-Controller) architecture. It shows how the Presentation layer (React/Next.js) interacts with the Logic layer (Express Controllers/Services) and the Data layer (Mongoose Models).
+
+```mermaid
+classDiagram
+    class Presentation_Layer {
+        <<Next.js / React>>
+        +DashboardPage
+        +SOSButtonComponent
+        +HospitalMapComponent
+        +AppointmentBookingForm
+        +handleUserAction()
+    }
+
+    class Logic_Layer_Controllers {
+        <<Express.js>>
+        +AuthController
+        +AppointmentController
+        +EmergencyController
+        +HospitalController
+        +AIReportController
+        +ChatController
+        +WardController
+        +processRequest()
+    }
+
+    class Logic_Layer_Services {
+        <<Backend Services>>
+        +SocketManager (Real-time)
+        +GeminiService (AI Analysis)
+        +RazorpayService (Payments)
+        +LeafletProvider (Maps)
+    }
+
+    class Data_Layer_Models {
+        <<Mongoose / MongoDB>>
+        +UserModel
+        +DoctorModel
+        +HospitalModel
+        +AppointmentModel
+        +EmergencyModel
+        +MedicalRecordModel
+        +MessageModel
+        +WardModel
+        +save() / find()
+    }
+
+    Presentation_Layer ..> Logic_Layer_Controllers : "HTTP REST / Socket.io"
+    Logic_Layer_Controllers --> Logic_Layer_Services : "delegates logic"
+    Logic_Layer_Controllers --> Data_Layer_Models : "CRUD operations"
+    Logic_Layer_Services ..> Data_Layer_Models : "optional data access"
+```
+
+This tiered structure ensures high maintainability and scalability, allowing the AI and Payment services to be updated or replaced without impacting the core database schema or user interface.
+
+
+14.0 SYSTEM ARCHITECTURE (HIGH-LEVEL)
+=====================================
+
+The Medicare+ platform follows a decoupled, full-stack architecture designed for scalability and real-time responsiveness.
+
+```mermaid
+graph TD
+    subgraph Client_Side [Frontend - Next.js 16/React 19]
+        UI[User Interface - Tailwind CSS]
+        STATE[State Management - React Context]
+        MAP[Leaflet.js/OSM Map]
+    end
+
+    subgraph Server_Side [Backend - Node.js/Express.js]
+        API[RESTful API Endpoints]
+        AUTH[JWT/Bcrypt Authentication]
+        SOCKET[Socket.io Real-time Engine]
+    end
+
+    subgraph Data_Persistence [Database - MongoDB]
+        MONGO[(MongoDB NoSQL Cluster)]
+        ODM[Mongoose ODM]
+    end
+
+    subgraph External_Integrations [Third-Party Services]
+        GEMINI[Google Gemini AI - Lab Reports]
+        RAZOR[Razorpay Gateway - Payments]
+        ABHA[ABHA Health Stack - Digital ID]
+    end
+
+    UI <--> API
+    UI <--> SOCKET
+    API <--> ODM
+    ODM <--> MONGO
+    API <--> GEMINI
+    API <--> RAZOR
+    API <--> ABHA
+    MAP <--> API
+```
+
+The application leverages Next.js server components for performance and client-side transitions for a seamless patient experience. Real-time SOS alerts and Chat operations bypass traditional polling methods via Socket.io, ensuring sub-second latency in critical healthcare scenarios.
+
+
+15.0 USE CASE DIAGRAM
+=====================
+
+The Use Case diagram outlines the core interactions between external actors and every module of the Medicare+ platform, styled with UML actor notation and color-coded role groups.
+
+```mermaid
+flowchart LR
+    classDef actor fill:#1e3a5f,color:#fff,stroke:#60a5fa,stroke-width:2px,font-weight:bold
+    classDef ai fill:#4c1d95,color:#fff,stroke:#a78bfa,stroke-width:2px,font-weight:bold
+    classDef p_uc fill:#eff6ff,color:#1e40af,stroke:#3b82f6,stroke-width:1.5px
+    classDef d_uc fill:#f0fdf4,color:#166534,stroke:#22c55e,stroke-width:1.5px
+    classDef a_uc fill:#fff7ed,color:#92400e,stroke:#f59e0b,stroke-width:1.5px
+
+    P["Patient"]:::actor
+    D["Doctor"]:::actor
+    A["Hospital Admin"]:::actor
+    AI["Gemini AI System"]:::ai
+
+    subgraph SYS ["Medicare+ System Boundary"]
+        subgraph PG ["Patient Use Cases"]
+            UC1(["Register / Login"]):::p_uc
+            UC2(["View ABHA Health Card"]):::p_uc
+            UC3(["Discover Hospitals on Map"]):::p_uc
+            UC4(["Trigger SOS Emergency"]):::p_uc
+            UC5(["AI Symptom Chat"]):::p_uc
+            UC6(["Upload Lab Report"]):::p_uc
+            UC7(["Book Appointment"]):::p_uc
+            UC8(["View Medical Records"]):::p_uc
+            UC9(["Pay Consultation Fee"]):::p_uc
+            UC10(["Chat with Hospital"]):::p_uc
+            UC11(["Read First Aid Guides"]):::p_uc
+        end
+
+        subgraph DG ["Doctor Use Cases"]
+            UC12(["Login"]):::d_uc
+            UC13(["View Schedule"]):::d_uc
+            UC14(["Confirm / Reject Appointment"]):::d_uc
+            UC15(["Complete Session with Diagnosis"]):::d_uc
+            UC16(["Add Prescription & Medicines"]):::d_uc
+            UC17(["View Patient Medical History"]):::d_uc
+            UC18(["Print Medical Report"]):::d_uc
+        end
+
+        subgraph AG ["Admin Use Cases"]
+            UC19(["Login"]):::a_uc
+            UC20(["Manage Hospital Profile"]):::a_uc
+            UC21(["Add / Manage Doctors"]):::a_uc
+            UC22(["Accept / Reject Appointments"]):::a_uc
+            UC23(["Monitor SOS Emergencies"]):::a_uc
+            UC24(["Manage Bed & Ward Capacity"]):::a_uc
+            UC25(["Chat with Patients"]):::a_uc
+            UC26(["View Hospital Stats"]):::a_uc
+        end
+    end
+
+    P --- UC1 & UC2 & UC3 & UC4 & UC5 & UC6
+    P --- UC7 & UC8 & UC9 & UC10 & UC11
+
+    D --- UC12 & UC13 & UC14 & UC15 & UC16 & UC17 & UC18
+
+    A --- UC19 & UC20 & UC21 & UC22 & UC23 & UC24 & UC25 & UC26
+
+    UC5 -. "powered by" .-> AI
+    UC6 -. "powered by" .-> AI
+```
+
+The system enforces strict Role-Based Access Control (RBAC): Patients manage their own health journey, Doctors handle clinical workflows, and Admins oversee facility operations. The Gemini AI System Actor powers both the symptom chat and the lab report analysis modules.
+
+
+16.0 SEQUENCE DIAGRAMS
+========================
+
+The following sections provide both conceptual and technical perspectives on the core workflows within the Medicare+ ecosystem. 
+
+
+16.1 ANALYSIS LEVEL SEQUENCE DIAGRAMS (CONCEPTUAL)
+--------------------------------------------------
+
+The Analysis Level diagrams focus on the logical interactions between primary business actors (Patient, Doctor, Hospital Admin, AI System) without considering implementation details like database drivers or frontend frameworks.
+
+
+16.1.1 SOS ALERT FLOW (ANALYSIS LEVEL)
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital Admin
+    
+    Note over P: Emergency Occurs
+    P->>P: Activates SOS
+    P->>H: Broadcast Crisis Alert & GPS
+    H->>H: Verify Identity & Location
+    H->>P: Dispatch First Response
+    H->>H: Update Emergency Status
+    H-->>P: Case Active (ETA Sent)
+```
+
+
+16.1.2 APPOINTMENT BOOKING FLOW (ANALYSIS LEVEL)
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant H as Hospital Admin
+    participant D as Doctor
+    
+    P->>H: Request Consultation
+    H->>H: Check Doctor Availability
+    H->>P: Verify Request (Pending)
+    H->>H: Process Payment (Optional)
+    H->>D: Schedule Appointment
+    H-->>P: Booking Confirmed
+```
+
+
+16.1.3 AI LAB REPORT ANALYSIS FLOW (ANALYSIS LEVEL)
+```mermaid
+sequenceDiagram
+    participant P as Patient
+    participant AI as AI System (Gemini)
+    
+    P->>P: Provide Lab Report
+    P->>AI: Request Medical Analysis
+    AI->>AI: Parse Clinical Data
+    AI->>AI: Interpret Symptoms
+    AI-->>P: Generate Health Summary
+```
+
+
+16.1.4 DOCTOR SESSION COMPLETION (ANALYSIS LEVEL)
+```mermaid
+sequenceDiagram
+    participant D as Doctor
+    participant R as Medical Record
+    participant P as Patient
+    
+    D->>D: Conduct Consultation
+    D->>R: Finalize Clinical Diagnosis
+    D->>R: Prescribe Medications
+    R->>R: Archive Session Detail
+    R-->>P: Access Updated History
+```
+
+
+16.2 DESIGN LEVEL SEQUENCE DIAGRAMS (MVC / THREE-TIER)
+------------------------------------------------------
+
+The Design Level diagrams illustrate the technical implementation following the Three-Tier / MVC architecture, tracing interactions between React Views, Express Controllers, and Mongoose Models.
+
+
+16.2.1 SOS ALERT FLOW (DESIGN LEVEL)
+```mermaid
+sequenceDiagram
+    participant V as View (SOSButton.tsx)
+    participant C as Socket.io (Back-end)
+    participant L as EmergencyController
+    participant M as EmergencyModel (Mongoose)
+    participant DB as MongoDB
+    participant A as View (AdminPanel.tsx)
+
+    Note over V: User holds SOS for 3s
+    V->>V: Capture GPS Coordinates
+    V->>C: emit("emergency:trigger", data)
+    C->>L: processSOSRequest(data)
+    L->>M: new Emergency(data).save()
+    M->>DB: INSERT document
+    DB-->>M: Success
+    M-->>L: Record Saved
+    L->>C: broadcast("hospital:alert", data)
+    C->>A: Live Push Notification & Sound
+    A->>L: updateStatus("acknowledged")
+    L->>C: emit("status:update", {eta: "5m"})
+    C-->>V: Render Hospital Response Tracker
+```
+
+
+16.2.2 APPOINTMENT BOOKING FLOW (DESIGN LEVEL)
+```mermaid
+sequenceDiagram
+    participant V as View (BookingForm.tsx)
+    participant C as AppointmentController
+    participant M as AppointmentModel
+    participant DB as MongoDB
+    participant A as View (AdminDashboard.tsx)
+
+    V->>C: POST /api/appointments {data}
+    C->>M: create(data)
+    M->>DB: INSERT {status: "pending"}
+    DB-->>M: Success
+    M-->>C: Appointment Saved
+    C-->>V: 201 Created - "Appointment Pending"
+
+    Note over A: Admin sees pending record
+    A->>C: PATCH /api/appointments/:id {status: "confirmed"}
+    C->>M: findByIdAndUpdate(id, data)
+    M->>DB: UPDATE document
+    DB-->>M: Success
+    M-->>C: Data Updated
+    C-->>A: 200 OK - "Confirmed"
+```
+
+
+16.2.3 AI LAB REPORT ANALYSIS FLOW (DESIGN LEVEL)
+```mermaid
+sequenceDiagram
+    participant V as View (AIChat.tsx)
+    participant C as AIReportController
+    participant S as GeminiService (AI API)
+    participant M as MedicalRecordModel
+
+    V->>C: POST /api/ai/analyze {pdf: base64}
+    C->>C: Extract text from buffer
+    C->>S: generateContent(prompt + text)
+    Note over S: Gemini processes medical data
+    S-->>C: AI Insight JSON Response
+    C->>M: create({analysisResults})
+    M-->>C: Saved
+    C-->>V: {results: summary, recommendations}
+    V-->>V: Render AI-generated insights
+```
+
+
+16.2.4 DOCTOR SESSION COMPLETION (DESIGN LEVEL)
+```mermaid
+sequenceDiagram
+    participant V as View (ConsultationPage.tsx)
+    participant C as RecordController
+    participant M1 as MedicalRecordModel
+    participant M2 as AppointmentModel
+    participant DB as MongoDB
+
+    Note over V: Doctor enters clinical detail
+    V->>C: POST /api/medical-records {data}
+    C->>M1: new MedicalRecord(data).save()
+    M1->>DB: INSERT Record
+    DB-->>M1: Success
+    M1-->>C: Record Stored
+    C->>M2: findByIdAndUpdate(appt_id, {status: "completed"})
+    M2->>DB: UPDATE Appointment
+    DB-->>M2: Success
+    M2-->>C: Status Updated
+    C-->>V: 201 - "Session Finalized"
+```
+
+
+17.0 NAVIGATION CHART (SITEMAP)
+===============================
+
+The navigation chart below illustrates the hierarchical structure of the Medicare+ platform, showing how each user role (Patient, Doctor, Admin) navigates through their respective portals.
+
+```mermaid
+graph TD
+    %% Styling for rounded nodes
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1.5px
+    
+    Start(( )) --> Home[Landing Page /]
+    Home --> LoginAuth[Login / Registration]
+    
+    LoginAuth --> RoleChoice{User Role?}
+    
+    %% Patient Path
+    RoleChoice --> Patient[Patient Dashboard]
+    Patient --> P_SOS[Emergency SOS Alert]
+    Patient --> P_AI[AI Health Assistant]
+    Patient --> P_Map[Hospital Discovery Map]
+    Patient --> P_Appt[Appointment Booking]
+    P_Appt --> P_Pay[Razorpay Payment]
+    P_Pay --> P_Hist[Medical History / PDF Reports]
+    P_Hist --> Patient
+    
+    %% Doctor Path
+    RoleChoice --> Doctor[Doctor Dashboard]
+    Doctor --> D_Sched[Manage Availability]
+    Doctor --> D_Visit[Consultation / Prescription]
+    D_Visit --> D_Rec[Permanent Medical Record]
+    D_Rec --> Doctor
+    
+    %% Admin Path
+    RoleChoice --> Admin[Admin Dashboard]
+    A_SOS --> A_Ward[Bed & Ward Management]
+    A_Ward --> A_Docs[Manage Doctor Profiles]
+    A_Docs --> A_Chat[Admin-Patient Support Chat]
+    Admin --> A_SOS[Live SOS Monitoring]
+    A_Chat --> Admin
+```
+
+The system employs a centralized entry point with dynamic routing based on the authenticated user's role. Each dashboard is fully isolated, ensuring that users can only access the features and data relevant to their specific role.
+
+
+18.0 ACTIVITY DIAGRAM
+=====================
+
+The Activity Diagram below models the dynamic behavior of the Medicare+ platform, tracing the operational flows for Emergency SOS alerts, the Appointment booking lifecycle, and the AI-driven health assistant processing.
+
+```mermaid
+graph TD
+    %% Styling for rounded nodes
+    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1.5px
+    
+    Start(( )) --> Access[User Accesses Platform]
+    Access --> Auth{Authenticated?}
+    
+    Auth -- No --> Login[Login / Registration]
+    Login --> Access
+    
+    Auth -- Yes --> Dash[Access Unified Dashboard]
+    
+    Dash --> Select{Select User Flow}
+    
+    %% SOS Flow
+    Select -- Priority 1 --> SOS[Trigger Emergency SOS Alert]
+    SOS --> Capture[Capture Live GPS & Medical Profile]
+    Capture --> Notify[Broadcast to Hospitals & Contacts]
+    Notify --> Admin[Hospital Admin Acknowledges]
+    Admin --> Resolve[Emergency Case Managed]
+    Resolve --> End(( ))
+    
+    %% Appointment Flow
+    Select -- Priority 2 --> Discovery[Hospital Discovery & Mapping]
+    Discovery --> Booking[Select Doctor & Book Appointment]
+    Booking --> Billing[Razorpay Payment Processing]
+    Billing --> Confirm[Admin Confirms Booking]
+    Confirm --> Session[Doctor Consultation Session]
+    Session --> Record[Digital Medical Record Generated]
+    Record --> End
+    
+    %% AI Flow
+    Select -- Priority 3 --> AI[AI Health Assistant Query]
+    AI --> Upload[Upload Medical Document PDF]
+    Upload --> Parsing[Gemini AI Analysis & Extraction]
+    Parsing --> Summary[View AI Health Insights]
+    Summary --> End
+```
+
+The Activity Diagram illustrates the prioritized behavioral logic of the platform, ensuring that high-priority emergency SOS flows bypass routine scheduling to provide immediate hospital response.
+
+
+19.0 COMPONENT DIAGRAM
+=======================
+
+The component diagram visualizes the high-level physical modules of the Medicare+ platform and their technical dependencies, following the Three-Tier architecture.
+
+```mermaid
+graph LR
+    subgraph Frontend_Component [Frontend - Next.js]
+        V[React Views & UI Components]
+        L[Leaflet.js Mapping Logic]
+        S[Socket.io Client Context]
+    end
+
+    subgraph Backend_Component [Backend - Node.js/Express]
+        API[RESTful API Controllers]
+        WS[Socket.io WebSocket Server]
+        AUTH[JWT/Bcrypt Auth Middleware]
+    end
+
+    subgraph Data_Layer [Data Provider - MongoDB]
+        M[Mongoose ODM]
+        DB[(MongoDB Persistence)]
+    end
+
+    subgraph External_Services [Third-Party Integrations]
+        GEMINI[Google Gemini AI Service]
+        RAZOR[Razorpay Payment Gateway]
+        ABHA[ABHA Health Mission Registry]
+    end
+
+    %% Interactions
+    V --(Fetch/Axios)--> API
+    S --(WebSockets)--> WS
+    API --(ODM Queries)--> M
+    M --- DB
+    API --(gRPC/HTTPS)--> GEMINI
+    API --(Webhooks)--> RAZOR
+    API --(REST)--> ABHA
+```
+
+This physical view confirms the decoupling of the Core Engine from third-party services like Gemini AI and Razorpay, allowing the platform to scale its data persistence layer independently of the real-time websocket and mapping components.
+
+
+20.0 DEPLOYMENT DIAGRAM
+========================
+
+The deployment diagram illustrates the physical distribution of the Medicare+ artifacts across execution environments, highlighting the client-server-database relationship and the integration of third-party cloud services.
+
+```mermaid
+graph TD
+    subgraph Client_Node [Client Side - Portable Device / PC]
+        Browser[Execution Environment: Web Browser]
+        FE[Artifact: Next.js / React Frontend]
+        Browser --- FE
+    end
+
+    subgraph Server_Node [Application Node - Cloud / On-Premise]
+        Runtime[Execution Environment: Node.js / Express]
+        BE[Artifact: Medicare+ Core Backend]
+        Socket[Artifact: Socket.io Server]
+        Runtime --- BE
+        Runtime --- Socket
+    end
+
+    subgraph Data_Node [Database Node - MongoDB Atlas / Local]
+        Storage[Execution Environment: MongoDB NoSQL]
+        P[Artifact: Permanent Data Persistence]
+        Storage --- P
+    end
+
+    subgraph Cloud_Integrations [SaaS / Cloud Service Nodes]
+        AI[Google Gemini AI Engine]
+        PAY[Razorpay Checkout Gateway]
+    end
+
+    %% Communication Protocols
+    FE -- "HTTPS (port 443)" --> BE
+    FE -- "WSS (WebSockets)" --> Socket
+    BE -- "MongoDB Wire Protocol" --> Storage
+    BE -- "gRPC / HTTPS" --> AI
+    BE -- "Webhook Callback" --> PAY
+```
+
+
+21.0 STATE TRANSITION DIAGRAM
+==============================
+
+The state transition diagram models the dynamic lifecycle of core system objects- specifically the Appointment and Emergency SOS entities- as they move through various operational statuses in the Medicare+ backend.
+
+21.1 APPOINTMENT LIFECYCLE
+```mermaid
+stateDiagram-v2
+    [*] --> Pending : Patient Submits Form
+    Pending --> Confirmed : Admin Verifies Schedule
+    Pending --> Rejected : Schedule Conflict / No Slot
+    Confirmed --> Completed : Doctor Finalizes Session
+    Confirmed --> Cancelled : User/System Cancellation
+    Completed --> [*]
+    Rejected --> [*]
+    Cancelled --> [*]
+```
+
+21.2 EMERGENCY SOS LIFECYCLE
+```mermaid
+stateDiagram-v2
+    [*] --> Triggered : Patient Activates SOS
+    Triggered --> Acknowledged : Hospital Admin Sees Alert
+    Acknowledged --> Active : Response Team Dispatched
+    Active --> Resolved : Patient Managed / Safe
+    Resolved --> [*]
+```

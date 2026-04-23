@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { DoctorSidebar } from "@/components/doctor-sidebar"
 import {
   LayoutDashboard,
   Calendar,
@@ -42,13 +43,7 @@ import {
 import { cn } from "@/lib/utils"
 import io from "socket.io-client"
 
-const navItems = [
-  { href: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/doctor/appointments", icon: Calendar, label: "Appointments" },
-  { href: "/doctor/patients", icon: Users, label: "Patients" },
-  { href: "/doctor/schedule", icon: Clock, label: "Schedule" },
-  { href: "/doctor/profile", icon: User, label: "Profile" },
-]
+// Removed inline navItems
 
 const stats = [
   {
@@ -305,68 +300,33 @@ export default function DoctorDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 border-r bg-card">
-        <div className="p-6 border-b">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <Stethoscope className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-bold">MediCare+</h1>
-              <p className="text-xs text-muted-foreground">Doctor Portal</p>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <DoctorSidebar />
 
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setActiveNav(item.href)}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                activeNav === item.href
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </nav>
+      <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500 bg-slate-50/50 dark:bg-slate-950/20 min-h-screen">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent h-96 -z-10" />
 
-        <div className="p-4 border-t">
-          <Link href="/auth" className="flex items-center gap-3 px-4 py-3 w-full text-muted-foreground hover:text-foreground transition-colors">
-            <LogOut className="h-5 w-5" />
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b px-6 py-4">
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5 px-6 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold">Doctor Dashboard</h1>
-              <p className="text-sm text-muted-foreground">
-                Welcome back, {doctorInfo?.user?.name ? `Dr. ${doctorInfo.user.name}` : "Doctor"}
-              </p>
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-[1.25rem] bg-primary/10 flex items-center justify-center text-primary shadow-sm ring-1 ring-primary/5">
+                <LayoutDashboard className="h-6 w-6 stroke-[2.5]" />
+              </div>
+              <div>
+                <h1 className="text-xl font-black tracking-tight text-slate-900 leading-none">Clinical Console</h1>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1.5 opacity-80">Welcome back, Dr. {doctorInfo?.user?.name || "Practitioner"}</p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-white/50 text-slate-400 hover:text-primary transition-all">
                 <Settings className="h-5 w-5" />
               </Button>
-              <Avatar>
+              <Avatar className="h-10 w-10 border-2 border-background shadow-md">
                 <AvatarImage
                   src={doctorInfo?.user?.profileImage ? `http://localhost:5000${doctorInfo.user.profileImage}` : ""}
-                  alt={doctorInfo?.user?.name}
+                  className="object-cover"
                 />
-                <AvatarFallback className="bg-primary/10 text-primary uppercase">
+                <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">
                   {doctorInfo?.user?.name ? doctorInfo.user.name.split(" ").map((n: string) => n[0]).join("") : "DR"}
                 </AvatarFallback>
               </Avatar>
@@ -375,38 +335,40 @@ export default function DoctorDashboard() {
         </header>
 
         <div className="p-6 space-y-6">
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Stats Bar */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {dashboardStats.map((stat) => (
-              <Card key={stat.label}>
-                <CardContent className="p-4">
+              <Card key={stat.label} className="group border-none bg-white/40 backdrop-blur-xl shadow-sm rounded-[2rem] hover:bg-white/60 transition-all duration-500 overflow-hidden">
+                <CardContent className="p-7">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] opacity-80">
                         {stat.label}
                       </p>
-                      <p className="text-2xl font-bold">{stat.value}</p>
-                      <div className="flex items-center gap-1 mt-2">
-                        {stat.trend === "up" ? (
-                          <ArrowUpRight className="h-4 w-4 text-success" />
-                        ) : (
-                          <ArrowDownRight className="h-4 w-4 text-destructive" />
-                        )}
-                        <span
-                          className={cn(
-                            "text-sm",
-                            stat.trend === "up" ? "text-success" : "text-destructive"
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-3xl font-black text-slate-800 tracking-tight">{stat.value}</p>
+                        <div className="flex items-center gap-1">
+                          {stat.trend === "up" ? (
+                            <ArrowUpRight className="h-3 w-3 text-emerald-500" />
+                          ) : (
+                            <ArrowDownRight className="h-3 w-3 text-emergency" />
                           )}
-                        >
-                          {stat.change}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          from last week
-                        </span>
+                          <span className={cn(
+                            "text-[10px] font-black",
+                            stat.trend === "up" ? "text-emerald-500" : "text-emergency"
+                          )}>
+                            {stat.change}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <div className={cn("p-3 rounded-lg bg-muted", stat.color)}>
-                      <stat.icon className="h-6 w-6" />
+                    <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-inner", 
+                      stat.color === "text-primary" ? "bg-primary/10 text-primary" : 
+                      stat.color === "text-warning-foreground" ? "bg-amber-500/10 text-amber-600" :
+                      stat.color === "text-success" ? "bg-emerald-500/10 text-emerald-600" :
+                      "bg-accent/10 text-accent"
+                    )}>
+                      <stat.icon className="h-7 w-7 stroke-[1.5]" />
                     </div>
                   </div>
                 </CardContent>
@@ -415,242 +377,214 @@ export default function DoctorDashboard() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-6">
-            {/* Today's Appointments */}
-            <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>Today's Appointments</CardTitle>
-                    <Link href="/doctor/appointments">
-                      <Button variant="ghost" size="sm">
-                        View All
-                        <ChevronRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </Link>
+            {/* Clinical Queue */}
+            <div className="lg:col-span-2 space-y-8">
+              <div className="flex items-center justify-between px-2">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-800 opacity-80">Immediate Appointment Queue</h2>
+                </div>
+                <Link href="/doctor/appointments">
+                  <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all">
+                    Access Registry
+                    <ChevronRight className="h-3 w-3 ml-1" />
+                  </Button>
+                </Link>
+              </div>
+
+              <div className="space-y-4">
+                {loading && (
+                   <div className="p-20 text-center bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-primary/5">
+                     <Clock className="h-10 w-10 mx-auto text-slate-200 animate-spin" />
+                   </div>
+                )}
+                {!loading && appointments.filter(a => {
+                  const isToday = new Date(a.date).toDateString() === new Date().toDateString();
+                  const isUpcomingPending = a.status === 'pending' && new Date(a.date) > new Date();
+                  return isToday || isUpcomingPending;
+                }).length === 0 && (
+                  <div className="p-20 text-center bg-white/40 backdrop-blur-xl rounded-[2.5rem] border border-primary/5">
+                    <Calendar className="h-10 w-10 mx-auto text-slate-200 mb-4" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Zero entries for this window</p>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="space-y-3">
-                      {loading && <p>Loading appointments...</p>}
-                      {!loading && appointments.filter(a => new Date(a.date).toDateString() === new Date().toDateString()).length === 0 && <p className="text-muted-foreground p-4">No appointments today.</p>}
-                      {appointments.filter(a => new Date(a.date).toDateString() === new Date().toDateString()).map((appointment) => (
-                        <div
-                          key={appointment._id}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="p-2 rounded-lg bg-primary/10">
-                              <Clock className="h-5 w-5 text-primary" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{appointment.patient.name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {appointment.reason}
-                              </p>
-                              {appointment.attachments && appointment.attachments.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                  {appointment.attachments.map((file, i) => (
-                                    file.url.startsWith("medical-record:") || file.fileType === "text/reference" ? (
-                                      <button
-                                        key={i}
-                                        disabled={fetchingRecord}
-                                        onClick={(e) => {
-                                          e.preventDefault()
-                                          if (file.url.startsWith("medical-record:")) {
-                                            const id = file.url.split(":")[1];
-                                            fetchMedicalRecordDetail(id);
-                                          } else {
-                                            alert("Detailed view is not available for this record (old summary reference).");
-                                          }
-                                        }}
-                                        className="flex items-center gap-1.5 px-2 py-1 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold hover:bg-primary/20 transition-all disabled:opacity-50"
-                                      >
-                                        <FileText className="h-3 w-3" />
-                                        {fetchingRecord ? "..." : file.name}
-                                      </button>
-                                    ) : (
-                                      <a
-                                        key={i}
-                                        href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="flex items-center gap-1.5 px-2 py-1 rounded bg-muted border border-border hover:bg-muted/80 transition-colors text-[10px] font-medium"
-                                      >
-                                        <Paperclip className="h-3 w-3" />
-                                        {file.name}
-                                      </a>
-                                    )
-                                  ))}
-                                </div>
-                              )}
-                              <div className="flex items-center gap-3 mt-1">
-                                <span className="text-sm text-muted-foreground">
-                                  {new Date(appointment.date).toLocaleDateString()} {appointment.time}
-                                </span>
-                                <Badge
-                                  variant="outline"
-                                  className={
-                                    appointment.status === "confirmed"
-                                      ? "bg-success/20 text-success border-success"
-                                      : appointment.status === "pending"
-                                        ? "bg-warning/20 text-warning-foreground border-warning"
-                                        : "bg-destructive/20 text-destructive border-destructive"
-                                  }
-                                >
-                                  {appointment.status}
-                                </Badge>
-                              </div>
-                            </div>
+                )}
+                {appointments
+                  .filter(a => {
+                    const isToday = new Date(a.date).toDateString() === new Date().toDateString();
+                    const isUpcomingPending = a.status === 'pending' && new Date(a.date) > new Date();
+                    return isToday || isUpcomingPending;
+                  })
+                  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.time.localeCompare(b.time))
+                  .map((appointment) => (
+                  <Card key={appointment._id} className="group border-none bg-white/40 backdrop-blur-xl shadow-sm rounded-[2.5rem] hover:bg-white/60 transition-all duration-500 overflow-hidden">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
+                          <div className="h-14 w-14 rounded-2xl bg-slate-100 flex flex-col items-center justify-center border border-white group-hover:bg-primary/5 transition-colors">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Time</span>
+                            <span className="text-xs font-black text-slate-800">{appointment.time}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {appointment.status === "pending" && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-success border-success hover:bg-success/10"
-                                  onClick={() => handleStatusUpdate(appointment._id, "confirmed")}
-                                >
-                                  Accept
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="text-destructive border-destructive hover:bg-destructive/10"
-                                  onClick={() => handleStatusUpdate(appointment._id, "rejected")}
-                                >
-                                  Reject
-                                </Button>
-                              </>
-                            )}
-                            {appointment.status === "confirmed" && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() =>
-                                  (window.location.href = `tel:${appointment.patient?.phone?.replace(/\s/g, "")}`)
-                                }
-                              >
-                                <Phone className="h-4 w-4" />
-                              </Button>
-                            )}
+                          <div>
+                            <div className="flex items-center gap-3 mb-1">
+                              <h3 className="text-lg font-black text-slate-800 tracking-tight">{appointment.patient.name}</h3>
+                              <Badge variant="outline" className={cn("px-3 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-widest border-none", 
+                                appointment.status === "confirmed" ? "bg-emerald-500/10 text-emerald-600" :
+                                appointment.status === "pending" ? "bg-amber-500/10 text-amber-600" :
+                                "bg-emergency/10 text-emergency"
+                              )}>
+                                {appointment.status}
+                              </Badge>
+                            </div>
+                            <p className="text-xs font-bold text-slate-400 italic leading-none truncate max-w-[240px] mb-2">
+                              "{appointment.reason}"
+                            </p>
+                            <div className="flex items-center gap-4 text-[9px] font-black text-primary/60 uppercase tracking-widest">
+                               <div className="flex items-center gap-1">
+                                  <Calendar className="h-2.5 w-2.5" />
+                                  {new Date(appointment.date).toDateString() === new Date().toDateString() ? "Today" : new Date(appointment.date).toLocaleDateString()}
+                               </div>
+                               <div className="flex items-center gap-1">
+                                  <Clock className="h-2.5 w-2.5" />
+                                  {appointment.time}
+                               </div>
+                            </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+
+                        <div className="flex items-center gap-3">
+                          {appointment.status === "pending" && (
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleStatusUpdate(appointment._id, "confirmed")}
+                                className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[9px] font-black uppercase tracking-widest"
+                              >
+                                Accept
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleStatusUpdate(appointment._id, "rejected")}
+                                className="h-9 px-4 rounded-xl bg-emergency/5 text-emergency hover:bg-emergency/10 text-[9px] font-black uppercase tracking-widest"
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-10 w-10 rounded-xl bg-white/50 text-slate-400 hover:text-primary transition-all"
+                            onClick={() => window.location.href = `tel:${appointment.patient?.phone?.replace(/\s/g, "")}`}
+                          >
+                            <Phone className="h-4 w-4" />
+                          </Button>
+                          <Link href={`/doctor/patients?patient=${appointment.patient.name}`}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10 rounded-xl bg-white/50 text-slate-400 hover:text-slate-800 transition-all"
+                            >
+                              <ChevronRight className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
-            {/* Recent Patients & Quick Actions */}
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Patients</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recentPatientsDynamic.length === 0 && (
-                      <p className="text-sm text-muted-foreground text-center py-4">No recent patients found.</p>
-                    )}
-                    {recentPatientsDynamic.map((patient) => (
-                      <div
-                        key={patient.id}
-                        className="flex items-start gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-                        onClick={() => window.location.href = `/doctor/patients?patient=${patient.name}`}
-                      >
-                        <Avatar>
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                            {patient.name
-                              .split(" ")
-                              .map((n: string) => n[0])
-                              .join("")
-                              .slice(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm">{patient.name}</p>
-                          <p className="text-xs text-muted-foreground line-clamp-1">
-                            {patient.condition}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge
-                              variant="outline"
-                              className={
-                                patient.status === "stable"
-                                  ? "bg-success/20 text-success border-success text-xs"
-                                  : patient.status === "improving"
-                                    ? "bg-primary/20 text-primary border-primary text-xs"
-                                    : "bg-warning/20 text-warning-foreground border-warning text-xs"
-                              }
-                            >
-                              {patient.status}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {patient.nextAppointment ? `Next: ${patient.nextAppointment}` : `Last: ${patient.lastVisit}`}
-                            </span>
-                          </div>
+            {/* Side Modules */}
+            <div className="space-y-10">
+              {/* Recent Registry Entries */}
+              <section className="space-y-5">
+                <div className="flex items-center gap-2 px-2">
+                  <Users className="h-4 w-4 text-primary" />
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-800 opacity-80">Recent Entries</h3>
+                </div>
+                <div className="space-y-4">
+                  {recentPatientsDynamic.length === 0 && (
+                    <div className="p-10 text-center bg-white/40 backdrop-blur-xl rounded-[2rem] border border-primary/5">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Registry is empty</p>
+                    </div>
+                  )}
+                  {recentPatientsDynamic.map((patient) => (
+                    <div
+                      key={patient.id}
+                      className="group flex items-center gap-4 p-4 bg-white/40 backdrop-blur-xl rounded-[2rem] border border-transparent hover:border-primary/10 hover:bg-white/60 transition-all duration-500 cursor-pointer shadow-sm"
+                      onClick={() => window.location.href = `/doctor/patients?patient=${patient.name}`}
+                    >
+                      <Avatar className="h-12 w-12 border-2 border-white shadow-md">
+                        <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">
+                          {patient.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-sm text-slate-800 tracking-tight truncate">{patient.name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Badge variant="outline" className={cn("px-2 py-0 rounded-md text-[8px] font-black uppercase tracking-widest border-none", 
+                            patient.status === "critical" ? "bg-emergency/10 text-emergency" : "bg-emerald-500/10 text-emerald-600"
+                          )}>
+                            {patient.status}
+                          </Badge>
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                            {patient.lastVisit}
+                          </span>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                  <Link href="/doctor/patients">
-                    <Button variant="ghost" className="w-full mt-4" size="sm">
-                      View All Patients
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                      <ChevronRight className="h-4 w-4 text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-              {/* Quick Actions */}
-              <Card className="overflow-hidden border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-bold">Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-3 p-4">
+              {/* Protocol Shortcuts */}
+              <section className="space-y-5">
+                <div className="flex items-center gap-2 px-2">
+                  <TrendingUp className="h-4 w-4 text-primary" />
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-800 opacity-80">Protocol Shortcuts</h3>
+                </div>
+                <div className="grid gap-4">
                   <Link href="/doctor/appointments">
-                    <div className="group flex items-center gap-4 p-3 rounded-xl bg-background border hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer">
-                      <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary transition-colors">
-                        <Calendar className="h-6 w-6 text-primary group-hover:text-primary-foreground" />
+                    <div className="group flex items-center gap-5 p-5 bg-gradient-to-br from-primary/5 to-white/40 backdrop-blur-xl rounded-[2rem] border border-transparent hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer">
+                      <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                        <Calendar className="h-7 w-7 stroke-[1.5]" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-sm">Manage Appointments</p>
-                        <p className="text-xs text-muted-foreground">Review and update slots</p>
+                        <p className="font-black text-sm text-slate-800 tracking-tight">Registry Management</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sync Appointments</p>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
 
                   <Link href="/doctor/schedule">
-                    <div className="group flex items-center gap-4 p-3 rounded-xl bg-background border hover:border-warning hover:shadow-md transition-all duration-200 cursor-pointer">
-                      <div className="h-12 w-12 rounded-lg bg-warning/10 flex items-center justify-center group-hover:bg-warning transition-colors">
-                        <Clock className="h-6 w-6 text-warning group-hover:text-warning-foreground" />
+                    <div className="group flex items-center gap-5 p-5 bg-gradient-to-br from-amber-500/5 to-white/40 backdrop-blur-xl rounded-[2rem] border border-transparent hover:border-amber-500/20 hover:shadow-xl hover:shadow-amber-500/5 transition-all duration-500 cursor-pointer">
+                      <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center text-amber-600 shadow-sm group-hover:bg-amber-500 group-hover:text-white transition-all duration-500">
+                        <Clock className="h-7 w-7 stroke-[1.5]" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-semibold text-sm">Update Schedule</p>
-                        <p className="text-xs text-muted-foreground">Set your availability</p>
+                        <p className="font-black text-sm text-slate-800 tracking-tight">Timeline Control</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Update Availability</p>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                     </div>
                   </Link>
 
-                  <Link href="/doctor/patients">
-                    <div className="group flex items-center gap-4 p-3 rounded-xl bg-background border hover:border-success hover:shadow-md transition-all duration-200 cursor-pointer">
-                      <div className="h-12 w-12 rounded-lg bg-success/10 flex items-center justify-center group-hover:bg-success transition-colors">
-                        <UserPlus className="h-6 w-6 text-success group-hover:text-success-foreground" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm">Register Patient</p>
-                        <p className="text-xs text-muted-foreground">Create new records</p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                  <Link href="/doctor/patients" className="group p-8 bg-gradient-to-br from-primary to-primary-foreground rounded-[2.5rem] shadow-2xl shadow-primary/20 flex flex-col items-center text-center space-y-4 hover:scale-[1.02] transition-all duration-500">
+                    <div className="h-16 w-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                      <Stethoscope className="h-9 w-9 text-white stroke-[1.5]" />
                     </div>
+                    <div className="space-y-1">
+                      <h4 className="text-xl font-black italic text-white tracking-tighter">Practitioner Growth</h4>
+                      <p className="text-[10px] font-bold text-white/70 uppercase tracking-widest">Register New Patient Dossier</p>
+                    </div>
+                    <Button variant="outline" className="w-full h-11 rounded-2xl bg-white/10 border-white/20 text-white hover:bg-white hover:text-primary font-black uppercase tracking-widest text-[9px] transition-all">
+                      Open Medical Intake
+                    </Button>
                   </Link>
-                </CardContent>
-              </Card>
+                </div>
+              </section>
             </div>
           </div>
         </div>

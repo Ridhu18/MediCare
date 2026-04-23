@@ -22,70 +22,11 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { AdminSidebar } from "@/components/admin-sidebar"
 
-const recentAppointments = [
-  {
-    id: "1",
-    patientName: "Priya Patel",
-    doctorName: "Dr. Sharma",
-    department: "Cardiology",
-    time: "10:00 AM",
-    status: "pending",
-  },
-  {
-    id: "2",
-    patientName: "Amit Kumar",
-    doctorName: "Dr. Verma",
-    department: "Neurology",
-    time: "10:30 AM",
-    status: "confirmed",
-  },
-  {
-    id: "3",
-    patientName: "Sunita Rao",
-    doctorName: "Dr. Gupta",
-    department: "Orthopedics",
-    time: "11:00 AM",
-    status: "pending",
-  },
-  {
-    id: "4",
-    patientName: "Rajesh Singh",
-    doctorName: "Dr. Patel",
-    department: "General",
-    time: "11:30 AM",
-    status: "confirmed",
-  },
-]
-
-const emergencyCases = [
-  {
-    id: "1",
-    type: "Cardiac Arrest",
-    priority: "critical",
-    patient: "Unknown Male",
-    eta: "2 min",
-    ambulanceId: "AMB-101",
-  },
-  {
-    id: "2",
-    type: "Road Accident",
-    priority: "high",
-    patient: "Meera Sharma",
-    eta: "5 min",
-    ambulanceId: "AMB-105",
-  },
-  {
-    id: "3",
-    type: "Breathing Difficulty",
-    priority: "high",
-    patient: "Ram Prasad",
-    eta: "8 min",
-    ambulanceId: "AMB-103",
-  },
-]
 
 export default function AdminDashboard() {
   const [activeNav, setActiveNav] = useState("/admin")
+  const [appointments, setAppointments] = useState<any[]>([])
+  const [emergencyAlerts, setEmergencyAlerts] = useState<any[]>([])
   const [dashboardStats, setDashboardStats] = useState([
     { label: "Total Appointments", value: "0", icon: Calendar, color: "text-primary", bg: "bg-primary/10" },
     { label: "Total Doctors", value: "0", icon: Users, color: "text-accent", bg: "bg-accent/10" },
@@ -115,7 +56,45 @@ export default function AdminDashboard() {
         console.error("Error fetching admin stats:", error)
       }
     }
+
+    const fetchTodayAppointments = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch("http://localhost:5000/api/appointments/admin/today", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setAppointments(data)
+        }
+      } catch (error) {
+        console.error("Error fetching today's appointments:", error)
+      }
+    }
+
+    const fetchEmergencies = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await fetch("http://localhost:5000/api/emergencies", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          // Filter for non-completed cases and limit to recent 3
+          setEmergencyAlerts(data.filter((e: any) => e.status !== 'completed').slice(0, 3))
+        }
+      } catch (error) {
+        console.error("Error fetching emergencies:", error)
+      }
+    }
+
     fetchStats()
+    fetchTodayAppointments()
+    fetchEmergencies()
   }, [])
 
   return (
@@ -124,13 +103,13 @@ export default function AdminDashboard() {
       <AdminSidebar />
 
       {/* Main Content */}
-      <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500">
+      <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500 bg-slate-50/50 dark:bg-slate-950/20 min-h-screen">
         {/* Header */}
         <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5 px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-black tracking-tight text-slate-800">DASHBOARD</h1>
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+              <h1 className="text-xl font-black tracking-tight text-slate-800 dark:text-slate-100">DASHBOARD</h1>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 dark:text-slate-400">
                 Administrative Control Center
               </p>
             </div>
@@ -154,8 +133,8 @@ export default function AdminDashboard() {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</p>
-                      <p className="text-2xl font-black mt-1 text-slate-800 group-hover:scale-105 transition-transform origin-left">{stat.value}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground dark:text-slate-400">{stat.label}</p>
+                      <p className="text-2xl font-black mt-1 text-slate-800 dark:text-slate-100 group-hover:scale-105 transition-transform origin-left">{stat.value}</p>
                     </div>
                     <div className={cn("p-2.5 rounded-xl transition-all duration-300 group-hover:rotate-12", stat.bg)}>
                       <stat.icon className={cn("h-5 w-5", stat.color)} />
@@ -173,8 +152,8 @@ export default function AdminDashboard() {
                 <CardHeader className="border-b border-primary/5 pb-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-lg font-black tracking-tight text-slate-800">TODAY'S APPOINTMENTS</CardTitle>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">Real-time scheduling</p>
+                      <CardTitle className="text-lg font-black tracking-tight text-slate-800 dark:text-slate-100">TODAY'S APPOINTMENTS</CardTitle>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60 dark:text-slate-400">Real-time scheduling</p>
                     </div>
                     <Link href="/admin/appointments">
                       <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5 gap-1 font-bold">
@@ -186,50 +165,59 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="space-y-2">
-                    {recentAppointments.map((apt) => (
-                      <div
-                        key={apt.id}
-                        className="flex items-center justify-between p-3 rounded-xl hover:bg-white/40 transition-all duration-300 group hover:translate-x-1"
-                      >
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-10 w-10 border-2 border-primary/10 group-hover:border-primary/30 transition-colors">
-                            <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold font-mono">
-                              {apt.patientName.split(" ").map((n) => n[0]).join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-bold text-slate-800">{apt.patientName}</p>
-                            <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-tight">
-                              {apt.doctorName} <span className="opacity-30 mx-1">|</span> {apt.department}
-                            </p>
+                    {appointments.length > 0 ? (
+                      appointments.map((apt) => (
+                        <div
+                          key={apt._id}
+                          className="flex items-center justify-between p-3 rounded-xl hover:bg-white/40 transition-all duration-300 group hover:translate-x-1"
+                        >
+                          <div className="flex items-center gap-4">
+                            <Avatar className="h-10 w-10 border-2 border-primary/10 group-hover:border-primary/30 transition-colors">
+                              <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold font-mono">
+                                {apt.patient?.name?.split(" ").map((n: string) => n[0]).join("") || "P"}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-bold text-slate-800 dark:text-slate-100">{apt.patient?.name || "Unknown Patient"}</p>
+                              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-tight dark:text-slate-400">
+                                {apt.doctor?.user?.name || "Dr. Staff"} <span className="opacity-30 mx-1">|</span> {apt.doctor?.specialization || apt.doctor?.department || "General"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <p className="font-black text-slate-700 font-mono text-sm">{apt.time}</p>
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "text-[9px] font-black uppercase tracking-widest px-2 py-0 border-0",
+                                  apt.status === "confirmed"
+                                    ? "bg-emerald-500/10 text-emerald-600"
+                                    : apt.status === "pending"
+                                      ? "bg-amber-500/10 text-amber-600"
+                                      : "bg-slate-500/10 text-slate-600"
+                                )}
+                              >
+                                {apt.status}
+                              </Badge>
+                            </div>
+                            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-600 hover:bg-emerald-50">
+                                <CheckCircle2 className="h-4 w-4" />
+                              </Button>
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-rose-600 hover:bg-rose-50">
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <p className="font-black text-slate-700 font-mono text-sm">{apt.time}</p>
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                "text-[9px] font-black uppercase tracking-widest px-2 py-0 border-0",
-                                apt.status === "confirmed"
-                                  ? "bg-emerald-500/10 text-emerald-600"
-                                  : "bg-amber-500/10 text-amber-600"
-                              )}
-                            >
-                              {apt.status}
-                            </Badge>
-                          </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-emerald-600 hover:bg-emerald-50">
-                              <CheckCircle2 className="h-4 w-4" />
-                            </Button>
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-rose-600 hover:bg-rose-50">
-                              <XCircle className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="p-8 text-center">
+                        <Calendar className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">No appointments today</p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -245,37 +233,44 @@ export default function AdminDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 relative z-10 p-4">
-                {emergencyCases.map((emergency) => (
-                  <div
-                    key={emergency.id}
-                    className="p-4 rounded-xl bg-white/40 border border-rose-500/10 hover:border-rose-500/30 transition-all duration-300 group/item"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge
-                        className={cn(
-                          "text-[9px] font-black uppercase tracking-widest px-2",
-                          emergency.priority === "critical"
-                            ? "bg-rose-500 text-white animate-pulse"
-                            : "bg-amber-500 text-white"
-                        )}
-                      >
-                        {emergency.priority}
-                      </Badge>
-                      <span className="text-[10px] font-black font-mono text-slate-500 opacity-60 tracking-tighter">{emergency.ambulanceId}</span>
-                    </div>
-                    <h4 className="font-black text-slate-800 tracking-tight">{emergency.type}</h4>
-                    <p className="text-[11px] font-bold text-muted-foreground uppercase opacity-70 mb-3">{emergency.patient}</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-rose-500/10 text-rose-600">
-                        <Clock className="h-3 w-3" />
-                        <span className="text-[11px] font-black font-mono">ETA: {emergency.eta}</span>
+                {emergencyAlerts.length > 0 ? (
+                  emergencyAlerts.map((emergency) => (
+                    <div
+                      key={emergency._id}
+                      className="p-4 rounded-xl bg-white/40 border border-rose-500/10 hover:border-rose-500/30 transition-all duration-300 group/item"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge
+                          className={cn(
+                            "text-[9px] font-black uppercase tracking-widest px-2",
+                            emergency.priority === "critical"
+                              ? "bg-rose-500 text-white animate-pulse"
+                              : "bg-amber-500 text-white"
+                          )}
+                        >
+                          {emergency.priority}
+                        </Badge>
+                        <span className="text-[10px] font-black font-mono text-slate-500 opacity-60 tracking-tighter">{emergency.ambulanceId || "PENDING"}</span>
                       </div>
-                      <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest h-7 px-3 border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all">
-                        PREPARE
-                      </Button>
+                        <h4 className="font-black text-slate-800 dark:text-slate-100 tracking-tight uppercase">{emergency.emergencyType}</h4>
+                        <p className="text-[11px] font-bold text-muted-foreground dark:text-slate-400 uppercase opacity-70 mb-3">{emergency.patientName || "Unknown Patient"}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-rose-500/10 text-rose-600">
+                          <Clock className="h-3 w-3" />
+                          <span className="text-[11px] font-black font-mono">ETA: {emergency.eta || "TBD"}</span>
+                        </div>
+                        <Button size="sm" variant="outline" className="text-[10px] font-black uppercase tracking-widest h-7 px-3 border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all">
+                          PREPARE
+                        </Button>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center bg-white/20 rounded-xl border border-rose-500/5">
+                    <Activity className="h-10 w-10 text-rose-500/20 mx-auto mb-2" />
+                    <p className="text-[10px] font-black text-rose-500/40 uppercase tracking-widest">No active alerts</p>
                   </div>
-                ))}
+                )}
               </CardContent>
             </Card>
           </div>
@@ -295,8 +290,8 @@ export default function AdminDashboard() {
                       <action.icon className={cn("h-6 w-6", action.color)} />
                     </div>
                     <div>
-                      <h3 className="font-black text-slate-800 tracking-tight">{action.label}</h3>
-                      <p className="text-[11px] font-bold text-muted-foreground uppercase opacity-60">{action.desc}</p>
+                      <h3 className="font-black text-slate-800 dark:text-slate-100 tracking-tight">{action.label}</h3>
+                      <p className="text-[11px] font-bold text-muted-foreground uppercase opacity-60 dark:text-slate-400">{action.desc}</p>
                     </div>
                   </CardContent>
                 </Card>

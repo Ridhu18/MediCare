@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "../../../lib/utils"
 import {
   ArrowLeft,
   Search,
@@ -19,6 +20,8 @@ import {
   Check,
   CheckCheck,
   Download,
+  Building2,
+  User,
 } from "lucide-react"
 import { AdminSidebar } from "@/components/admin-sidebar"
 import Loading from "./loading"
@@ -189,7 +192,7 @@ export default function AdminChatPage() {
   // Scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      scrollRef.current.scrollIntoView({ behavior: "auto" })
     }
   }, [messages])
 
@@ -285,33 +288,37 @@ export default function AdminChatPage() {
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="flex h-[calc(100vh)] min-h-[500px] overflow-hidden bg-background/50 backdrop-blur-xl relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 -z-10" />
         <AdminSidebar />
         <div className="md:ml-20 lg:ml-64 transition-all duration-500 flex-1 flex flex-col h-screen">
-          <header className="sticky top-0 z-50 border-b bg-card/95 backdrop-blur">
-            <div className="flex h-16 items-center gap-4 px-6">
-              <Link href="/admin" className="lg:hidden">
-                <Button variant="ghost" size="icon">
-                  <ArrowLeft className="h-5 w-5" />
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold">Patient Messages</h1>
-                <p className="text-sm text-muted-foreground">
-                  Communicate with patients in real-time
-                </p>
+          <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5">
+            <div className="flex items-center justify-between px-6 py-5">
+              <div className="flex items-center gap-4">
+                <Link href="/admin" className="lg:hidden">
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                </Link>
+                <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                  <User className="h-5 w-5" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-black tracking-tight text-slate-800">Patient Messages</h1>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Hospital Response Portal</p>
+                </div>
               </div>
               <div className="ml-auto w-64">
                 <Select
                   value={hospitalAuth?._id || ""}
                   onValueChange={handleHospitalChange}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-primary/5 border-primary/10 rounded-xl focus:ring-primary/20 transition-all">
                     <SelectValue placeholder="Select Hospital Context" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border-primary/10 shadow-xl">
                     {hospitals.map(h => (
-                      <SelectItem key={h._id} value={h._id}>
+                      <SelectItem key={h._id} value={h._id} className="focus:bg-primary/5 rounded-lg m-1">
                         {h.name}
                       </SelectItem>
                     ))}
@@ -321,10 +328,15 @@ export default function AdminChatPage() {
             </div>
           </header>
 
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex h-[calc(100vh-240px)] min-h-[500px] overflow-hidden m-6 rounded-2xl border border-primary/10 bg-background/50 backdrop-blur-xl shadow-2xl relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 -z-10" />
             {/* Conversation List */}
-            <div className="w-80 border-r flex flex-col">
-              <div className="p-4 border-b">
+            <div className={cn(
+              "w-full md:w-80 h-full border-r bg-background/40 backdrop-blur-md z-10 flex flex-col",
+              selectedConversation && "hidden md:flex"
+            )}>
+              <div className="p-6 border-b">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary/70 mb-4">Conversations</h2>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -335,14 +347,14 @@ export default function AdminChatPage() {
                   />
                 </div>
               </div>
-              <ScrollArea className="flex-1">
+              <ScrollArea className="h-[calc(100vh-325px)] min-h-[440px]">
                 {filteredConversations.map((conversation) => (
                   <button
                     key={conversation.userId}
                     onClick={() => setSelectedConversation(conversation)}
-                    className={`w-full p-4 flex items-start gap-3 hover:bg-muted/50 transition-colors text-left border-b ${selectedConversation?.userId === conversation.userId
-                      ? "bg-muted"
-                      : ""
+                    className={`w-full p-4 flex items-start gap-3 transition-all duration-300 text-left border-b border-border/40 group ${selectedConversation?.userId === conversation.userId
+                      ? "bg-primary/10"
+                      : "hover:bg-primary/5"
                       }`}
                   >
                     <div className="relative">
@@ -370,9 +382,6 @@ export default function AdminChatPage() {
                       <div className="flex items-center gap-2 mt-1">
                         {getTypeBadge(conversation.type)}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate mt-1">
-                        {conversation.lastMessage}
-                      </p>
                     </div>
                     {conversation.unread > 0 && (
                       <Badge className="bg-primary text-primary-foreground">
@@ -389,11 +398,19 @@ export default function AdminChatPage() {
 
             {/* Chat Area */}
             {selectedConversation ? (
-              <div className="flex-1 flex flex-col min-w-0 min-h-0">
+              <div className="flex-1 flex flex-col h-full min-w-0 min-h-0">
                 {/* Chat Header */}
-                <div className="p-4 border-b flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
+                <div className="p-4 border-b bg-background/40 backdrop-blur-md flex items-center gap-4 sticky top-0 z-20">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="md:hidden rounded-full h-10 w-10 hover:bg-primary/10 text-primary"
+                    onClick={() => setSelectedConversation(null)}
+                  >
+                    Back
+                  </Button>
+                  <div className="relative">
+                    <Avatar className="h-10 w-10 border-2 border-primary/20 ring-2 ring-primary/5">
                       <AvatarFallback className="bg-primary/10 text-primary">
                         {(selectedConversation.patientName || "U")
                           .split(" ")
@@ -401,32 +418,22 @@ export default function AdminChatPage() {
                           .join("")}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <h2 className="font-semibold">
-                        {selectedConversation.patientName}
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        {selectedConversation.status === "online"
-                          ? "Online"
-                          : "Offline"}
-                      </p>
-                    </div>
+                    {selectedConversation.status === "online" && (
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-success border-2 border-background ring-1 ring-success/20" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Phone className="h-5 w-5" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <Video className="h-5 w-5" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-5 w-5" />
-                    </Button>
+                  <div>
+                    <h3 className="font-bold text-base">
+                      {selectedConversation.patientName}
+                    </h3>
+                    <p className={`text-[10px] font-bold uppercase tracking-wide ${selectedConversation.status === "online" ? "text-success" : "text-muted-foreground"}`}>
+                      Patient • {selectedConversation.status === "online" ? "Online" : "Offline"}
+                    </p>
                   </div>
                 </div>
 
                 {/* Messages */}
-                <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+                <ScrollArea className="flex-1 p-4 h-[calc(100vh-384px)] min-h-[356px]">
                   <div className="space-y-4">
                     {messages.map((message) => {
                       const isHospital = message.senderModel === "Hospital"
@@ -434,16 +441,30 @@ export default function AdminChatPage() {
                       return (
                         <div
                           key={message._id || Math.random().toString()}
-                          className={`flex ${isHospital
-                            ? "justify-end"
-                            : "justify-start"
-                            }`}
+                          className={`flex gap-3 ${isHospital ? "flex-row-reverse" : ""}`}
                         >
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback
+                              className={
+                                isHospital
+                                  ? "bg-muted text-muted-foreground"
+                                  : "bg-primary/10 text-primary"
+                              }
+                            >
+                              {isHospital ? (
+                                <Building2 className="h-4 w-4" />
+                              ) : (
+                                <User className="h-4 w-4" />
+                              )}
+                            </AvatarFallback>
+                          </Avatar>
                           <div
-                            className={`max-w-[70%] rounded-2xl px-4 py-2 ${isHospital
-                              ? "bg-primary text-primary-foreground rounded-br-md"
-                              : "bg-muted rounded-bl-md"
-                              }`}
+                            className={cn(
+                              "rounded-2xl p-4 shadow-sm transition-all duration-300 max-w-[75%]",
+                              isHospital
+                                ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-tr-none"
+                                : "bg-card border border-border/50 rounded-tl-none"
+                            )}
                           >
                             {message.fileUrl && (
                               <div className="mb-2 relative group">
@@ -503,16 +524,18 @@ export default function AdminChatPage() {
                         </div>
                       )
                     })}
+                    {/* Bottom anchor for scrolling */}
+                    <div ref={scrollRef} className="h-1" />
                   </div>
                 </ScrollArea>
 
                 {/* Message Input */}
-                <div className="p-4 border-t flex flex-col gap-2">
+                <div className="p-4 border-t flex flex-col gap-3 bg-background/40 backdrop-blur-md relative z-10">
                   {selectedFile && (
-                    <div className="flex items-center gap-2 bg-muted p-2 rounded-md w-fit text-sm">
+                    <div className="flex items-center gap-3 bg-primary/10 p-2.5 rounded-xl border border-primary/20 w-fit text-xs font-semibold text-primary animate-in fade-in slide-in-from-bottom-2">
                       <Paperclip className="h-4 w-4" />
                       <span className="truncate max-w-[200px]">{selectedFile.name}</span>
-                      <Button type="button" variant="ghost" size="icon" className="h-4 w-4 ml-2" onClick={() => {
+                      <Button type="button" variant="ghost" size="icon" className="h-5 w-5 ml-1 hover:bg-primary/20 rounded-full" onClick={() => {
                         setSelectedFile(null)
                         if (fileInputRef.current) fileInputRef.current.value = ""
                       }}>
@@ -525,25 +548,36 @@ export default function AdminChatPage() {
                       e.preventDefault()
                       handleSendMessage()
                     }}
-                    className="flex items-center gap-2 w-full">
+                    className="flex gap-3 bg-muted/30 p-1.5 rounded-2xl border border-border/40 focus-within:border-primary/40 focus-within:bg-background/60 transition-all duration-300">
                     <input
                       type="file"
                       ref={fileInputRef}
                       onChange={handleFileSelect}
                       className="hidden"
                     />
-                    <Button type="button" variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()}>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-10 w-10 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
                       <Paperclip className="h-5 w-5" />
                     </Button>
                     <Input
                       placeholder="Type a message..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
-                      className="flex-1"
+                      className="flex-1 border-none bg-transparent focus-visible:ring-0 px-1 placeholder:text-muted-foreground/60 h-10"
                       disabled={isUploading}
                     />
-                    <Button type="submit" disabled={(!newMessage.trim() && !selectedFile) || isUploading}>
-                      <Send className="h-5 w-5" />
+                    <Button 
+                      type="submit" 
+                      size="icon"
+                      disabled={(!newMessage.trim() && !selectedFile) || isUploading}
+                      className="h-10 w-10 rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all bg-gradient-to-br from-primary to-primary/80"
+                    >
+                      <Send className="h-4.5 w-4.5" />
                     </Button>
                   </form>
                 </div>

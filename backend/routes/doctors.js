@@ -83,7 +83,7 @@ router.get("/", async (req, res) => {
             query.hospitals = hospitalId; // Finds docs where hospitals array contains hospitalId
         }
 
-        const doctors = await Doctor.find(query).populate('user', 'name email profileImage').populate('hospitals', 'name');
+        const doctors = await Doctor.find(query).populate('user', 'name email phone profileImage').populate('hospitals', 'name');
         res.json(doctors);
     } catch (error) {
         console.error("Get doctors error:", error);
@@ -138,6 +138,70 @@ router.put("/me", authMiddleware, async (req, res) => {
     } catch (error) {
         console.error("Update doctor profile error:", error);
         res.status(500).json({ message: "Error updating profile" });
+    }
+});
+
+// Delete Doctor (Admin)
+router.delete("/:id", async (req, res) => {
+    try {
+        const doctor = await Doctor.findById(req.params.id);
+        if (!doctor) {
+            return res.status(404).json({ message: "Doctor profile not found" });
+        }
+
+        const userId = doctor.user;
+        if (userId) {
+            const user = await User.findById(userId);
+            if (user && user.role === 'doctor') {
+                await User.findByIdAndDelete(userId);
+                console.log(`Deleted user ${userId} associated with doctor ${req.params.id}`);
+            }
+        }
+
+        await Doctor.findByIdAndDelete(req.params.id);
+        res.json({ message: "Doctor deleted successfully" });
+    } catch (error) {
+        console.error("Delete doctor error:", error);
+        res.status(500).json({ message: "Error deleting doctor" });
+    }
+});
+
+// Update Doctor (Admin)
+router.put("/:id", async (req, res) => {
+    try {
+        const { name, email, phone, specialization, experience, hospitalIds, department, consultationFee } = req.body;
+        const doctor = await Doctor.findById(req.params.id);
+        if (!doctor) {
+            return res.status(404).json({ message: "Doctor profile not found" });
+        }
+
+        // Update associated User details
+        if (doctor.user) {
+            await User.findByIdAndUpdate(doctor.user, {
+                name,
+                email,
+                phone
+            });
+        }
+
+        // Update Doctor specific details
+        doctor.specialization = specialization || doctor.specialization;
+        doctor.experience = experience || doctor.experience;
+        doctor.department = department || doctor.department;
+        doctor.hospitals = hospitalIds || doctor.hospitals;
+        doctor.consultationFee = consultationFee || doctor.consultationFee;
+
+        await doctor.save();
+        
+        // Return populated doctor
+        const updatedDoctor = await Doctor.findById(doctor._id)
+            .populate('user', 'name email phone profileImage')
+            .populate('hospitals', 'name');
+            
+        res.json(updatedDoctor);
+    } catch (error) {
+        console.error("Update doctor error:", error);
+        res.status(500).json({ message: "Error updating doctor", error: error.message });
     }
 });
 

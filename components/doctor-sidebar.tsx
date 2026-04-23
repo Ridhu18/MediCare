@@ -6,68 +6,56 @@ import {
     LayoutDashboard,
     Calendar,
     Users,
-    Bed,
-    AlertTriangle,
-    MessageCircle,
-    Hospital,
+    Clock,
     Settings,
     LogOut,
+    Stethoscope,
 } from "lucide-react"
 import { useState, useEffect } from "react"
-import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-    { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/admin/appointments", icon: Calendar, label: "Appointments" },
-    { href: "/admin/doctors", icon: Users, label: "Doctors" },
-    { href: "/admin/hospitals", icon: Hospital, label: "Hospitals" },
-    { href: "/admin/beds", icon: Bed, label: "Bed Management" },
-    { href: "/admin/emergency", icon: AlertTriangle, label: "Emergency Cases" },
-    { href: "/admin/chat", icon: MessageCircle, label: "Messages" },
+    { href: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
+    { href: "/doctor/appointments", icon: Calendar, label: "Appointments" },
+    { href: "/doctor/patients", icon: Users, label: "Patients" },
+    { href: "/doctor/schedule", icon: Clock, label: "Schedule" },
 ]
 
-export function AdminSidebar() {
+export function DoctorSidebar() {
     const pathname = usePathname()
-    const [stats, setStats] = useState({ pending: 0, unread: 0 })
-
-    const fetchStats = async () => {
-        try {
-            const token = localStorage.getItem("token")
-            const headers: HeadersInit = {}
-            if (token) {
-                headers["Authorization"] = `Bearer ${token}`
-            }
-            const res = await fetch("http://localhost:5000/api/stats", { headers })
-            if (res.ok) {
-                const data = await res.json()
-                setStats({
-                    pending: data.pendingEmergencies || 0,
-                    unread: data.unreadMessages || 0,
-                })
-            }
-        } catch (error) {
-            console.error("Error fetching stats:", error)
-        }
-    }
+    const [user, setUser] = useState<any>(null)
 
     useEffect(() => {
-        fetchStats()
-        const interval = setInterval(fetchStats, 10000) // Poll for alert updates
-        return () => clearInterval(interval)
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token")
+                const res = await fetch("http://localhost:5000/api/auth/me", {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                if (res.ok) {
+                    const data = await res.json()
+                    setUser(data)
+                }
+            } catch (e) {
+                console.error("Error fetching profile:", e)
+            }
+        }
+        fetchProfile()
     }, [])
+
     return (
         <aside className="fixed bottom-0 left-0 right-0 z-50 bg-background/40 backdrop-blur-2xl border-t border-primary/5 md:top-0 md:bottom-auto md:right-auto md:border-t-0 md:border-r md:h-screen md:w-20 lg:w-64 flex flex-col hidden md:flex transition-all duration-500">
             {/* Logo Section */}
             <div className="flex items-center gap-3 px-6 pb-8 pt-4 relative">
                 <div className="h-11 w-11 bg-gradient-to-br from-primary to-primary/80 rounded-[18px] flex items-center justify-center shadow-lg shadow-primary/20 ring-1 ring-white/20 transition-transform hover:scale-105 duration-300">
-                    <AlertTriangle className="h-6 w-6 text-white" />
+                    <Stethoscope className="h-6 w-6 text-white" />
                 </div>
                 <div className="hidden lg:flex flex-col">
                     <span className="font-black text-xl tracking-tight text-slate-800 dark:text-slate-100">
-                        Admin<span className="text-primary">Console</span>
+                        MediCare<span className="text-primary">+</span>
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 dark:text-primary/80 -mt-1 italic">Control Center</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 dark:text-primary/80 -mt-1 italic">Specialist Portal</span>
                 </div>
             </div>
 
@@ -97,26 +85,33 @@ export function AdminSidebar() {
                             )} />
                             
                             <span className="text-sm font-bold tracking-tight lg:inline hidden md:hidden lg:inline">{item.label}</span>
-                            
-                            {item.label === "Emergency Cases" && stats.pending > 0 && (
-                                <Badge className="ml-auto bg-emergency/90 text-white border-none shadow-lg shadow-emergency/20 text-[10px] h-5 px-1.5 animate-pulse lg:flex hidden">
-                                    {stats.pending}
-                                </Badge>
-                            )}
-                            {item.label === "Messages" && stats.unread > 0 && (
-                                <Badge className="ml-auto bg-primary text-white border-none shadow-lg shadow-primary/20 text-[10px] h-5 px-1.5 font-bold lg:flex hidden">
-                                    {stats.unread}
-                                </Badge>
-                            )}
                         </Link>
                     )
                 })}
             </nav>
 
+            {/* User Profile Quick View (Optional but premium) */}
+            {user && (
+                <div className="px-4 mb-2 hidden lg:block">
+                    <div className="p-3 bg-primary/5 rounded-2xl border border-primary/5 flex items-center gap-3">
+                        <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
+                            <AvatarImage src={user.profileImage ? `http://localhost:5000${user.profileImage}` : ""} className="object-cover" />
+                            <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-black">
+                                {user.name?.split(" ").map((n: any) => n[0]).join("")}
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col min-w-0">
+                            <span className="text-[11px] font-black text-slate-700 dark:text-slate-200 truncate">Dr. {user.name}</span>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter truncate">{user.specialization || "Specialist"}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Bottom Actions */}
             <div className="p-4 mt-auto border-t border-primary/5 space-y-1">
                 <Link
-                    href="/admin/settings"
+                    href="/doctor/profile"
                     className="flex items-center gap-4 px-4 py-3.5 w-full text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-white/40 dark:hover:bg-white/5 rounded-2xl transition-all group"
                 >
                     <Settings className="h-5 w-5 group-hover:rotate-45 transition-transform duration-500" />

@@ -8,10 +8,11 @@ import {
   Hospital,
   CreditCard,
   MessageCircle,
-  User,
-  LayoutDashboard,
+  Settings,
   LogOut,
   History,
+  LayoutDashboard,
+  User,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -22,7 +23,6 @@ const userNavItems = [
   { href: "/health-card", icon: CreditCard, label: "Health Card" },
   { href: "/history", icon: History, label: "History" },
   { href: "/chat", icon: MessageCircle, label: "Chat" },
-  { href: "/profile", icon: User, label: "Profile" },
 ]
 
 const adminNavItems = [
@@ -49,8 +49,8 @@ export function AppNavigation({ isAdmin = false }: AppNavigationProps) {
             <span className="text-white font-black text-xl tracking-tighter">M+</span>
           </div>
           <div className="hidden lg:flex flex-col">
-            <span className="font-black text-xl tracking-tight text-slate-800">MediCare+</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 -mt-1 italic">Patient Portal</span>
+            <span className="font-black text-xl tracking-tight text-slate-800 dark:text-slate-100">MediCare+</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary/60 dark:text-primary/70 -mt-1 italic">Patient Portal</span>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export function AppNavigation({ isAdmin = false }: AppNavigationProps) {
                   "flex flex-col md:flex-row items-center gap-1 md:gap-4 p-2 md:px-5 md:py-3.5 rounded-2xl transition-all duration-300 md:w-full group relative",
                   isActive
                     ? "text-primary bg-primary/10 shadow-sm shadow-primary/5"
-                    : "text-slate-500 hover:text-primary hover:bg-primary/5"
+                    : "text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-primary/5"
                 )}
               >
                 {isActive && (
@@ -77,7 +77,7 @@ export function AppNavigation({ isAdmin = false }: AppNavigationProps) {
                 )} />
                 <span className={cn(
                   "text-[10px] md:text-sm lg:inline hidden md:hidden lg:inline font-bold tracking-tight transition-colors",
-                  isActive ? "text-primary" : "text-slate-500 group-hover:text-primary"
+                  isActive ? "text-primary" : "text-slate-500 dark:text-slate-400 group-hover:text-primary"
                 )}>
                   {item.label}
                 </span>
@@ -86,16 +86,28 @@ export function AppNavigation({ isAdmin = false }: AppNavigationProps) {
           })}
         </div>
 
-        {/* Logout (Patient/User only) */}
+        {/* Bottom Actions */}
         {!isAdmin && (
-          <div className="hidden md:block mt-auto w-full px-4 pb-6">
+          <div className="hidden md:block mt-auto w-full px-2 pb-6 space-y-1">
              <div className="h-px w-full bg-primary/5 mb-6" />
+             <Link
+              href="/profile"
+              className={cn(
+                "flex items-center gap-4 px-5 py-3.5 w-full rounded-2xl transition-all duration-300 group",
+                pathname === "/profile"
+                  ? "bg-primary/10 text-primary font-bold"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-primary/5 hover:text-primary"
+              )}
+            >
+              <Settings className={cn("h-5 w-5 transition-transform duration-500", pathname === "/profile" ? "rotate-45" : "group-hover:rotate-45")} />
+              <span className="hidden lg:inline text-sm">Settings</span>
+            </Link>
             <Link
               href="/auth"
-              className="flex items-center gap-4 px-4 py-3.5 text-sm font-bold text-slate-400 hover:text-emergency hover:bg-emergency/5 rounded-2xl transition-all duration-300 group"
+              className="flex items-center gap-4 px-5 py-3.5 w-full text-slate-500 dark:text-slate-400 hover:text-emergency hover:bg-emergency/5 rounded-2xl transition-all duration-300 group"
             >
               <LogOut className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-              <span className="hidden lg:inline">Logout</span>
+              <span className="hidden lg:inline text-sm font-bold">Logout</span>
             </Link>
           </div>
         )}

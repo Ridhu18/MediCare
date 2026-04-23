@@ -163,6 +163,30 @@ router.get("/patient/:patientId", authMiddleware, async (req, res) => {
     }
 });
 
+// Get Medical Record by Appointment ID
+router.get("/appointment/:appointmentId", authMiddleware, async (req, res) => {
+    try {
+        const record = await MedicalRecord.findOne({ appointment: req.params.appointmentId })
+            .populate({
+                path: 'doctor',
+                populate: { path: 'user', select: 'name' }
+            })
+            .populate({
+                path: 'appointment',
+                populate: { path: 'hospital', select: 'name' }
+            });
+
+        if (!record) {
+            return res.status(404).json({ message: "Medical record not found for this appointment" });
+        }
+
+        res.json(record);
+    } catch (error) {
+        console.error("Get record by appointment error:", error);
+        res.status(500).json({ message: "Error fetching medical record" });
+    }
+});
+
 // Delete Medical Record (Only if self-uploaded by patient)
 router.delete("/:id", authMiddleware, async (req, res) => {
     try {

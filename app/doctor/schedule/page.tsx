@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { DoctorSidebar } from "@/components/doctor-sidebar"
 import {
   LayoutDashboard,
   Calendar,
@@ -35,15 +36,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
-const navItems = [
-  { href: "/doctor", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/doctor/appointments", icon: Calendar, label: "Appointments" },
-  { href: "/doctor/patients", icon: Users, label: "Patients" },
-  { href: "/doctor/schedule", icon: Clock, label: "Schedule" },
-  { href: "/doctor/profile", icon: User, label: "Profile" },
-]
+// Removed inline navItems
 
 interface TimeSlot {
   id: string
@@ -105,6 +101,12 @@ export default function DoctorSchedule() {
   })
 
   const [loading, setLoading] = useState(true)
+  const [profile, setProfile] = useState<any>({
+    name: "",
+    profileImage: "",
+    specialization: "",
+    department: ""
+  })
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -115,6 +117,12 @@ export default function DoctorSchedule() {
         })
         if (res.ok) {
           const data = await res.json()
+          setProfile({
+            name: data.user?.name || "",
+            profileImage: data.user?.profileImage || "",
+            specialization: data.specialization || "",
+            department: data.department || ""
+          })
           if (data.availability && data.availability.length > 0) {
             // Parse availabilities: ["Monday 09:00-17:00", ...]
             const newSchedule = defaultSchedule.map(day => {
@@ -200,87 +208,60 @@ export default function DoctorSchedule() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-64 border-r bg-card">
-        <div className="p-6 border-b">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
-              <Stethoscope className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="font-bold">MediCare+</h1>
-              <p className="text-xs text-muted-foreground">Doctor Portal</p>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <DoctorSidebar />
 
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                item.href === "/doctor/schedule"
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
-        </nav>
+      <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500 bg-slate-50/50 dark:bg-slate-950/20 min-h-screen">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent h-96 -z-10" />
 
-        <div className="p-4 border-t">
-          <Link href="/auth" className="flex items-center gap-3 px-4 py-3 w-full text-muted-foreground hover:text-foreground transition-colors">
-            <LogOut className="h-5 w-5" />
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto">
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b px-6 py-4">
+        <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5 px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/doctor" className="lg:hidden">
-                <Button variant="ghost" size="icon">
-                  <ChevronRight className="h-5 w-5 rotate-180" />
-                </Button>
-              </Link>
+              <div className="h-12 w-12 rounded-[1.25rem] bg-emergency/10 flex items-center justify-center text-emergency shadow-sm ring-1 ring-emergency/5">
+                <Clock className="h-6 w-6 stroke-[2.5]" />
+              </div>
               <div>
-                <h1 className="text-2xl font-bold">Schedule Management</h1>
-                <p className="text-sm text-muted-foreground">
-                  Manage your availability and working hours
-                </p>
+                <h1 className="text-xl font-black tracking-tight text-slate-900 leading-none">Schedule Management</h1>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1.5 opacity-80">Manage your working hours</p>
               </div>
             </div>
-            <Button onClick={() => setIsEditing(!isEditing)}>
-              {isEditing ? (
-                <>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Changes
-                </>
-              ) : (
-                <>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Schedule
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={() => setIsEditing(!isEditing)}
+                className="h-10 px-6 font-black uppercase tracking-widest text-[10px] bg-primary shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95 gap-2"
+              >
+                {isEditing ? (
+                  <>
+                    <Save className="h-3.5 w-3.5" />
+                    Save Changes
+                  </>
+                ) : (
+                  <>
+                    <Edit className="h-3.5 w-3.5" />
+                    Edit Schedule
+                  </>
+                )}
+              </Button>
+              <Avatar className="h-9 w-9 border-2 border-background shadow-md">
+                <AvatarImage src={profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ""} className="object-cover" />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary font-black">
+                  {profile.name ? profile.name.split(" ").map((n: any) => n[0]).join("") : "DR"}
+                </AvatarFallback>
+              </Avatar>
+            </div>
           </div>
         </header>
 
-        <div className="px-6 py-6 space-y-6">
+        <div className="px-6 py-10 space-y-10">
           {/* Weekly Schedule */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Weekly Availability</CardTitle>
+          <Card className="border-primary/5 bg-background/40 backdrop-blur-xl shadow-sm rounded-[2rem] overflow-hidden">
+            <CardHeader className="p-8 pb-4">
+              <div className="flex items-center gap-3">
+                <Calendar className="h-4 w-4 text-primary" />
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-800">Weekly Availability</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8 pt-0">
               <div className="space-y-4">
                 {schedule.map((day) => (
                   <div
@@ -293,19 +274,19 @@ export default function DoctorSchedule() {
                       </div>
                       {day.isAvailable ? (
                         editingDay === day.id ? (
-                          <div className="flex items-center gap-2 flex-1">
-                            <div className="flex-1">
-                              <Label className="text-xs">Start Time</Label>
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="flex-1 space-y-2">
+                              <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Start Time</Label>
                               <Select
                                 value={newSchedule.startTime}
                                 onValueChange={(value) =>
                                   setNewSchedule({ ...newSchedule, startTime: value })
                                 }
                               >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Start" />
+                                <SelectTrigger className="h-12 bg-white/50 border-primary/10 rounded-2xl focus:ring-primary/20 font-bold text-sm transition-all hover:bg-white">
+                                  <SelectValue placeholder="Start Time" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-2xl border-primary/10">
                                   {timeSlots.map((slot) => (
                                     <SelectItem key={slot} value={slot}>
                                       {slot}
@@ -314,19 +295,19 @@ export default function DoctorSchedule() {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <span className="pt-6">to</span>
-                            <div className="flex-1">
-                              <Label className="text-xs">End Time</Label>
+                            <span className="pt-6 font-bold text-muted-foreground opacity-40">to</span>
+                            <div className="flex-1 space-y-2">
+                              <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">End Time</Label>
                               <Select
                                 value={newSchedule.endTime}
                                 onValueChange={(value) =>
                                   setNewSchedule({ ...newSchedule, endTime: value })
                                 }
                               >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="End" />
+                                <SelectTrigger className="h-12 bg-white/50 border-primary/10 rounded-2xl focus:ring-primary/20 font-bold text-sm transition-all hover:bg-white">
+                                  <SelectValue placeholder="End Time" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="rounded-2xl border-primary/10">
                                   {timeSlots.map((slot) => (
                                     <SelectItem key={slot} value={slot}>
                                       {slot}
@@ -335,35 +316,37 @@ export default function DoctorSchedule() {
                                 </SelectContent>
                               </Select>
                             </div>
-                            <Button
-                              size="sm"
-                              onClick={() => handleSaveDay(day.id)}
-                              disabled={
-                                !newSchedule.startTime || !newSchedule.endTime
-                              }
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setEditingDay(null)
-                                setNewSchedule({ startTime: "", endTime: "", isAvailable: true })
-                              }}
-                            >
-                              Cancel
-                            </Button>
+                            <div className="pt-6 flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleSaveDay(day.id)}
+                                disabled={!newSchedule.startTime || !newSchedule.endTime}
+                                className="h-12 w-12 rounded-2xl bg-emerald-500 hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 transition-all active:scale-95"
+                              >
+                                <Save className="h-5 w-5" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setEditingDay(null)
+                                  setNewSchedule({ startTime: "", endTime: "", isAvailable: true })
+                                }}
+                                className="h-12 px-5 rounded-2xl font-bold text-sm"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-4 flex-1">
+                          <div className="flex items-center gap-6 flex-1">
                             <Badge
-                              variant="outline"
-                              className="bg-success/20 text-success border-success"
+                              variant="secondary"
+                              className="bg-emerald-500/10 text-emerald-600 border-none px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg"
                             >
                               Available
                             </Badge>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-sm font-bold text-slate-600">
                               {day.startTime} - {day.endTime}
                             </span>
                             {isEditing && (
@@ -385,7 +368,7 @@ export default function DoctorSchedule() {
                           </div>
                         )
                       ) : (
-                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-400 border-none px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg">
                           Not Available
                         </Badge>
                       )}
@@ -410,20 +393,26 @@ export default function DoctorSchedule() {
           </Card>
 
           {/* Time Slots Preview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Available Time Slots</CardTitle>
+          <Card className="border-primary/5 bg-background/40 backdrop-blur-xl shadow-sm rounded-[2rem] overflow-hidden">
+            <CardHeader className="p-8 pb-4">
+              <div className="flex items-center gap-3">
+                <Clock className="h-4 w-4 text-primary" />
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-slate-800">Time Slots Preview</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CardContent className="p-8 pt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {schedule
                   .filter((day) => day.isAvailable)
                   .map((day) => (
-                    <div key={day.id} className="p-4 border rounded-lg">
-                      <h3 className="font-semibold mb-3">{day.day}</h3>
+                    <div key={day.id} className="p-6 bg-white/40 border border-primary/5 rounded-[2rem] shadow-sm group hover:bg-white/60 transition-all duration-500">
+                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                         <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                         {day.day}
+                      </h3>
                       <div className="flex flex-wrap gap-2">
                         {getAvailableSlots(day).map((slot) => (
-                          <Badge key={slot} variant="secondary" className="text-xs">
+                          <Badge key={slot} variant="secondary" className="bg-white text-primary border border-primary/5 text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm">
                             {slot}
                           </Badge>
                         ))}

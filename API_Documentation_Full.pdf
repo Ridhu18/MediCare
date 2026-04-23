@@ -1,0 +1,1459 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 6532
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 799.3703149606299121 Td
+(================================================================================) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 785.1970866141732586 Td
+(                    MEDICARE+ FULL BACKEND API DOCUMENTATION) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 771.0238582677164914 Td
+(================================================================================) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 742.6774015748030706 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 728.5041732283464171 Td
+([1] AUTHENTICATION & USER PROFILE API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 714.3309448818897636 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 700.15771653543311 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 685.9844881889763428 Td
+(router.post\("/signup", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 671.8112598425196893 Td
+(    try {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 657.6380314960629221 Td
+(        const { name, email, phone, password, role } = req.body;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 643.4648031496062686 Td
+(        const hashedPassword = await bcrypt.hash\(password, 10\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 629.291574803149615 Td
+(        const user = new User\({ name, email, phone, password: hashedPassword, role }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 615.1183464566928478 Td
+(        await user.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 600.9451181102361943 Td
+(        res.status\(201\).json\({ message: "User created" }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 586.7718897637794271 Td
+(    } catch \(e\) { res.status\(500\).json\(e\); }) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 572.5986614173227736 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 544.2522047244094665 Td
+(router.post\("/login", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 530.0789763779526993 Td
+(    const user = await User.findOne\({ email: req.body.email }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 515.9057480314959321 Td
+(    if \(!user || !\(await bcrypt.compare\(req.body.password, user.password\)\)\) {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 501.7325196850393354 Td
+(        return res.status\(401\).json\({ message: "Invalid credentials" }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 487.559291338582625 Td
+(    }) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 473.3860629921259147 Td
+(    const token = jwt.sign\({ userId: user._id, role: user.role }, process.env.JWT_SECRET\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 459.2128346456692611 Td
+(    res.json\({ token, user }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 445.0396062992125508 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 416.69314960629913 Td
+(router.post\("/generate-abha", authMiddleware, async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 402.5199212598424765 Td
+(    const abhaId = `${Math.floor\(10 + Math.random\(\) * 90\)}-${Math.floor\(1000 + Math.random\(\) *) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 388.3466929133857661 Td
+(9000\)}-${Math.floor\(1000 + Math.random\(\) * 9000\)}`;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 374.1734645669290558 Td
+(    await User.findByIdAndUpdate\(req.user.userId, { healthId: abhaId }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 360.0002362204724022 Td
+(    res.json\({ healthId: abhaId }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 345.8270078740156919 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 317.480551181102328 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 303.3073228346455608 Td
+(This module manages security. The 'Signup' API uses Bcrypt to 'salt and hash' passwords so they are never stored) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 289.1340944881889072 Td
+(in plain text. The 'Login' API uses JSON Web Tokens \(JWT\) to create a secure session. The 'ABHA Generation') Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 274.9608661417322537 Td
+(logic creates a unique 14-digit identifier compliant with NDHM standards, ensuring every patient has a digital) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 260.7876377952754865 Td
+(medical identity.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 232.4411811023621794 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 218.2679527559054122 Td
+([2] EMERGENCY SOS & REAL-TIME RESPONSE API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 204.0947244094487587 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 189.9214960629919915 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 175.748267716535338 Td
+(router.post\("/", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 161.5750393700786844 Td
+(    try {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 147.4018110236219172 Td
+(        const { patientName, phone, emergencyType, location } = req.body;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 133.2285826771652637 Td
+(        const newEmergency = new Emergency\({ patientName, phone, emergencyType, location }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 119.0553543307086102 Td
+(        const saved = await newEmergency.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 104.882125984251843 Td
+(        ) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 90.7088976377951894 Td
+(        const io = req.app.get\("io"\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 76.5356692913385359 Td
+(        io.emit\("new_emergency", saved\); ) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 62.3624409448817687 Td
+(        res.status\(201\).json\(saved\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 48.1892125984251152 Td
+(    } catch \(e\) { res.status\(500\).json\(e\); }) Tj
+ET
+endstream
+endobj
+5 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 6 0 R
+>>
+endobj
+6 0 obj
+<<
+/Length 6082
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 799.3703149606299121 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 771.0238582677164914 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 756.8506299212598378 Td
+(The SOS API is time-critical. It captures the patient's GeoJSON coordinates. The key logic here is the 'Socket.io) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 742.6774015748030706 Td
+(Emission'. Instead of waiting for the hospital to refresh, the backend 'pushes' the alert to the Admin dashboard) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 728.5041732283464171 Td
+(instantly. It creates a high-priority incident in the database to be tracked by ambulances.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 700.15771653543311 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 685.9844881889763428 Td
+([3] HOSPITAL GEOSPATIAL SEARCH API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 671.8112598425196893 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 657.6380314960629221 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 643.4648031496062686 Td
+(router.get\("/", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 629.291574803149615 Td
+(    const { lat, lng, radius = 5000 } = req.query;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 615.1183464566928478 Td
+(    let query = {};) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 600.9451181102361943 Td
+(    if \(lat && lng\) {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 586.7718897637794271 Td
+(        query.location = {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 572.5986614173227736 Td
+(            $near: {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 558.42543307086612 Td
+(                $geometry: { type: "Point", coordinates: [parseFloat\(lng\), parseFloat\(lat\)] },) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 544.2522047244094665 Td
+(                $maxDistance: parseInt\(radius\)) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 530.0789763779526993 Td
+(            }) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 515.9057480314959321 Td
+(        };) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 501.7325196850393354 Td
+(    }) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 487.559291338582625 Td
+(    const hospitals = await Hospital.find\(query\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 473.3860629921259147 Td
+(    res.json\(hospitals\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 459.2128346456692611 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 430.8663779527558404 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 416.69314960629913 Td
+(This API uses MongoDB's '$near' operator. It performs a 2D-Sphere earth calculation to find hospitals within X) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 402.5199212598424765 Td
+(meters of the user's current location. This allows patients to find help instantly during an emergency. The results are) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 388.3466929133857661 Td
+(ordered by physical distance automatically by the database engine.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 360.0002362204724022 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 345.8270078740156919 Td
+([4] APPOINTMENT SCHEDULING & LIFECYCLE API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 331.6537795275589815 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 317.480551181102328 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 303.3073228346455608 Td
+(router.post\("/", authMiddleware, async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 289.1340944881889072 Td
+(    const { doctorId, hospitalId, date, time, reason } = req.body;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 274.9608661417322537 Td
+(    const appointment = new Appointment\({) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 260.7876377952754865 Td
+(        patient: req.user.userId,) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 246.614409448818833 Td
+(        doctor: doctorId,) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 232.4411811023621794 Td
+(        hospital: hospitalId,) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 218.2679527559054122 Td
+(        date, time, reason) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 204.0947244094487587 Td
+(    }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 189.9214960629919915 Td
+(    await appointment.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 175.748267716535338 Td
+(    req.app.get\("io"\).emit\("appointment_created", appointment\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 161.5750393700786844 Td
+(    res.status\(201\).json\(appointment\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 147.4018110236219172 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 119.0553543307086102 Td
+(router.put\("/:id/status", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 104.882125984251843 Td
+(    const appointment = await Appointment.findByIdAndUpdate\(req.params.id, { status: req.body.status }, { new: true) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 90.7088976377951894 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 76.5356692913385359 Td
+(    req.app.get\("io"\).emit\("appointment_updated", appointment\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 62.3624409448817687 Td
+(    res.json\(appointment\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 48.1892125984251152 Td
+(}\);) Tj
+ET
+endstream
+endobj
+7 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 8 0 R
+>>
+endobj
+8 0 obj
+<<
+/Length 6385
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 785.1970866141732586 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 771.0238582677164914 Td
+(This manages the lifecycle of a medical consultation. Appointments transition from 'Pending' to 'Confirmed' to) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 756.8506299212598378 Td
+('Completed'. The backend uses WebSockets to ensure patients get notified on their phones the instant a doctor) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 742.6774015748030706 Td
+(approves their request. It handles role-based filtering \(Patients see their history, Doctors see their schedule\).) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 714.3309448818897636 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 700.15771653543311 Td
+([5] MEDICAL RECORD & CLINICAL HISTORY API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 685.9844881889763428 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 671.8112598425196893 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 657.6380314960629221 Td
+(router.post\("/", authMiddleware, async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 643.4648031496062686 Td
+(    const { appointmentId, patientId, diagnosis, medicines } = req.body;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 629.291574803149615 Td
+(    const record = new MedicalRecord\({ patient: patientId, doctor: req.user.doctorId, appointment: appointmentId,) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 615.1183464566928478 Td
+(diagnosis, medicines }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 600.9451181102361943 Td
+(    await record.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 572.5986614173227736 Td
+(    if \(appointmentId\) {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 558.42543307086612 Td
+(        await Appointment.findByIdAndUpdate\(appointmentId, { status: 'completed' }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 544.2522047244094665 Td
+(    }) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 530.0789763779526993 Td
+(    res.status\(201\).json\(record\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 515.9057480314959321 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 487.559291338582625 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 473.3860629921259147 Td
+(This is the most critical logic for data integrity. When a doctor creates a medical record, the backend logic 'Links' it) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 459.2128346456692611 Td
+(to the source appointment. It then 'Auto-Closes' the appointment status. This ensures that a patient's medical) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 445.0396062992125508 Td
+(history is always perfectly synced with their hospital visits.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 416.69314960629913 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 402.5199212598424765 Td
+([6] REAL-TIME CHAT & MESSAGING API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 388.3466929133857661 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 374.1734645669290558 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 360.0002362204724022 Td
+(io.on\("connection", \(socket\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 345.8270078740156919 Td
+(    socket.on\("join_room", \(room\) => { socket.join\(room\); }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 331.6537795275589815 Td
+(    socket.on\("send_message", async \(data\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 317.480551181102328 Td
+(        const newMessage = new Message\({ ...data }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 303.3073228346455608 Td
+(        await newMessage.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 289.1340944881889072 Td
+(        io.to\(data.room\).emit\("receive_message", newMessage\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 274.9608661417322537 Td
+(    }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 260.7876377952754865 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 232.4411811023621794 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 218.2679527559054122 Td
+(Instead of standard REST, this uses WebSockets for a 'WhatsApp-like' experience. The backend creates Virtual) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 204.0947244094487587 Td
+(Rooms for every patient-doctor pair. When a message is sent, it is both saved to MongoDB for history and) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 189.9214960629919915 Td
+(broadcasted to the room for instant visibility.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 161.5750393700786844 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 147.4018110236219172 Td
+([7] ADMIN DASHBOARD STATISTICS API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 133.2285826771652637 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 119.0553543307086102 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 104.882125984251843 Td
+(router.get\("/", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 90.7088976377951894 Td
+(    const totalDoctors = await Doctor.countDocuments\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 76.5356692913385359 Td
+(    const totalPatients = await User.countDocuments\({ role: 'patient' }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 62.3624409448817687 Td
+(    const pendingEmergencies = await Emergency.countDocuments\({ status: 'incoming' }\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 48.1892125984251152 Td
+(    res.json\({ totalDoctors, totalPatients, pendingEmergencies }\);) Tj
+ET
+endstream
+endobj
+9 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 10 0 R
+>>
+endobj
+10 0 obj
+<<
+/Length 2928
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 799.3703149606299121 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 771.0238582677164914 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 756.8506299212598378 Td
+(This API provides high-level insights. It uses the 'countDocuments' aggregation to pull real-time numbers. This) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 742.6774015748030706 Td
+(allows hospital deans and administrators to monitor their entire medical facility's operational health at a single) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 728.5041732283464171 Td
+(glance.) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 700.15771653543311 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 685.9844881889763428 Td
+([8] WARD & BED MANAGEMENT API) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 671.8112598425196893 Td
+(--------------------------------------------------------------------------------) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 657.6380314960629221 Td
+(CODE:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 643.4648031496062686 Td
+(router.put\("/:id", async \(req, res\) => {) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 629.291574803149615 Td
+(    const ward = await Ward.findById\(req.params.id\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 615.1183464566928478 Td
+(    if \(req.body.occupiedBeds\) ward.occupiedBeds = req.body.occupiedBeds;) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 600.9451181102361943 Td
+(    await ward.save\(\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 586.7718897637794271 Td
+(    res.json\(ward\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 572.5986614173227736 Td
+(}\);) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 544.2522047244094665 Td
+(DESCRIPTION:) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 530.0789763779526993 Td
+(Manages the physical capacity of the hospital. It tracks bed counts across ICU, General, and Pediatric wards. When) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 515.9057480314959321 Td
+(a patient is admitted, the 'occupiedBeds' count is updated, which reflected instantly on the 'Hospital Discovery' map) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 501.7325196850393354 Td
+(for new patients.) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 473.3860629921259147 Td
+(================================================================================) Tj
+ET
+BT
+/F1 10 Tf
+11.5 TL
+0. g
+42.5196850393700814 459.2128346456692611 Td
+(                            END OF DOCUMENTATION) Tj
+ET
+BT
+/F2 10 Tf
+11.5 TL
+0. 0.196 0.588 rg
+42.5196850393700814 445.0396062992125508 Td
+(===============================================================================) Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R 5 0 R 7 0 R 9 0 R ]
+/Count 4
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+19 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+20 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+21 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+22 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+23 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+24 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 11 0 R
+/F2 12 0 R
+/F3 13 0 R
+/F4 14 0 R
+/F5 15 0 R
+/F6 16 0 R
+/F7 17 0 R
+/F8 18 0 R
+/F9 19 0 R
+/F10 20 0 R
+/F11 21 0 R
+/F12 22 0 R
+/F13 23 0 R
+/F14 24 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+25 0 obj
+<<
+/Producer (jsPDF 4.2.0)
+/CreationDate (D:20260418215312+05'30')
+>>
+endobj
+26 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 27
+0000000000 65535 f 
+0000022700 00000 n 
+0000024540 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000006736 00000 n 
+0000006873 00000 n 
+0000013007 00000 n 
+0000013144 00000 n 
+0000019581 00000 n 
+0000019719 00000 n 
+0000022775 00000 n 
+0000022901 00000 n 
+0000023032 00000 n 
+0000023166 00000 n 
+0000023304 00000 n 
+0000023428 00000 n 
+0000023557 00000 n 
+0000023689 00000 n 
+0000023825 00000 n 
+0000023953 00000 n 
+0000024080 00000 n 
+0000024209 00000 n 
+0000024342 00000 n 
+0000024444 00000 n 
+0000024793 00000 n 
+0000024879 00000 n 
+trailer
+<<
+/Size 27
+/Root 26 0 R
+/Info 25 0 R
+/ID [ <FF0EEC29A441213E03DF948C9245E52F> <FF0EEC29A441213E03DF948C9245E52F> ]
+>>
+startxref
+24983
+%%EOF

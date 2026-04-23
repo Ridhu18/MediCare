@@ -253,16 +253,16 @@ export default function HospitalsPage() {
 
             {/* Main Content */}
             <main className="relative z-10 md:ml-20 lg:ml-64 transition-all duration-500">
-                <header className="sticky top-0 z-40 bg-background/95 backdrop-blur border-b px-6 py-4">
+                <header className="sticky top-0 z-40 bg-background/40 backdrop-blur-2xl border-b border-primary/5 px-6 py-4">
                     <div className="flex items-center gap-4">
                         <Link href="/admin" className="lg:hidden">
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="hover:bg-primary/5">
                                 <ArrowLeft className="h-5 w-5" />
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-lg font-semibold">Hospital Management</h1>
-                            <p className="text-sm text-muted-foreground">
+                            <h1 className="text-xl font-black tracking-tight text-slate-800">Hospital Management</h1>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-0.5">
                                 Manage registered hospitals
                             </p>
                         </div>
@@ -270,7 +270,7 @@ export default function HospitalsPage() {
                 </header>
 
                 <div className="px-6 py-6 space-y-6">
-                    <Card>
+                    <Card className="border-primary/5 bg-background/40 backdrop-blur-xl">
                         <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row gap-4 justify-between">
                                 <div className="relative flex-1 max-w-sm">
@@ -279,93 +279,111 @@ export default function HospitalsPage() {
                                         placeholder="Search hospitals..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-10"
+                                        className="pl-10 bg-white/50 border-primary/10 transition-colors hover:border-primary/30 focus-visible:ring-primary/20 h-10"
                                     />
                                 </div>
                                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                                     <DialogTrigger asChild>
-                                        <Button className="gap-2" onClick={openAddDialog}>
+                                        <Button className="gap-2 h-10 px-6 font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all" onClick={openAddDialog}>
                                             <Plus className="h-4 w-4" />
                                             Add Hospital
                                         </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-                                        <DialogHeader>
-                                            <DialogTitle>{editingHospital ? "Edit Hospital" : "Add New Hospital"}</DialogTitle>
+                                    <DialogContent className="max-w-xl max-h-[90vh] p-0 overflow-hidden border-none bg-background/80 backdrop-blur-2xl rounded-[2rem] shadow-2xl">
+                                        <DialogHeader className="p-6 pb-4 bg-white/40 border-b border-primary/5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="p-2.5 rounded-2xl bg-primary/10 text-primary shadow-inner">
+                                                    <Hospital className="h-6 w-6" />
+                                                </div>
+                                                <div>
+                                                    <DialogTitle className="text-xl font-black tracking-tight text-slate-800 text-left">
+                                                        {editingHospital ? "Edit Hospital" : "Add New Hospital"}
+                                                    </DialogTitle>
+                                                    <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest opacity-60 text-left mt-0.5">
+                                                        {editingHospital ? "Update facility details" : "Register a new medical facility"}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </DialogHeader>
-                                        <div className="space-y-4 pt-4">
+                                        <div className="p-6 overflow-y-auto max-h-[60vh] space-y-5">
                                             <div className="space-y-2">
-                                                <Label>Name</Label>
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Name</Label>
                                                 <Input
                                                     placeholder="Hospital Name"
                                                     value={newHospital.name}
                                                     onChange={(e) => setNewHospital({ ...newHospital, name: e.target.value })}
+                                                    className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Address</Label>
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Address</Label>
                                                 <Input
                                                     placeholder="Full Address"
                                                     value={newHospital.address}
                                                     onChange={(e) => setNewHospital({ ...newHospital, address: e.target.value })}
+                                                    className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                 />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-5">
                                                 <div className="space-y-2">
-                                                    <Label>Phone</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Phone</Label>
                                                     <Input
                                                         placeholder="+91..."
                                                         value={newHospital.phone}
                                                         onChange={(e) => setNewHospital({ ...newHospital, phone: e.target.value })}
+                                                        className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Type</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Type</Label>
                                                     <Select
                                                         value={newHospital.type}
                                                         onValueChange={(val) => setNewHospital({ ...newHospital, type: val })}
                                                     >
-                                                        <SelectTrigger>
+                                                        <SelectTrigger className="h-11 bg-white/60 border-primary/5 focus:ring-primary/20 rounded-xl font-bold text-xs hover:border-primary/20 hover:bg-white/80 transition-colors">
                                                             <SelectValue />
                                                         </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="Government">Government</SelectItem>
-                                                            <SelectItem value="Private">Private</SelectItem>
+                                                        <SelectContent className="rounded-xl border-primary/10 shadow-2xl">
+                                                            <SelectItem value="Government" className="text-xs font-bold rounded-lg cursor-pointer">Government</SelectItem>
+                                                            <SelectItem value="Private" className="text-xs font-bold rounded-lg cursor-pointer">Private</SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-5">
                                                 <div className="space-y-2">
-                                                    <Label>Total Beds</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Total Beds</Label>
                                                     <Input type="number"
                                                         value={newHospital.totalBeds}
                                                         onChange={(e) => setNewHospital({ ...newHospital, totalBeds: e.target.value })}
+                                                        className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Available Beds</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Available Beds</Label>
                                                     <Input type="number"
                                                         value={newHospital.availableBeds}
                                                         onChange={(e) => setNewHospital({ ...newHospital, availableBeds: e.target.value })}
+                                                        className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                     />
                                                 </div>
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Departments (comma separated)</Label>
+                                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Departments (comma separated)</Label>
                                                 <Input
                                                     placeholder="Cardiology, Neurology..."
                                                     value={newHospital.departments}
                                                     onChange={(e) => setNewHospital({ ...newHospital, departments: e.target.value })}
+                                                    className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                 />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-2 gap-5">
                                                 <div className="space-y-2">
                                                     <div className="flex items-center justify-between">
-                                                        <Label>Latitude</Label>
+                                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Latitude</Label>
                                                         <Button
                                                             variant="link"
-                                                            className="h-auto p-0 text-primary text-xs flex items-center gap-1"
+                                                            className="h-auto p-0 px-0.5 text-primary text-[10px] font-black uppercase tracking-widest flex items-center gap-1"
                                                             onClick={handleAutoDetect}
                                                             disabled={isLocating}
                                                         >
@@ -376,18 +394,21 @@ export default function HospitalsPage() {
                                                     <Input type="number" step="any"
                                                         value={newHospital.lat}
                                                         onChange={(e) => setNewHospital({ ...newHospital, lat: e.target.value })}
+                                                        className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Longitude</Label>
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-0.5">Longitude</Label>
                                                     <Input type="number" step="any"
                                                         value={newHospital.lng}
                                                         onChange={(e) => setNewHospital({ ...newHospital, lng: e.target.value })}
+                                                        className="h-11 bg-white/60 border-primary/5 focus-visible:ring-primary/20 rounded-xl font-bold text-xs transition-colors hover:border-primary/20 hover:bg-white/80"
                                                     />
                                                 </div>
                                             </div>
-
-                                            <Button onClick={handleSaveHospital} className="w-full">
+                                        </div>
+                                        <div className="p-6 pt-4 bg-muted/20 border-t border-primary/5">
+                                            <Button onClick={handleSaveHospital} className="w-full h-12 text-xs font-black uppercase tracking-widest rounded-xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95">
                                                 {editingHospital ? "Update Hospital" : "Create Hospital"}
                                             </Button>
                                         </div>
@@ -397,55 +418,81 @@ export default function HospitalsPage() {
                         </CardContent>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Registered Hospitals ({filteredHospitals.length})</CardTitle>
+                    <Card className="border-primary/5 bg-background/40 backdrop-blur-xl overflow-hidden">
+                        <CardHeader className="border-b border-primary/5 bg-white/40 pb-4">
+                            <CardTitle className="text-lg font-black text-slate-800 tracking-tight">Registered Hospitals ({filteredHospitals.length})</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Start</TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead>Location</TableHead>
-                                        <TableHead>Beds</TableHead>
-                                        <TableHead>Contact</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                        <CardContent className="p-0">
+                            <div className="overflow-x-auto">
+                                <Table>
+                                    <TableHeader className="bg-primary/5">
+                                        <TableRow className="border-primary/5 hover:bg-transparent">
+                                            <TableHead className="font-bold text-slate-700 pl-4 w-[250px]">Hospital</TableHead>
+                                            <TableHead className="font-bold text-slate-700 w-[120px]">Type</TableHead>
+                                            <TableHead className="font-bold text-slate-700 w-[300px]">Location</TableHead>
+                                            <TableHead className="font-bold text-slate-700 w-[120px]">Beds (Avail/Total)</TableHead>
+                                            <TableHead className="font-bold text-slate-700">Contact</TableHead>
+                                            <TableHead className="text-right font-bold text-slate-700 pr-6">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
                                 <TableBody>
                                     {filteredHospitals.map((h) => (
-                                        <TableRow key={h.id}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                                                        {h.name[0]}
+                                        <TableRow key={h.id} className="border-primary/5 hover:bg-white/40 group transition-colors">
+                                            <TableCell className="pl-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-10 w-10 rounded-xl bg-primary/10 border-2 border-primary/10 flex items-center justify-center text-primary font-bold font-mono">
+                                                        {h.name ? h.name.slice(0, 2).toUpperCase() : "H"}
                                                     </div>
-                                                    {h.name}
+                                                    <div className="flex flex-col">
+                                                        <span className="font-bold text-slate-800 tracking-tight truncate max-w-[180px]" title={h.name}>{h.name}</span>
+                                                    </div>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant="outline">{h.type}</Badge>
+                                                <Badge 
+                                                    variant="outline" 
+                                                    className={cn(
+                                                        "text-[9px] font-bold uppercase tracking-widest px-2 py-0 border-0",
+                                                        h.type === "Private" ? "bg-amber-500/10 text-amber-600" : "bg-emerald-500/10 text-emerald-600"
+                                                    )}
+                                                >
+                                                    {h.type}
+                                                </Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-1 text-sm text-muted-foreground w-48 truncate">
-                                                    <MapPin className="h-3 w-3" />
-                                                    {h.address}
+                                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600 max-w-[280px]">
+                                                    <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                                    <span className="truncate" title={h.address}>{h.address}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <Bed className="h-3 w-3 text-muted-foreground" />
-                                                    {h.availableBeds}/{h.totalBeds}
+                                                <div className="flex items-center gap-1.5 px-2 py-1 w-max rounded-md bg-indigo-500/10 text-indigo-600 font-bold text-xs">
+                                                    <Bed className="h-3.5 w-3.5" />
+                                                    {h.availableBeds} / {h.totalBeds}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{h.phone}</TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => startEdit(h)}>
+                                            <TableCell>
+                                                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                                                    <Phone className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                                    {h.phone}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-right pr-6">
+                                                <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="h-8 w-8 text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" 
+                                                        onClick={() => startEdit(h)}
+                                                    >
                                                         <Edit className="h-4 w-4" />
                                                     </Button>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => handleDeleteHospital(h.id)}>
+                                                    <Button 
+                                                        variant="ghost" 
+                                                        size="icon" 
+                                                        className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 transition-colors" 
+                                                        onClick={() => handleDeleteHospital(h.id)}
+                                                    >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
                                                 </div>
@@ -454,6 +501,7 @@ export default function HospitalsPage() {
                                     ))}
                                 </TableBody>
                             </Table>
+                            </div>
                         </CardContent>
                     </Card>
                 </div>
