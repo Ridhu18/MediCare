@@ -123,7 +123,7 @@ export default function HospitalsPage() {
   const fetchHospitals = async (lat: number, lng: number) => {
     setLoading(true)
     try {
-      const res = await fetch(`http://localhost:5000/api/hospitals?lat=${lat}&lng=${lng}&radius=10000`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals?lat=${lat}&lng=${lng}&radius=10000`)
       if (res.ok) {
         const data = await res.json()
         // Calculate distance client-side if needed or rely on backend to provide it

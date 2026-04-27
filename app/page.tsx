@@ -48,7 +48,7 @@ export default function HomePage() {
 
         // Fetch Appointments if logged in
         if (token) {
-          const resApps = await fetch("http://localhost:5000/api/appointments/my", { headers })
+          const resApps = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/my`, { headers })
           if (resApps.ok) {
             const apps = await resApps.json()
             const upcoming = apps.filter((a: any) =>
@@ -62,7 +62,7 @@ export default function HomePage() {
         }
 
         // Fetch Hospital Count (using default location for now)
-        const resHosp = await fetch("http://localhost:5000/api/hospitals?lat=12.9716&lng=77.5946&radius=50000") // Wide radius to get count
+        const resHosp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals?lat=12.9716&lng=77.5946&radius=50000`) // Wide radius to get count
         if (resHosp.ok) {
           const hospitals = await resHosp.json()
           setStats(prev => ({ ...prev, hospitals: hospitals.length }))

@@ -94,7 +94,7 @@ export default function EmergencyPage() {
           return
         }
         const user = JSON.parse(userStr)
-        const res = await fetch(`http://localhost:5000/api/emergencies/my/${user.id || user._id}`)
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies/my/${user.id || user._id}`)
         if (res.ok) {
           const data = await res.json()
           setEmergencyHistory(data)

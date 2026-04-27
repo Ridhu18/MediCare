@@ -99,7 +99,7 @@ export function AppointmentsList() {
     setFetchingRecord(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/medical-records/${recordId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/${recordId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -115,7 +115,7 @@ export function AppointmentsList() {
   }
 
   useEffect(() => {
-    const socket = io("http://localhost:5000")
+    const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}`)
     socket.on("appointment_created", () => fetchAppointments())
     socket.on("appointment_updated", () => fetchAppointments())
     return () => { socket.disconnect() }
@@ -129,12 +129,12 @@ export function AppointmentsList() {
         return
       }
 
-      const res = await fetch("http://localhost:5000/api/appointments/my", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/my`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
         const data = await res.json()
-        const recordsRes = await fetch("http://localhost:5000/api/medical-records/my", {
+        const recordsRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         let records: any[] = []
@@ -446,7 +446,7 @@ export function AppointmentsList() {
                             if (file.url.startsWith("medical-record:")) {
                               fetchMedicalRecordDetail(file.url.split(":")[1]);
                             } else {
-                              window.open(file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`, "_blank");
+                              window.open(file.url.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`, "_blank");
                             }
                           }}
                           className="flex items-center justify-between p-3 rounded-xl bg-white/40 dark:bg-slate-900/40 border border-primary/5 hover:border-primary/20 transition-all group group/btn"
@@ -602,7 +602,7 @@ export function AppointmentsList() {
                         {viewingMedicalRecord.attachments.map((file: any, i: number) => (
                           <button
                             key={i}
-                            onClick={() => window.open(file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`, "_blank")}
+                            onClick={() => window.open(file.url.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`, "_blank")}
                             className="flex flex-col items-start gap-4 p-4 rounded-3xl bg-white dark:bg-slate-900 border border-primary/5 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all group group/card w-full"
                           >
                             <div className="h-10 w-10 rounded-2xl bg-primary/5 flex items-center justify-center group-hover/card:bg-primary/10 transition-colors">

@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/stats", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/stats`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -60,7 +60,7 @@ export default function AdminDashboard() {
     const fetchTodayAppointments = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/appointments/admin/today", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/admin/today`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
     const fetchEmergencies = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/emergencies", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

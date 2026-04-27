@@ -30,7 +30,7 @@ export function DoctorSidebar() {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("token")
-                const res = await fetch("http://localhost:5000/api/auth/me", {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 })
                 if (res.ok) {
@@ -95,7 +95,7 @@ export function DoctorSidebar() {
                 <div className="px-4 mb-2 hidden lg:block">
                     <div className="p-3 bg-primary/5 rounded-2xl border border-primary/5 flex items-center gap-3">
                         <Avatar className="h-8 w-8 border-2 border-background shadow-sm">
-                            <AvatarImage src={user.profileImage ? `http://localhost:5000${user.profileImage}` : ""} className="object-cover" />
+                            <AvatarImage src={user.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${user.profileImage}` : ""} className="object-cover" />
                             <AvatarFallback className="text-[10px] bg-primary/10 text-primary font-black">
                                 {user.name?.split(" ").map((n: any) => n[0]).join("")}
                             </AvatarFallback>

@@ -53,7 +53,7 @@ export default function BedsPage() {
 
   const fetchWards = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/wards")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/wards`)
       if (res.ok) {
         const data = await res.json()
         setWards(data)
@@ -111,7 +111,7 @@ export default function BedsPage() {
     value: number
   ) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/wards/${wardId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/wards/${wardId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [field]: Math.max(0, value) }),

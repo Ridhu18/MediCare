@@ -90,7 +90,7 @@ export default function DoctorPatients() {
           const token = localStorage.getItem("token")
 
           // Fetch Appointment History
-          const historyRes = await fetch(`http://localhost:5000/api/appointments/patient/${selectedPatient.id}`, {
+          const historyRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/patient/${selectedPatient.id}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           if (historyRes.ok) {
@@ -98,7 +98,7 @@ export default function DoctorPatients() {
           }
 
           // Fetch Medical Records
-          const recordsRes = await fetch(`http://localhost:5000/api/medical-records/patient/${selectedPatient.id}`, {
+          const recordsRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/patient/${selectedPatient.id}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           if (recordsRes.ok) {
@@ -119,7 +119,7 @@ export default function DoctorPatients() {
     const fetchPatients = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/appointments/doctor", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/doctor`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -236,7 +236,7 @@ export default function DoctorPatients() {
                 </DialogContent>
               </Dialog>
               <Avatar className="h-9 w-9 border-2 border-background shadow-md">
-                <AvatarImage src={profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ""} className="object-cover" />
+                <AvatarImage src={profile.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${profile.profileImage}` : ""} className="object-cover" />
                 <AvatarFallback className="text-xs bg-primary/10 text-primary font-black">
                   {profile.name ? profile.name.split(" ").map((n: any) => n[0]).join("") : "DR"}
                 </AvatarFallback>
@@ -554,7 +554,7 @@ export default function DoctorPatients() {
                                     {record.attachments.map((file: any, i: number) => (
                                       <a
                                         key={i}
-                                        href={`http://localhost:5000${file.url}`}
+                                        href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-3 px-5 py-3 bg-slate-100/50 hover:bg-primary/5 hover:text-primary rounded-[1.25rem] transition-all duration-300 group/file"

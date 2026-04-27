@@ -123,7 +123,7 @@ export default function DoctorDashboard() {
     setFetchingRecord(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/medical-records/${recordId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/${recordId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -150,7 +150,7 @@ export default function DoctorDashboard() {
       const token = localStorage.getItem("token")
 
       // Fetch Appointments
-      const apptRes = await fetch("http://localhost:5000/api/appointments/doctor", {
+      const apptRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/doctor`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (apptRes.ok) {
@@ -160,7 +160,7 @@ export default function DoctorDashboard() {
       }
 
       // Fetch Doctor Profile
-      const docRes = await fetch("http://localhost:5000/api/doctors/me", {
+      const docRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (docRes.ok) {
@@ -179,7 +179,7 @@ export default function DoctorDashboard() {
   useEffect(() => {
     fetchDashboardData()
 
-    const socket = io("http://localhost:5000")
+    const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}`)
 
     socket.on("appointment_created", (data) => {
       console.log("New appointment received on dashboard:", data)
@@ -284,7 +284,7 @@ export default function DoctorDashboard() {
   const handleStatusUpdate = async (id: string, status: string) => {
     try {
       const token = localStorage.getItem("token")
-      await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -323,7 +323,7 @@ export default function DoctorDashboard() {
               </Button>
               <Avatar className="h-10 w-10 border-2 border-background shadow-md">
                 <AvatarImage
-                  src={doctorInfo?.user?.profileImage ? `http://localhost:5000${doctorInfo.user.profileImage}` : ""}
+                  src={doctorInfo?.user?.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${doctorInfo.user.profileImage}` : ""}
                   className="object-cover"
                 />
                 <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">
@@ -687,7 +687,7 @@ export default function DoctorDashboard() {
                       {viewingMedicalRecord.attachments.map((file: any, i: number) => (
                         <a
                           key={i}
-                          href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                          href={file.url.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 p-3 rounded-xl bg-background border border-border hover:border-primary hover:bg-primary/5 transition-all group"

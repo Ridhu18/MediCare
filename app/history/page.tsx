@@ -127,15 +127,15 @@ function HistoryContent() {
       const headers = { Authorization: `Bearer ${token}` }
 
       // Fetch Medical Records
-      const resRecords = await fetch("http://localhost:5000/api/medical-records/my", { headers })
+      const resRecords = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, { headers })
       if (resRecords.ok) setMedicalRecords(await resRecords.json())
 
       // Fetch Emergencies
-      const resEmergencies = await fetch(`http://localhost:5000/api/emergencies/my/${user.id || user._id}`, { headers })
+      const resEmergencies = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies/my/${user.id || user._id}`, { headers })
       if (resEmergencies.ok) setEmergencies(await resEmergencies.json())
 
       // Fetch Appointments
-      const resAppointments = await fetch("http://localhost:5000/api/appointments/my", { headers })
+      const resAppointments = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/my`, { headers })
       if (resAppointments.ok) setAppointments(await resAppointments.json())
 
     } catch (error) {
@@ -590,7 +590,7 @@ function HistoryContent() {
                       {selectedRecord.attachments.map((file, i) => (
                         <div key={i} className="group relative">
                           <a
-                            href={`http://localhost:5000${file.url}`}
+                            href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl border border-slate-100 hover:border-primary/20 hover:bg-white transition-all shadow-sm"

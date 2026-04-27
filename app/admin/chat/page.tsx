@@ -75,7 +75,7 @@ export default function AdminChatPage() {
   useEffect(() => {
     const initChat = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/hospitals")
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`)
         if (res.ok) {
           const allHospitals = await res.json()
 
@@ -96,7 +96,7 @@ export default function AdminChatPage() {
           if (adminHospitals.length > 0) {
             setHospitalAuth(adminHospitals[0]) // Act as first hospital
 
-            const newSocket = io("http://localhost:5000")
+            const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}`)
             setSocket(newSocket)
 
             newSocket.on("receive_message", (message: ChatMessage) => {
@@ -132,7 +132,7 @@ export default function AdminChatPage() {
 
   const fetchConversations = async (hospitalId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/messages/hospital/${hospitalId}/conversations`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/hospital/${hospitalId}/conversations`)
       if (res.ok) {
         setConversations(await res.json())
       }
@@ -160,13 +160,13 @@ export default function AdminChatPage() {
 
       const fetchMessages = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/messages/${selectedConversation.userId}/${hospitalAuth._id}`)
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/${selectedConversation.userId}/${hospitalAuth._id}`)
           if (res.ok) {
             setMessages(await res.json())
           }
 
           // Mark messages as read
-          await fetch(`http://localhost:5000/api/messages/read`, {
+          await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/read`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -214,7 +214,7 @@ export default function AdminChatPage() {
       formData.append("file", selectedFile)
 
       try {
-        const res = await fetch("http://localhost:5000/api/messages/upload", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/upload`, {
           method: "POST",
           body: formData,
         })
@@ -470,9 +470,9 @@ export default function AdminChatPage() {
                               <div className="mb-2 relative group">
                                 {message.fileType?.startsWith("image/") ? (
                                   <div className="relative inline-block">
-                                    <img src={`http://localhost:5000${message.fileUrl}`} alt="attachment" className="rounded-md max-w-full h-auto max-h-[200px]" />
+                                    <img src={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`} alt="attachment" className="rounded-md max-w-full h-auto max-h-[200px]" />
                                     <a
-                                      href={`http://localhost:5000${message.fileUrl}`}
+                                      href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`}
                                       download
                                       target="_blank"
                                       rel="noopener noreferrer"
@@ -484,12 +484,12 @@ export default function AdminChatPage() {
                                   </div>
                                 ) : (
                                   <div className="flex items-center gap-2">
-                                    <a href={`http://localhost:5000${message.fileUrl}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center gap-2 p-2 bg-background/20 rounded border hover:bg-background/40 transition-colors text-sm">
+                                    <a href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center gap-2 p-2 bg-background/20 rounded border hover:bg-background/40 transition-colors text-sm">
                                       <Paperclip className="h-4 w-4" />
                                       <span className="truncate">View Attachment</span>
                                     </a>
                                     <a
-                                      href={`http://localhost:5000${message.fileUrl}`}
+                                      href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`}
                                       download
                                       target="_blank"
                                       rel="noopener noreferrer"

@@ -123,7 +123,7 @@ export default function EmergencyDashboard() {
 
   const fetchCases = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/emergencies")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies`)
       if (res.ok) {
         const data = await res.json()
         setCases(data)
@@ -137,7 +137,7 @@ export default function EmergencyDashboard() {
 
   const fetchAmbulances = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/ambulances")
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/ambulances`)
       if (res.ok) {
         const data = await res.json()
         setAmbulances(data)
@@ -211,14 +211,14 @@ export default function EmergencyDashboard() {
 
   const handleAssignAmbulance = async (caseId: string, ambId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/emergencies/${caseId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies/${caseId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "assigned", ambulanceId: ambId, eta: "10 min" }),
       })
       if (res.ok) {
         // Also update ambulance status
-        await fetch(`http://localhost:5000/api/ambulances/${ambId}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/ambulances/${ambId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: "dispatched" }),
@@ -237,7 +237,7 @@ export default function EmergencyDashboard() {
     ambId?: string
   ) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/emergencies/${caseId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies/${caseId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
@@ -245,7 +245,7 @@ export default function EmergencyDashboard() {
       if (res.ok) {
         if (status === "completed" && ambId) {
           // Free up the ambulance
-          await fetch(`http://localhost:5000/api/ambulances/${ambId}`, {
+          await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/ambulances/${ambId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: "available", currentLocation: "Returning to base" }),

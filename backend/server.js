@@ -23,8 +23,9 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+        origin: ["http://localhost:3000", /\.vercel\.app$/],
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
@@ -71,7 +72,23 @@ io.on("connection", (socket) => {
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://emergency-app-ui.vercel.app", // Fallback placeholder
+    /\.vercel\.app$/ // Allow all Vercel deployments
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.some(o => typeof o === 'string' ? o === origin : o.test(origin))) {
+            return callback(null, true);
+        }
+        return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
+    },
+    credentials: true
+}));
 app.use(express.json());
 
 // Routes

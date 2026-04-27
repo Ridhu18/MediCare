@@ -87,10 +87,10 @@ export default function DoctorProfile() {
     try {
       const token = localStorage.getItem("token")
       const [profileRes, apptRes] = await Promise.all([
-        fetch("http://localhost:5000/api/doctors/me", {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://localhost:5000/api/appointments/doctor", {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/doctor`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
@@ -131,7 +131,7 @@ export default function DoctorProfile() {
     setIsSaving(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/doctors/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -162,7 +162,7 @@ export default function DoctorProfile() {
 
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/auth/avatar", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/avatar`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -213,7 +213,7 @@ export default function DoctorProfile() {
                 Verified Specialist
               </Badge>
               <Avatar className="h-9 w-9 border-2 border-background shadow-md">
-                <AvatarImage src={profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ""} className="object-cover" />
+                <AvatarImage src={profile.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${profile.profileImage}` : ""} className="object-cover" />
                 <AvatarFallback className="text-xs bg-primary/10 text-primary font-black">
                   {profile.name ? profile.name.split(" ").map(n => n[0]).join("") : "DR"}
                 </AvatarFallback>
@@ -243,7 +243,7 @@ export default function DoctorProfile() {
             <div className="relative group">
               <Avatar className="h-32 w-32 border-4 border-background shadow-2xl scale-100 group-hover:scale-105 transition-transform duration-500 rounded-full">
                 <AvatarImage
-                  src={profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ""}
+                  src={profile.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${profile.profileImage}` : ""}
                   alt={profile.name}
                   className="object-cover"
                 />

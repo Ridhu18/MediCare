@@ -156,7 +156,7 @@ function DoctorAppointmentsContent() {
       try {
         const token = localStorage.getItem("token")
         // Try to find the medical record for this appointment
-        const res = await fetch(`http://localhost:5000/api/medical-records/appointment/${appointment.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/appointment/${appointment.id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -208,7 +208,7 @@ function DoctorAppointmentsContent() {
     setFetchingRecord(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/medical-records/${recordId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/${recordId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -230,7 +230,7 @@ function DoctorAppointmentsContent() {
 
   useEffect(() => {
     setIsMounted(true)
-    const socket = io("http://localhost:5000")
+    const socket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}`)
 
     socket.on("appointment_created", (data) => {
       console.log("New appointment received:", data)
@@ -257,7 +257,7 @@ function DoctorAppointmentsContent() {
     const fetchDoctorProfile = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/doctors/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -275,7 +275,7 @@ function DoctorAppointmentsContent() {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/appointments/doctor", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/doctor`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -336,7 +336,7 @@ function DoctorAppointmentsContent() {
   const handleStatusChange = async (id: string, status: Appointment["status"]) => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/appointments/${id}/status`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/${id}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -368,7 +368,7 @@ function DoctorAppointmentsContent() {
           attachments: attachments
         }
 
-        const res = await fetch("http://localhost:5000/api/medical-records", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -404,7 +404,7 @@ function DoctorAppointmentsContent() {
       const formData = new FormData()
       formData.append("file", file)
 
-      const res = await fetch("http://localhost:5000/api/medical-records/upload", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`
@@ -444,7 +444,7 @@ function DoctorAppointmentsContent() {
         type: bookingData.type
       }
 
-      const res = await fetch("http://localhost:5000/api/appointments", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -465,7 +465,7 @@ function DoctorAppointmentsContent() {
     if (selectedAppointment && rescheduleData.date && rescheduleData.time) {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch(`http://localhost:5000/api/appointments/${selectedAppointment.id}/reschedule`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/${selectedAppointment.id}/reschedule`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -756,7 +756,7 @@ function DoctorAppointmentsContent() {
                                       const id = file.url.split(":")[1];
                                       fetchMedicalRecordDetail(id);
                                     } else if (!file.url.startsWith('http')) {
-                                      window.open(`http://localhost:5000${file.url}`, '_blank')
+                                      window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`, '_blank')
                                     } else {
                                       window.open(file.url, '_blank')
                                     }
@@ -1211,7 +1211,7 @@ function DoctorAppointmentsContent() {
                         {viewingMedicalRecord.attachments.map((file: any, i: number) => (
                           <div key={i} className="group relative">
                             <a
-                              href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                              href={file.url.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl border border-slate-100 hover:border-primary/20 hover:bg-white transition-all shadow-sm"
@@ -1367,7 +1367,7 @@ function DoctorAppointmentsContent() {
                       {viewingMedicalRecord.attachments.map((file: any, i: number) => (
                         <div key={i} className="group relative">
                           <a
-                            href={file.url.startsWith('http') ? file.url : `http://localhost:5000${file.url}`}
+                            href={file.url.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl border border-slate-100 hover:border-primary/20 hover:bg-white transition-all shadow-sm"

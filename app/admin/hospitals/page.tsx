@@ -94,7 +94,7 @@ export default function HospitalsPage() {
     const fetchHospitals = async () => {
         try {
             const token = localStorage.getItem("token")
-            const res = await fetch("http://localhost:5000/api/hospitals", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -136,8 +136,8 @@ export default function HospitalsPage() {
             }
 
             const url = editingHospital
-                ? `http://localhost:5000/api/hospitals/${editingHospital.id}`
-                : "http://localhost:5000/api/hospitals";
+                ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals/${editingHospital.id}`
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`;
 
             const method = editingHospital ? "PUT" : "POST";
 
@@ -153,7 +153,7 @@ export default function HospitalsPage() {
 
             if (res.ok) {
                 if (method === "POST") {
-                    const meRes = await fetch("http://localhost:5000/api/auth/me", {
+                    const meRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
                         headers: { "Authorization": `Bearer ${token}` }
                     })
                     if (meRes.ok) {
@@ -179,7 +179,7 @@ export default function HospitalsPage() {
         if (!confirm("Are you sure you want to delete this hospital?")) return;
         try {
             const token = localStorage.getItem("token")
-            const res = await fetch(`http://localhost:5000/api/hospitals/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals/${id}`, {
                 method: "DELETE",
                 headers: { "Authorization": `Bearer ${token}` }
             })

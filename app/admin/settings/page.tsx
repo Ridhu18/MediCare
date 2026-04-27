@@ -61,13 +61,13 @@ export default function AdminSettingsPage() {
     try {
       const token = localStorage.getItem("token")
       const [userRes, docRes, hospRes] = await Promise.all([
-        fetch("http://localhost:5000/api/auth/me", {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://localhost:5000/api/doctors", {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch("http://localhost:5000/api/hospitals", {
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ])
@@ -119,7 +119,7 @@ export default function AdminSettingsPage() {
     setIsSaving(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/auth/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
 
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/auth/avatar", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/avatar`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -201,7 +201,7 @@ export default function AdminSettingsPage() {
                  Verified Administrator
                </Badge>
                <Avatar className="h-9 w-9 border-2 border-background shadow-md">
-                 <AvatarImage src={user?.profileImage ? `http://localhost:5000${user.profileImage}` : ""} className="object-cover" />
+                 <AvatarImage src={user?.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${user.profileImage}` : ""} className="object-cover" />
                  <AvatarFallback className="text-xs bg-primary/10 text-primary font-black">
                    {user?.name ? user.name.split(" ").map((n: any) => n[0]).join("") : "A"}
                  </AvatarFallback>
@@ -215,7 +215,7 @@ export default function AdminSettingsPage() {
               <div className="relative group">
               <Avatar className="h-32 w-32 border-4 border-background shadow-2xl scale-100 group-hover:scale-105 transition-transform duration-500 rounded-full">
                 <AvatarImage
-                  src={user?.profileImage ? `http://localhost:5000${user.profileImage}` : ""}
+                  src={user?.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${user.profileImage}` : ""}
                   alt={user?.name}
                   className="object-cover"
                 />

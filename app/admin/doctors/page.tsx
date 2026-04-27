@@ -133,7 +133,7 @@ export default function DoctorsPage() {
       const token = localStorage.getItem("token")
 
       // Fetch admin profile
-      const userRes = await fetch("http://localhost:5000/api/auth/me", {
+      const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
 
@@ -145,7 +145,7 @@ export default function DoctorsPage() {
       }
 
       // Fetch all hospitals and filter
-      const hospRes = await fetch("http://localhost:5000/api/hospitals")
+      const hospRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`)
       if (hospRes.ok) {
         let hospData = await hospRes.json()
         // Filter out only hospitals assigned to this admin
@@ -156,7 +156,7 @@ export default function DoctorsPage() {
       }
 
       // Fetch all doctors and filter
-      const docsRes = await fetch("http://localhost:5000/api/doctors")
+      const docsRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors`)
       if (docsRes.ok) {
         let docsData = await docsRes.json()
         if (ids.length > 0) {
@@ -204,8 +204,8 @@ export default function DoctorsPage() {
       }
 
       const url = editingDoctor 
-        ? `http://localhost:5000/api/doctors/${editingDoctor._id}`
-        : "http://localhost:5000/api/doctors";
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/${editingDoctor._id}`
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors`;
       
       const method = editingDoctor ? "PUT" : "POST";
 
@@ -271,7 +271,7 @@ export default function DoctorsPage() {
     setIsDeleting(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/doctors/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`

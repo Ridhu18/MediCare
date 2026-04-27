@@ -119,7 +119,7 @@ export default function ProfilePage() {
       const token = localStorage.getItem("token")
       if (!token) return
 
-      const response = await fetch("http://localhost:5000/api/auth/me", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -154,9 +154,9 @@ export default function ProfilePage() {
         
         // Fetch Counts for Stats
         const [resRecords, resEmergencies, resAppointments] = await Promise.all([
-          fetch("http://localhost:5000/api/medical-records/my", { headers }),
-          fetch(`http://localhost:5000/api/emergencies/my/${data._id || data.id}`, { headers }),
-          fetch("http://localhost:5000/api/appointments/my", { headers })
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, { headers }),
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/emergencies/my/${data._id || data.id}`, { headers }),
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/my`, { headers })
         ])
 
         const newCounts = { ...counts }
@@ -181,7 +181,7 @@ export default function ProfilePage() {
   const handleUpdateProfile = async () => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/auth/me", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -219,7 +219,7 @@ export default function ProfilePage() {
     try {
       setIsGeneratingAbha(true)
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/auth/generate-abha", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/generate-abha`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -259,7 +259,7 @@ export default function ProfilePage() {
       const formData = new FormData()
       formData.append("file", file)
 
-      const res = await fetch("http://localhost:5000/api/medical-records/upload", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -267,7 +267,7 @@ export default function ProfilePage() {
 
       if (res.ok) {
         const fileData = await res.json()
-        const createRes = await fetch("http://localhost:5000/api/medical-records", {
+        const createRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -305,7 +305,7 @@ export default function ProfilePage() {
 
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/auth/avatar", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/avatar`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -361,7 +361,7 @@ export default function ProfilePage() {
               <div className="relative group">
                 <Avatar className="h-32 w-32 border-4 border-background shadow-xl scale-100 group-hover:scale-105 transition-transform duration-300">
                   <AvatarImage
-                    src={userProfile.profileImage ? `http://localhost:5000${userProfile.profileImage}` : ""}
+                    src={userProfile.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${userProfile.profileImage}` : ""}
                     alt={userProfile.name}
                     className="object-cover"
                   />

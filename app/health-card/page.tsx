@@ -85,7 +85,7 @@ export default function HealthCardPage() {
       formData.append("file", file)
 
       // Step 1: Upload the file to the server
-      const res = await fetch("http://localhost:5000/api/medical-records/upload", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/upload`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`
@@ -97,7 +97,7 @@ export default function HealthCardPage() {
         const fileData = await res.json()
 
         // Step 2: Create the actual medical record document
-        const createRes = await fetch("http://localhost:5000/api/medical-records", {
+        const createRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function HealthCardPage() {
 
         if (createRes.ok) {
           // Step 3: Refresh records list
-          const recordsRes = await fetch("http://localhost:5000/api/medical-records/my", {
+          const recordsRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, {
             headers: { Authorization: `Bearer ${token}` }
           })
           if (recordsRes.ok) {
@@ -133,7 +133,7 @@ export default function HealthCardPage() {
 
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/medical-records/${recordId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/${recordId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`
@@ -159,7 +159,7 @@ export default function HealthCardPage() {
         const token = localStorage.getItem("token")
 
         // Fetch User Profile
-        const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (userRes.ok) {
@@ -169,7 +169,7 @@ export default function HealthCardPage() {
         }
 
         // Fetch Medical Records
-        const res = await fetch("http://localhost:5000/api/medical-records/my", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -452,7 +452,7 @@ export default function HealthCardPage() {
                     {selectedRecord.attachments.map((file, i) => (
                       <div key={i} className="space-y-2">
                         <a
-                          href={`http://localhost:5000${file.url}`}
+                          href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-3 p-3 bg-muted/30 rounded border border-slate-200 hover:bg-muted/50 transition-colors print:border-none print:p-0"
@@ -470,7 +470,7 @@ export default function HealthCardPage() {
                         {file.fileType.startsWith('image/') && (
                           <div className="relative aspect-video rounded-lg overflow-hidden border border-slate-200 bg-slate-50 mt-2">
                             <img
-                              src={`http://localhost:5000${file.url}`}
+                              src={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${file.url}`}
                               alt={file.name}
                               className="object-contain w-full h-full"
                             />

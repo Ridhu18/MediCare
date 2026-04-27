@@ -112,7 +112,7 @@ export default function DoctorSchedule() {
     const fetchSchedule = async () => {
       try {
         const token = localStorage.getItem("token")
-        const res = await fetch("http://localhost:5000/api/doctors/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {
@@ -154,7 +154,7 @@ export default function DoctorSchedule() {
         .filter(s => s.isAvailable && s.startTime && s.endTime)
         .map(s => `${s.day} ${s.startTime}-${s.endTime}`)
 
-      await fetch("http://localhost:5000/api/doctors/me", {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -243,7 +243,7 @@ export default function DoctorSchedule() {
                 )}
               </Button>
               <Avatar className="h-9 w-9 border-2 border-background shadow-md">
-                <AvatarImage src={profile.profileImage ? `http://localhost:5000${profile.profileImage}` : ""} className="object-cover" />
+                <AvatarImage src={profile.profileImage ? `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${profile.profileImage}` : ""} className="object-cover" />
                 <AvatarFallback className="text-xs bg-primary/10 text-primary font-black">
                   {profile.name ? profile.name.split(" ").map((n: any) => n[0]).join("") : "DR"}
                 </AvatarFallback>

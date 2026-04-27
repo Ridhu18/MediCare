@@ -109,7 +109,7 @@ export default function AdminAppointments() {
       const token = localStorage.getItem("token")
 
       // 1. Fetch admin profile to get hospitalIds
-      const userRes = await fetch("http://localhost:5000/api/auth/me", {
+      const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       let adminHospitalIds: string[] = []
@@ -119,7 +119,7 @@ export default function AdminAppointments() {
       }
 
       // 2. Fetch all appointments
-      const res = await fetch("http://localhost:5000/api/appointments/admin/all", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/admin/all`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -201,7 +201,7 @@ export default function AdminAppointments() {
   const handleAction = async (action: "confirmed" | "rejected", appointmentId: string) => {
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch(`http://localhost:5000/api/appointments/${appointmentId}/status`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments/${appointmentId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

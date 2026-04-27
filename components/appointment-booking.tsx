@@ -107,7 +107,7 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
   const fetchDoctors = async (dept: string) => {
     if (!hospitalId) return
     try {
-      const res = await fetch(`http://localhost:5000/api/doctors?hospitalId=${hospitalId}`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/doctors?hospitalId=${hospitalId}`)
       if (res.ok) {
         const data = await res.json()
         setDoctors(data.filter((d: any) => d.specialization.includes(dept) || dept === "General Medicine"))
@@ -121,7 +121,7 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
     setLoadingRecords(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/medical-records/my", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {
@@ -145,7 +145,7 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
       const formData = new FormData()
       formData.append("file", file)
 
-      const res = await fetch("http://localhost:5000/api/medical-records/upload", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -168,7 +168,7 @@ export function AppointmentBooking({ hospitalName, hospitalId, onClose, onSucces
 
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/appointments", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/appointments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

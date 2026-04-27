@@ -53,7 +53,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
       const user = JSON.parse(userStr)
       setCurrentUser(user)
 
-      const newSocket = io("http://localhost:5000")
+      const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}`)
       setSocket(newSocket)
 
       newSocket.on("receive_message", (message: ChatMessage) => {
@@ -70,7 +70,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
   useEffect(() => {
     const fetchHospitals = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/hospitals")
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals`)
         if (res.ok) {
           const data = await res.json()
           setHospitals(data)
@@ -90,7 +90,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
 
       const fetchMessages = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/messages/${currentUser.id}/${selectedHospital._id}`)
+          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/${currentUser.id}/${selectedHospital._id}`)
           if (res.ok) {
             const data = await res.json()
             setMessages(data)
@@ -125,7 +125,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
       formData.append("file", selectedFile)
 
       try {
-        const res = await fetch("http://localhost:5000/api/messages/upload", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/messages/upload`, {
           method: "POST",
           body: formData,
         })
@@ -198,7 +198,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
               <div className="flex items-start gap-3">
                 <Avatar className="h-10 w-10">
                   {hospital.image ? (
-                    <AvatarImage src={`http://localhost:5000${hospital.image}`} alt={hospital.name} />
+                    <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${hospital.image}`} alt={hospital.name} />
                   ) : null}
                   <AvatarFallback className="bg-primary/10 text-primary">
                     <Building2 className="h-5 w-5" />
@@ -231,7 +231,7 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
             </Button>
             <div className="relative">
               <Avatar className="h-10 w-10 border-2 border-primary/20 ring-2 ring-primary/5">
-                {selectedHospital?.image && <AvatarImage src={`http://localhost:5000${selectedHospital.image}`} />}
+                {selectedHospital?.image && <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${selectedHospital.image}`} />}
                 <AvatarFallback className="bg-primary/10 text-primary">
                   <Building2 className="h-5 w-5" />
                 </AvatarFallback>
@@ -284,9 +284,9 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
                         <div className="mb-2 relative group">
                           {message.fileType?.startsWith("image/") ? (
                             <div className="relative inline-block">
-                              <img src={`http://localhost:5000${message.fileUrl}`} alt="attachment" className="rounded-md max-w-full h-auto max-h-[200px]" />
+                              <img src={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`} alt="attachment" className="rounded-md max-w-full h-auto max-h-[200px]" />
                               <a
-                                href={`http://localhost:5000${message.fileUrl}`}
+                                href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`}
                                 download
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -298,12 +298,12 @@ export function HospitalChat({ activeTab }: HospitalChatProps) {
                             </div>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <a href={`http://localhost:5000${message.fileUrl}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center gap-2 p-2 bg-background/20 rounded border hover:bg-background/40 transition-colors text-sm">
+                              <a href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center gap-2 p-2 bg-background/20 rounded border hover:bg-background/40 transition-colors text-sm">
                                 <Paperclip className="h-4 w-4" />
                                 <span className="truncate">View Attachment</span>
                               </a>
                               <a
-                                href={`http://localhost:5000${message.fileUrl}`}
+                                href={`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}${message.fileUrl}`}
                                 download
                                 target="_blank"
                                 rel="noopener noreferrer"

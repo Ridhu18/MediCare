@@ -75,7 +75,7 @@ export function NearbyHospitals({ onBookAppointment }: NearbyHospitalsProps) {
       // Convert km radius to meters (roughly) or pass as query param if backend supports
       // Assuming backend supports lat, lng, radius (in m)
       const radiusMeters = parseInt(r) * 1000
-      const res = await fetch(`http://localhost:5000/api/hospitals?lat=${lat}&lng=${lng}&radius=${radiusMeters}`)
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/hospitals?lat=${lat}&lng=${lng}&radius=${radiusMeters}`)
 
       if (res.ok) {
         const data = await res.json()

@@ -79,12 +79,12 @@ export function DigitalHealthCard() {
         const token = localStorage.getItem("token")
 
         // Fetch User Profile
-        const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        const userRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
         // Fetch Latest Medical Record for Allergies/Medications
-        const recordRes = await fetch("http://localhost:5000/api/medical-records/my", {
+        const recordRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/medical-records/my`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -131,7 +131,7 @@ export function DigitalHealthCard() {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token")
-      const response = await fetch("http://localhost:5000/api/auth/me", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

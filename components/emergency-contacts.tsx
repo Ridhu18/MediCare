@@ -43,7 +43,7 @@ export function EmergencyContacts() {
         const token = localStorage.getItem("token")
         if (!token) return
 
-        const res = await fetch("http://localhost:5000/api/auth/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -65,7 +65,7 @@ export function EmergencyContacts() {
     setSaving(true)
     try {
       const token = localStorage.getItem("token")
-      const res = await fetch("http://localhost:5000/api/auth/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/auth/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
